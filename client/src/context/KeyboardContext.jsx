@@ -1,34 +1,87 @@
-import { createContext, useContext, useState, useRef, useCallback } from "react";
+import { createContext, useContext, useState, useRef, useCallback, useEffect } from "react";
 import DevanagariKeyboard from "../components/DevanagariKeyboard";
+
 const KeyboardContext = createContext(null);
+
 function KeyboardProvider({ children }) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [currentTarget, setCurrentTarget] = useState(null);
-  const defaultRef = useRef(null);
+  const activeInputRef = useRef(null);
+
+  // Globally track any focused input or textarea across the entire app
+  useEffect(() => {
+    const handleFocusIn = (e) => {
+      const target = e.target;
+      if (
+        target &&
+        (target.tagName === "INPUT" || target.tagName === "TEXTAREA") &&
+        !target.closest(".devanagari-keyboard")
+      ) {
+        activeInputRef.current = target;
+        // If keyboard is open, automatically switch target to this newly focused input
+        setCurrentTarget({ current: target });
+      }
+    };
+    document.addEventListener("focusin", handleFocusIn);
+    return () => document.removeEventListener("focusin", handleFocusIn);
+  }, []);
+
   const openKeyboard = useCallback((ref) => {
-    setCurrentTarget(ref);
+    if (ref && ref.current) {
+      setCurrentTarget(ref);
+    } else if (activeInputRef.current && document.contains(activeInputRef.current)) {
+      setCurrentTarget({ current: activeInputRef.current });
+    } else {
+      setCurrentTarget(null);
+    }
     setKeyboardVisible(true);
   }, []);
+
   const closeKeyboard = useCallback(() => {
     setKeyboardVisible(false);
-    setCurrentTarget(null);
   }, []);
+
   const toggleKeyboard = useCallback((ref) => {
-    if (keyboardVisible && currentTarget === ref) {
-      closeKeyboard();
-    } else {
-      openKeyboard(ref);
-    }
-  }, [keyboardVisible, currentTarget, openKeyboard, closeKeyboard]);
-  const registerInput = useCallback((ref) => {
-    defaultRef.current = ref.current;
+    setKeyboardVisible((prev) => {
+      if (prev) {
+        return false;
+      }
+      if (ref && ref.current) {
+        setCurrentTarget(ref);
+      } else if (activeInputRef.current && document.contains(activeInputRef.current)) {
+        setCurrentTarget({ current: activeInputRef.current });
+      } else {
+        setCurrentTarget(null);
+      }
+      return true;
+    });
   }, []);
-  return <KeyboardContext.Provider value={{ keyboardVisible, openKeyboard, closeKeyboard, toggleKeyboard, registerInput }}>
+
+  const registerInput = useCallback((ref) => {
+    if (ref?.current) {
+      activeInputRef.current = ref.current;
+    }
+  }, []);
+
+  return (
+    <KeyboardContext.Provider
+      value={{
+        keyboardVisible,
+        openKeyboard,
+        closeKeyboard,
+        toggleKeyboard,
+        registerInput,
+        currentTarget
+      }}
+    >
       {children}
-      {keyboardVisible && currentTarget && <div className="kb-overlay">
+      {keyboardVisible && (
+        <div className="kb-overlay">
           <DevanagariKeyboard targetRef={currentTarget} onClose={closeKeyboard} />
-        </div>}
-    </KeyboardContext.Provider>;
+        </div>
+      )}
+    </KeyboardContext.Provider>
+  );
 }
 function useKeyboard() {
   const ctx = useContext(KeyboardContext);

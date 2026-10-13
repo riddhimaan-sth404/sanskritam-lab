@@ -533,19 +533,30 @@ input:focus, textarea:focus, select:focus {
 
 /* ─── CARDS GRID ─── */
 .card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
 }
 .card-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
 }
 
 .vt-card {
+  flex: 1 1 280px;
+  max-width: 360px;
+  min-width: 260px;
   background: var(--vt-white);
   border-radius: var(--vt-radius);
   padding: 28px 24px;
@@ -556,7 +567,10 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   text-align: center;
+  box-sizing: border-box;
+  margin: 0;
 }
 .vt-card:hover { transform: translateY(-4px); box-shadow: var(--vt-shadow-hover); border-color: var(--vt-orange); }
 .vt-card .card-icon {
@@ -596,11 +610,11 @@ input:focus, textarea:focus, select:focus {
   transform: scale(1.12);
 }
 .vt-card h3 { font-size: 16px; font-weight: 700; color: var(--vt-text); margin-bottom: 8px; text-align: center; width: 100%; }
-.vt-card p { font-size: 13px; color: var(--vt-text-light); line-height: 1.6; text-align: center; flex: 1; }
+.vt-card p { font-size: 13px; color: var(--vt-text-light); line-height: 1.6; text-align: center; width: 100%; flex: 1; margin: 0 auto; }
 .vt-card .card-link {
   display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--vt-orange);
-  text-align: center;
+  text-align: center; width: 100%;
 }
 
 /* ─── TRACK ROW ─── */
@@ -654,6 +668,9 @@ input:focus, textarea:focus, select:focus {
   margin: 0 auto;
   width: 100%;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .programs-filter-bar {
@@ -1643,6 +1660,10 @@ input:focus, textarea:focus, select:focus {
 .kb-toggle.active { background: var(--vt-orange); color: #fff; border-color: var(--vt-orange); }
 .kb-close { font-size: 18px; padding: 2px 8px; border: none; background: none; color: var(--vt-text-light); cursor: pointer; border-radius: 6px; }
 .kb-close:hover { background: var(--vt-bg); }
+.kb-preview-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.kb-preview-input { flex: 1; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--vt-border); background: var(--vt-bg); color: var(--vt-text); font-size: 15px; font-family: 'Noto Sans Devanagari', serif; }
+.kb-preview-input:focus { outline: none; border-color: var(--vt-orange); }
+.kb-action-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 13px; white-space: nowrap; }
 .kb-tabs { display: flex; gap: 4px; margin-bottom: 10px; overflow-x: auto; }
 .kb-tab { padding: 6px 16px; border-radius: 8px; border: 1px solid var(--vt-border); background: var(--vt-bg); color: var(--vt-text); font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
 .kb-tab.active { background: var(--vt-orange); color: #fff; border-color: var(--vt-orange); }

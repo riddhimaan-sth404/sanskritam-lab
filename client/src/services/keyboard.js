@@ -43,28 +43,52 @@ const devanagariLayouts = {
   }
 };
 function insertAtCursor(input, char) {
-  const start = input.selectionStart ?? input.value.length;
-  const end = input.selectionEnd ?? start;
+  if (!input) return;
+  const val = input.value || "";
+  const start = typeof input.selectionStart === "number" ? input.selectionStart : val.length;
+  const end = typeof input.selectionEnd === "number" ? input.selectionEnd : start;
+
+  let newVal = "";
+  let newCursor = start;
+
   if (char === "\b" || char === "backspace") {
     if (start === end && start > 0) {
-      const before = input.value.slice(0, start - 1);
-      const after = input.value.slice(start);
-      input.value = before + after;
-      input.selectionStart = input.selectionEnd = start - 1;
+      newVal = val.slice(0, start - 1) + val.slice(start);
+      newCursor = start - 1;
+    } else if (start !== end) {
+      newVal = val.slice(0, start) + val.slice(end);
+      newCursor = start;
     } else {
-      const before = input.value.slice(0, start);
-      const after = input.value.slice(end);
-      input.value = before + after;
-      input.selectionStart = input.selectionEnd = start;
+      return;
     }
   } else {
-    const before = input.value.slice(0, start);
-    const after = input.value.slice(end);
-    input.value = before + char + after;
-    input.selectionStart = input.selectionEnd = start + char.length;
+    newVal = val.slice(0, start) + char + val.slice(end);
+    newCursor = start + char.length;
   }
+
+  // Use native prototype setter so React tracks value change and fires onChange
+  const proto = (input instanceof HTMLTextAreaElement || input.tagName === "TEXTAREA")
+    ? window.HTMLTextAreaElement.prototype
+    : window.HTMLInputElement.prototype;
+  const descriptor = Object.getOwnPropertyDescriptor(proto, "value");
+  if (descriptor && descriptor.set) {
+    descriptor.set.call(input, newVal);
+  } else {
+    input.value = newVal;
+  }
+
+  if (typeof input.setSelectionRange === "function") {
+    try {
+      input.setSelectionRange(newCursor, newCursor);
+    } catch (e) {}
+  }
+
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  input.focus();
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+
+  try {
+    input.focus();
+  } catch (e) {}
 }
 export {
   devanagariLayouts,

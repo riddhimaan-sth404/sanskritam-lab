@@ -16,7 +16,6 @@ import {
   School,
   GraduationCap,
   ClipboardCheck,
-  Bot,
   Mic,
   Puzzle,
   Stethoscope,
@@ -142,7 +141,6 @@ function Layout() {
   const { keyboardVisible, toggleKeyboard } = useKeyboard();
   const { t, lang, toggle: toggleLang } = useLanguage();
   const { user, role, setRole, canSwitch, guest, endGuest } = useRole();
-  const kbDummyRef = useRef(null);
   const ROLE_OPTIONS = [
     { value: "institution", icon: <School size={15} />, label: "School" },
     { value: "teacher", icon: <GraduationCap size={15} />, label: "Teacher" },
@@ -232,13 +230,10 @@ function Layout() {
             <button
               className={`btn btn-sm ${keyboardVisible ? "btn-primary" : "btn-outline"}`}
               style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", gap: 6 }}
-              onClick={() => toggleKeyboard(kbDummyRef)}
+              onClick={() => toggleKeyboard()}
               title={t("Devanagari Keyboard")}
             >
               <Keyboard size={15} /> <span>देव</span>
-            </button>
-            <button className="btn btn-sm btn-outline" style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => navigate("/tools/tutor")}>
-              <Bot size={15} /> <span>{t("Tutor")}</span>
             </button>
             {canSwitch && <div className="role-switcher" style={{ marginLeft: 8, display: "inline-flex", background: "rgba(255,140,0,0.12)", border: "1px solid rgba(255,140,0,0.4)", borderRadius: 8, padding: 2 }}>
                 {ROLE_OPTIONS.map((o) => <button
@@ -271,7 +266,6 @@ function Layout() {
         <main className="main-content">
           <Outlet />
         </main>
-        <textarea ref={kbDummyRef} style={{ position: "absolute", left: -9999, top: -9999, width: 1, height: 1 }} readOnly />
 
         {
     /* Footer */
@@ -370,7 +364,7 @@ function Layout() {
           </div>
 
           <div className="footer-bottom">
-            <span>{t("© 2026 SanskritLab. Open source.")}</span>
+            <span>{t("© 2026 SanskritLab. MIT Licensed.")}</span>
             <span>{t("Made with ❤️ for Sanskrit")}</span>
           </div>
         </footer>

@@ -15,7 +15,6 @@ import {
   Compass
 } from "lucide-react";
 import institutionHeroImg from "../../assets/image-aspera.jpg";
-import { tracks } from "../../data/tracks";
 import { DynamicIcon } from "../../components/icons";
 import { useLanguage } from "../../context/LanguageContext";
 import { useRole } from "../../context/RoleContext";
@@ -439,14 +438,6 @@ const filterCategoryIcons = {
   viva: "/sanskritlab-icons/6_Viva_and_Exam_Practice/card-viva-sim.png",
 };
 
-const trackIconMap = {
-  child: "/sanskritlab-icons/4_Learning_and_Adaptive_Modules/card-child-mode.png",
-  teen: "/sanskritlab-icons/1_Research_and_Digitization/card-ncert-lib.png",
-  undergrad: "/sanskritlab-icons/3_Teaching_and_Academics/card-teacher-dash.png",
-  graduate: "/sanskritlab-icons/1_Research_and_Digitization/card-corpus.png",
-  phd: "/sanskritlab-icons/4_Learning_and_Adaptive_Modules/card-phd-space.png",
-};
-
 const programFilterCategories = [
   { id: "all", label: "All Programs", labelHi: "सर्वाणि साधनानि" },
   { id: "research", label: "Research & OCR", labelHi: "अनुसन्धानम्" },
@@ -523,8 +514,8 @@ function Dashboard() {
 
             <p className="hero-tagline">
               {hi
-                ? "पाण्डुलिपि डिजिटलीकरणम्, ३डी दृश्यीकरणम्, कृत्रिमबुद्धि-साधनानि एवं सस्वर श्लोकपाठशाला — बालकेभ्यः अनुसन्धानछात्रेभ्यश्च।"
-                : "A sanctuary for manuscript preservation, interactive 3D visualization, neural linguistics, and traditional shloka recitation — from playful beginnings to doctoral critical editions."}
+                ? "३डी दृश्यीकरणम्, कृत्रिमबुद्धि-साधनानि एवं सस्वर श्लोकपाठशाला — बालकेभ्यः अनुसन्धानछात्रेभ्यश्च।"
+                : "A sanctuary for interactive 3D visualization, neural linguistics, and traditional shloka recitation — from playful beginnings to doctoral critical editions."}
             </p>
 
             <div className="institutional-hero-actions">
@@ -657,7 +648,14 @@ function Dashboard() {
                   <p>{t(p.desc)}</p>
                   <span
                     className="card-link"
-                    style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 4,
+                      width: "100%",
+                      textAlign: "center"
+                    }}
                   >
                     {t("Open Section")} <ArrowRight size={14} />
                   </span>
@@ -742,67 +740,6 @@ function Dashboard() {
           <div className="stat-label">{t("Scholarly Tools")}</div>
         </div>
       </div>
-
-      {/* ─── LEARNING TRACKS ─── */}
-      <section className="section" style={{ paddingTop: 16 }}>
-        <div className="section-header">
-          <h2>{t("Choose Your Learning Path")}</h2>
-          <p>
-            {t(
-              "From young beginners to doctoral researchers — a tailored track for every stage"
-            )}
-          </p>
-        </div>
-        <div className="track-row">
-          {tracks.map((track) => (
-            <div
-              key={track.id}
-              className="track-card"
-              onClick={() => navigate("/learning/tree")}
-            >
-              <span
-                className="track-icon"
-                style={{
-                  display: "inline-flex",
-                  justifyContent: "center",
-                  width: "100%",
-                  color: track.color
-                }}
-              >
-                <DynamicIcon name={track.icon} size={32} />
-              </span>
-              <h3>{t(track.label)}</h3>
-              <div className="track-desc">{t(track.description)}</div>
-              <div className="track-age">{t(track.classRange)}</div>
-            </div>
-          ))}
-          {tracks.map((track) => {
-            const trackImg = trackIconMap[track.id];
-            return (
-              <div
-                key={track.id}
-                className="track-card"
-                onClick={() => navigate("/learning/tree")}
-              >
-                <span className="track-icon">
-                  {trackImg ? (
-                    <img
-                      src={trackImg}
-                      alt={track.label}
-                      className="track-icon-img"
-                    />
-                  ) : (
-                    <DynamicIcon name={track.icon} size={32} />
-                  )}
-                </span>
-                <h3>{t(track.label)}</h3>
-                <div className="track-desc">{t(track.description)}</div>
-                <div className="track-age">{t(track.classRange)}</div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
 
       {/* ─── CALL TO ACTION BAR (PROMOTIONAL 100% FREE TEXT REMOVED) ─── */}
       <div className="cta-bar">

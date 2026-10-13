@@ -13,6 +13,7 @@ const dashboardHi = {
   "Research & annotation tools": "अनुसंधान एवं एनोटेशन उपकरण",
   "3D manuscript viewer": "3डी पाण्डुलिपि दर्शक",
   "Open source": "ओपन सोर्स",
+  "MIT Licensed": "MIT लाइसेंस्ड",
   "Get Started": "शुरू करें",
   "Years of Texts": "ग्रन्थों के वर्ष",
   "Curated Lessons": "चयनित पाठ",
