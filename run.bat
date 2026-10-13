@@ -53,6 +53,6 @@ echo ============================================================
 echo  SanskritLab is running!
 echo  - Frontend: http://localhost:5173
 echo  - Rust Backend: http://127.0.0.1:8080/api/health
-echo  - Netlify Ready: Build with 'npm run build' in client/
+echo  - Vercel Ready: Deploy with 'vercel' or push to Git
 echo ============================================================
 echo.

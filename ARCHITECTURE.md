@@ -108,7 +108,7 @@ graph TB
 | **Native Backend Server** | **Rust (Actix-Web 4, Tokio, Serde)** | Native binary REST API providing microsecond grammar parsing, corpus exploration, and assessment generation. |
 | **Desktop Shell** | **Python 3.10+, PySide6 (Qt6)** | Multi-window desktop application with embedded native controls and backend integration. |
 | **Cloud Database** | **Supabase (PostgreSQL 15, RLS)** | Optional remote storage for user profiles, classroom assignments, and corpus sync. |
-| **Deployment / CI** | **Netlify Static SPA, Vite Build** | Zero-config continuous deployment with `netlify.toml` wildcard redirect (`/* -> /index.html 200`). |
+| **Deployment / CI** | **Vercel SPA + Edge/Serverless, Vite Build** | Zero-config continuous deployment with `vercel.json` rewrites (`/(.*) -> /index.html`), asset caching headers, and `.github/workflows/vercel.yml` CI/CD. |
 
 ---
 
@@ -268,12 +268,29 @@ graph LR
   - Frontend: `cd client && npm run dev`
   - Unit Tests: `cd client && npm test` (Vitest test suite)
 
-### 10.2 Production Deployment (Netlify SPA)
+### 10.2 Production Deployment (Vercel SPA & Serverless)
 - The frontend builds cleanly via `npm run build` into `client/dist`.
-- Static routing rules are enforced via [netlify.toml](file:///d:/Projects/sanskrit/netlify.toml):
-  ```toml
-  [[redirects]]
-    from = "/*"
-    to = "/index.html"
-    status = 200
+- Static routing rules and caching are enforced via [vercel.json](file:///d:/Projects/sanskrit/vercel.json) and [client/vercel.json](file:///d:/Projects/sanskrit/client/vercel.json):
+  ```json
+  {
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "framework": "vite",
+    "cleanUrls": true,
+    "rewrites": [
+      { "source": "/api/(.*)", "destination": "/api/$1" },
+      { "source": "/(.*)", "destination": "/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "/assets/(.*)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      }
+    ]
+  }
   ```
+- Automated preview and production deployments are managed via [.github/workflows/vercel.yml](file:///d:/Projects/sanskrit/.github/workflows/vercel.yml) targeting scope `riddhimaan-singh`.

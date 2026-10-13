@@ -94,7 +94,7 @@ SanskritLab is an interactive, full-stack platform for Sanskrit studies spanning
 | **Lexical Engine** | Client-side indexed 60,000-word Monier-Williams JSON database |
 | **Backend (Rust)** | Actix-web 4, Serde, Tokio, CORS |
 | **Desktop** | PySide6 (Python 3.10+) |
-| **Hosting** | Netlify (Static SPA) + Local / Hosted Rust Engine |
+| **Hosting** | Vercel (Vite SPA + Serverless Functions) + Local / Hosted Rust Engine |
 
 ---
 
@@ -129,12 +129,23 @@ npm run test       # runs unit test suite
 npm run build      # creates production bundle in client/dist/
 ```
 
-### Deploying to Netlify
-The frontend is configured for zero-config Netlify SPA hosting:
-1. Connect your repository to Netlify.
-2. **Build command**: `npm run build`
-3. **Publish directory**: `client/dist`
-4. The included `netlify.toml` automatically handles client-side routing (`/* -> /index.html 200`).
+### Deploying to Vercel
+
+The project is configured for seamless deployment to Vercel (Scope: [`riddhimaan-singh`](https://vercel.com/riddhimaan-singh)):
+
+#### Option A: Zero-Config Git Integration (Recommended)
+1. Import the repository in your [Vercel Dashboard](https://vercel.com/riddhimaan-singh).
+2. Set **Root Directory** to `client` (or leave as root `./`, both `vercel.json` configurations are included).
+3. Framework Preset will auto-detect as **Vite**.
+4. Click **Deploy**. SPA routing fallbacks and the `/api/tts` serverless function work out-of-the-box.
+
+#### Option B: Automated GitHub Actions CI/CD
+The repository includes `.github/workflows/vercel.yml` which builds and deploys Preview environments on PRs and Production on pushes to `master`/`main`.
+
+To enable the GitHub Action, add the following to your GitHub repository under **Settings > Secrets and variables > Actions**:
+- `VERCEL_TOKEN`: Your Vercel Personal Access Token from [Vercel Account Tokens](https://vercel.com/account/tokens)
+- `VERCEL_ORG_ID`: Your Vercel User/Team ID (found in `.vercel/project.json` or team settings)
+- `VERCEL_PROJECT_ID`: Your Vercel Project ID (found in project settings or `.vercel/project.json`)
 
 ---
 
