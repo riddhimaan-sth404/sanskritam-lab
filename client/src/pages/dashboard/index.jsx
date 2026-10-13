@@ -14,12 +14,11 @@ import {
   Mic,
   Compass
 } from "lucide-react";
-import institutionHeroImg from "../../assets/images.png";
+import institutionHeroImg from "../../assets/image-aspera.jpg";
 import { tracks } from "../../data/tracks";
 import { DynamicIcon } from "../../components/icons";
 import { useLanguage } from "../../context/LanguageContext";
 import { useRole } from "../../context/RoleContext";
-import ShlokaRecitationSection from "../../components/ShlokaRecitationSection";
 import ExplorePanel from "../../components/ExplorePanel";
 
 // Complete directory of all program sections available across SanskritLab
@@ -40,23 +39,6 @@ const allProgramSections = [
     categoryLabelHi: "अनुसन्धानम् एवं डिजिटलीकरणम्",
     icon: "temple",
     title: "Smart Corpus & Semantic Search",
-    desc: "Explore 3,000 years of classical texts by chronological era with deep dictionary integration.",
-    link: "/research/corpus"
-  },
-  {
-    category: "research",
-    categoryLabel: "Research & Digitization",
-    categoryLabelHi: "अनुसन्धानम् एवं डिजिटलीकरणम्",
-    icon: "temple",
-    title: "Layered Annotation Tool",
-    desc: "Multi-layered critical apparatus: attach grammatical analysis, commentaries, and multi-lingual translations.",
-    link: "/research/annotate"
-  },
-  {
-    category: "research",
-    categoryLabel: "Research & Digitization",
-    categoryLabelHi: "अनुसन्धानम् एवं डिजिटलीकरणम्",
-    icon: "book",
     title: "NCERT Sanskrit Library",
     desc: "Complete Class 6–12 textbooks (Deepakam, Shemushi, Bhaswati, Shashwati) with digitized reader.",
     link: "/research/ncert"
@@ -147,24 +129,6 @@ const allProgramSections = [
     title: "Learning Path (Skill Tree)",
     desc: "Structured curriculum from beginner to advanced with XP, streaks, quizzes, and unlocking milestones.",
     link: "/learning/tree"
-  },
-  {
-    category: "learning",
-    categoryLabel: "Adaptive Learning",
-    categoryLabelHi: "अनुकूली शिक्षणम्",
-    icon: "smile",
-    title: "Fun Learning Mode (Kids)",
-    desc: "Delightful alphabet cards, picture-word matching, sound association, and playful mini-challenges.",
-    link: "/learning/child"
-  },
-  {
-    category: "learning",
-    categoryLabel: "Adaptive Learning",
-    categoryLabelHi: "अनुकूली शिक्षणम्",
-    icon: "temple",
-    title: "PhD Research Workspace",
-    desc: "Collation workbench for manuscript witnesses, apparatus criticus generation, and paleography.",
-    link: "/learning/research"
   },
   {
     category: "learning",
@@ -566,7 +530,7 @@ function Dashboard() {
             <div className="institutional-hero-actions">
               <button
                 className="btn btn-primary"
-                onClick={() => scrollToSection("shlokas")}
+                onClick={() => navigate("/tools/shloka")}
               >
                 <Scroll size={16} />
                 <span>{hi ? "श्लोक श्रवणम्" : "Listen to Shlokas"}</span>
@@ -704,9 +668,6 @@ function Dashboard() {
         )}
       </section>
 
-      {/* ─── 3. SEPARATE DEDICATED SANSKRIT SHLOKA SECTION WITH RECITATION FEATURE ─── */}
-      <ShlokaRecitationSection onExploreWord={(word) => setExploreWord(word)} />
-
       {/* ─── NCERT CURRICULUM BANNER ─── */}
       <section className="section" style={{ paddingTop: 12, paddingBottom: 16 }}>
         <div
@@ -793,6 +754,28 @@ function Dashboard() {
           </p>
         </div>
         <div className="track-row">
+          {tracks.map((track) => (
+            <div
+              key={track.id}
+              className="track-card"
+              onClick={() => navigate("/learning/tree")}
+            >
+              <span
+                className="track-icon"
+                style={{
+                  display: "inline-flex",
+                  justifyContent: "center",
+                  width: "100%",
+                  color: track.color
+                }}
+              >
+                <DynamicIcon name={track.icon} size={32} />
+              </span>
+              <h3>{t(track.label)}</h3>
+              <div className="track-desc">{t(track.description)}</div>
+              <div className="track-age">{t(track.classRange)}</div>
+            </div>
+          ))}
           {tracks.map((track) => {
             const trackImg = trackIconMap[track.id];
             return (
