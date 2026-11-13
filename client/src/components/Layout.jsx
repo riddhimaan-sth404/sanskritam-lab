@@ -37,19 +37,27 @@ import {
   X,
   User,
   Globe,
-  ExternalLink
+  ExternalLink,
+  Video
 } from "lucide-react";
 import { OmIcon, PalmLeafIcon, TempleIcon, ShlokaIcon } from "./icons";
 import { useTheme } from "../context/ThemeContext";
 import { useKeyboard } from "../context/KeyboardContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useRole } from "../context/RoleContext";
-import { signOut } from "../services/auth";
 const navSections = [
   {
     title: "Dashboard",
     links: [
       { to: "/", icon: <Home size={18} />, label: "Overview" }
+    ]
+  },
+  {
+    title: "Media & Recitation",
+    links: [
+      { to: "/?filter=shloka_videos", icon: <Video size={18} />, label: "श्लोक-चलचित्राणि (Videos)" },
+      { to: "/?filter=sanskrit_songs", icon: <Volume2 size={18} />, label: "संस्कृत-गीतानि (Songs)" },
+      { to: "/tools/shloka", icon: <ShlokaIcon size={18} />, label: "संस्कृत श्लोकाः (Shlokas)" }
     ]
   },
   {
@@ -72,7 +80,7 @@ const navSections = [
     title: "Learning",
     links: [
       { to: "/learning/tree", icon: <TreePine size={18} />, label: "Learning Path" },
-      
+
       { to: "/learning/curriculum", icon: <GraduationCap size={18} />, label: "Curriculum Builder" }
     ]
   },
@@ -81,7 +89,7 @@ const navSections = [
     links: [
       { to: "/research/corpus", icon: <PalmLeafIcon size={18} />, label: "Corpus & Search" },
       { to: "/research/ocr", icon: <FileText size={18} />, label: "Manuscript OCR" },
-      
+
     ]
   },
   {
@@ -104,7 +112,7 @@ const navSections = [
   {
     title: "AI Tools",
     links: [
-      
+
       { to: "/tools/sentence", icon: <Puzzle size={18} />, label: "Sentence Builder" },
       { to: "/tools/fix", icon: <Stethoscope size={18} />, label: "Fix My Sanskrit" },
       { to: "/tools/story", icon: <BookOpen size={18} />, label: "Story Generator" },
@@ -140,236 +148,246 @@ function Layout() {
   const navigate = useNavigate();
   const { keyboardVisible, toggleKeyboard } = useKeyboard();
   const { t, lang, toggle: toggleLang } = useLanguage();
-  const { user, role, setRole, canSwitch, guest, endGuest } = useRole();
+  const { role, setRole, canSwitch } = useRole();
   const ROLE_OPTIONS = [
     { value: "institution", icon: <School size={15} />, label: "School" },
     { value: "teacher", icon: <GraduationCap size={15} />, label: "Teacher" },
     { value: "student", icon: <User size={15} />, label: "Student" }
   ];
-  const handleSignOut = () => {
-    endGuest();
-    signOut();
-    navigate("/");
-  };
   return <div className="app-layout">
-      <div className={`sidebar-overlay${sidebarOpen ? " visible" : ""}`} onClick={() => setSidebarOpen(false)} />
+    <div className={`sidebar-overlay${sidebarOpen ? " visible" : ""}`} onClick={() => setSidebarOpen(false)} />
 
-      <nav className={`sidebar${sidebarOpen ? " open" : ""}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-brand">
-            <div className="sidebar-logo" style={{ overflow: "hidden", padding: 0, background: "none" }}>
-              <img src="/favicon.svg" alt="SanskritLab Logo" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
-            </div>
-            <div className="sidebar-brand-text">
-              <h1>संस्कृतम्</h1>
-              <div className="subtitle">SanskritLab</div>
-            </div>
+    <nav className={`sidebar${sidebarOpen ? " open" : ""}`}>
+      <div className="sidebar-header">
+        <div className="sidebar-brand">
+          <div className="sidebar-logo" style={{ overflow: "hidden", padding: 0, background: "none" }}>
+            <img src="/favicon.svg" alt="SanskritLab Logo" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
           </div>
-          <button className="sidebar-close" onClick={() => setSidebarOpen(false)} aria-label={t("Close")}><X size={18} /></button>
-        </div>
-        {navSections.map((section) => <div className="nav-section" key={section.title}>
-            <div className="nav-section-title">{t(section.title)}</div>
-            {section.links.filter((l) => !("schoolOnly" in l) || l.schoolOnly !== true || user?.accountType === "institution").map((link) => <NavLink
-    key={link.to}
-    to={link.to}
-    end={link.to === "/"}
-    className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-    onClick={() => setSidebarOpen(false)}
-  >
-                <span className="nav-icon">{link.icon}</span>
-                {t(link.label)}
-              </NavLink>)}
-          </div>)}
-        <div className="sidebar-footer">
-          <span>{t("Theme")}</span>
-          <button className="theme-btn" onClick={toggle}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button>
-        </div>
-      </nav>
-
-      <div className="main-wrapper">
-        {
-    /* Vedantu-style top orange navbar */
-  }
-        <div className="top-nav">
-          <div className="top-nav-left">
-            <button className="top-nav-hamburger" onClick={() => setSidebarOpen(true)} aria-label="Open menu"><Menu size={22} /></button>
-            <div className="top-nav-logo" onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
-              <img
-                src="/favicon.svg"
-                alt="SanskritLab Logo"
-                style={{ width: 28, height: 28, borderRadius: 7, boxShadow: "0 2px 8px rgba(0,0,0,0.22)", flexShrink: 0 }}
-              />
-              <span>संस्कृतम् <strong>Lab</strong></span>
-            </div>
-            <div className="top-nav-links">
-              <a onClick={() => navigate("/learning/tree")}>{t("Learn")}</a>
-              <a onClick={() => navigate("/research/ncert")}>{t("NCERT")}</a>
-              <a onClick={() => navigate("/research/corpus")}>{t("Research")}</a>
-              <a onClick={() => navigate("/visualization/3d")}>{t("Visualize")}</a>
-              <a onClick={() => navigate("/teaching/dashboard")}>{t("Teach")}</a>
-              <a onClick={() => navigate("/viva/simulator")}>{t("Practice")}</a>
-            </div>
-          </div>
-          <div className="top-nav-right">
-            <button
-              className="theme-btn"
-              onClick={toggle}
-              title={theme === "dark" ? (t("Switch to light mode") || "Light mode") : (t("Switch to dark mode") || "Dark mode")}
-              aria-label={t("Toggle theme")}
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-            <button
-              className={`btn btn-sm ${lang === "hi" ? "btn-primary" : "btn-outline"}`}
-              style={{ marginLeft: 8 }}
-              onClick={toggleLang}
-              title={t("Language / \u092D\u093E\u0937\u093E")}
-            >
-              {lang === "hi" ? "EN" : "\u0939\u093F"}
-            </button>
-            <button
-              className={`btn btn-sm ${keyboardVisible ? "btn-primary" : "btn-outline"}`}
-              style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", gap: 6 }}
-              onClick={() => toggleKeyboard()}
-              title={t("Devanagari Keyboard")}
-            >
-              <Keyboard size={15} /> <span>देव</span>
-            </button>
-            {canSwitch && <div className="role-switcher" style={{ marginLeft: 8, display: "inline-flex", background: "rgba(255,140,0,0.12)", border: "1px solid rgba(255,140,0,0.4)", borderRadius: 8, padding: 2 }}>
-                {ROLE_OPTIONS.map((o) => <button
-    key={o.value}
-    className={`btn btn-sm ${role === o.value ? "btn-primary" : ""}`}
-    style={{ border: "none", padding: "4px 10px", borderRadius: 6, display: "inline-flex", alignItems: "center", gap: 4 }}
-    onClick={() => setRole(o.value)}
-    title={t("View as") + ": " + t(o.label)}
-  >
-                    {o.icon} <span>{t(o.label)}</span>
-                  </button>)}
-              </div>}
+          <div className="sidebar-brand-text">
+            <h1>संस्कृतम्</h1>
+            <div className="subtitle">SanskritLab</div>
           </div>
         </div>
+        <button className="sidebar-close" onClick={() => setSidebarOpen(false)} aria-label={t("Close")}><X size={18} /></button>
+      </div>
 
-        {
-    /* Mobile header */
-  }
-        <header className="mobile-header">
-          <button className="hamburger" onClick={() => setSidebarOpen(true)} aria-label={t("Open navigation")}>
-            <span /><span /><span />
-          </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, cursor: "pointer" }} onClick={() => navigate("/")}>
-            <img src="/favicon.svg" alt="SanskritLab Logo" style={{ width: 24, height: 24, borderRadius: 6, flexShrink: 0 }} />
-            <span className="mobile-title">संस्कृतम्</span>
-          </div>
-          <button className="theme-btn" onClick={toggle} aria-label={t("Toggle theme")}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button>
-        </header>
+      {navSections.map((section) => <div className="nav-section" key={section.title}>
+        <div className="nav-section-title">{t(section.title)}</div>
+        {section.links.map((link) => <NavLink
+          key={link.to}
+          to={link.to}
+          end={link.to === "/"}
+          className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+          onClick={() => {
+            setSidebarOpen(false);
+            if (link.to === "/") {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+        >
+          <span className="nav-icon">{link.icon}</span>
+          {t(link.label)}
+        </NavLink>)}
+      </div>)}
+      <div className="sidebar-footer">
+        <span>{t("Theme")}</span>
+        <button className="theme-btn" onClick={toggle}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button>
+      </div>
+    </nav>
 
-        <main className="main-content">
-          <Outlet />
-        </main>
-
-        {
-    /* Footer */
-  }
-        <footer className="footer">
-          <div className="footer-grid">
-            <div className="footer-col">
-              <h4>SanskritLab</h4>
-              <a onClick={() => navigate("/learning/tree")}>{t("Learning Path")}</a>
-              <a onClick={() => navigate("/research/corpus")}>{t("Corpus & Search")}</a>
-              <a onClick={() => navigate("/teaching/assessment")}>{t("Assessment")}</a>
-              <a onClick={() => navigate("/viva/simulator")}>{t("Viva Practice")}</a>
-            </div>
-            <div className="footer-col">
-              <h4>{t("For Teachers")}</h4>
-              <a onClick={() => navigate("/teaching/dashboard")}>{t("Teacher Dashboard")}</a>
-              <a onClick={() => navigate("/learning/curriculum")}>{t("Curriculum Builder")}</a>
-              <a onClick={() => navigate("/teaching/workspace")}>{t("Student Workspace")}</a>
-              <a onClick={() => navigate("/viva/analytics")}>{t("Analytics")}</a>
-            </div>
-            <div className="footer-col">
-              <h4>{t("Research")}</h4>
-              <a onClick={() => navigate("/research/ocr")}>{t("Manuscript OCR")}</a>
-              
-              <a onClick={() => navigate("/visualization/timeline")}>{t("Timeline")}</a>
-            </div>
-            <div className="footer-col">
-              <h4>{t("Affiliations & Links")}</h4>
-              <a href="https://sainikschoolambikapur.org.in" target="_blank" rel="noopener noreferrer">
-                Sainik School Ambikapur ↗
-              </a>
-              <a href="https://www.youtube.com/@sourabhjain32" target="_blank" rel="noopener noreferrer">
-                Sanskrit Online Pathshala ↗
-              </a>
-              
-            </div>
-          </div>
-
-          {/* Hyperlinks for Sainik School Ambikapur & Sanskrit Online Pathshala */}
+    <div className="main-wrapper">
+      {
+        /* Vedantu-style top orange navbar */
+      }
+      <div className="top-nav">
+        <div className="top-nav-left">
+          <button className="top-nav-hamburger" onClick={() => setSidebarOpen(true)} aria-label="Open menu"><Menu size={22} /></button>
           <div
-            className="footer-institutional-links"
+            className="top-nav-logo"
+            onClick={() => {
+              navigate("/");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}
+          >
+            <img
+              src="/favicon.svg"
+              alt="SanskritLab Logo"
+              style={{ width: 28, height: 28, borderRadius: 7, boxShadow: "0 2px 8px rgba(0,0,0,0.22)", flexShrink: 0 }}
+            />
+            <span>संस्कृतम् <strong>Lab</strong></span>
+          </div>
+          <div className="top-nav-links">
+            <a onClick={() => navigate("/?filter=shloka_videos")}>चलचित्राणि (Videos)</a>
+            <a onClick={() => navigate("/?filter=sanskrit_songs")}>गीतानि (Songs)</a>
+            <a onClick={() => navigate("/learning/tree")}>{t("Learn")}</a>
+            <a onClick={() => navigate("/research/ncert")}>{t("NCERT")}</a>
+            <a onClick={() => navigate("/research/corpus")}>{t("Research")}</a>
+            <a onClick={() => navigate("/visualization/3d")}>{t("Visualize")}</a>
+            <a onClick={() => navigate("/teaching/dashboard")}>{t("Teach")}</a>
+            <a onClick={() => navigate("/viva/simulator")}>{t("Practice")}</a>
+          </div>
+        </div>
+        <div className="top-nav-right">
+          <button
+            className="theme-btn"
+            onClick={toggle}
+            title={theme === "dark" ? (t("Switch to light mode") || "Light mode") : (t("Switch to dark mode") || "Dark mode")}
+            aria-label={t("Toggle theme")}
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <button
+            className={`btn btn-sm ${lang === "hi" ? "btn-primary" : "btn-outline"}`}
+            style={{ marginLeft: 8 }}
+            onClick={toggleLang}
+            title={t("Language / \u092D\u093E\u0937\u093E")}
+          >
+            {lang === "hi" ? "EN" : "\u0939\u093F"}
+          </button>
+          <button
+            className={`btn btn-sm ${keyboardVisible ? "btn-primary" : "btn-outline"}`}
+            style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", gap: 6 }}
+            onClick={() => toggleKeyboard()}
+            title={t("Devanagari Keyboard")}
+          >
+            <Keyboard size={15} /> <span>देव</span>
+          </button>
+          {canSwitch && <div className="role-switcher" style={{ marginLeft: 8, display: "inline-flex", background: "rgba(255,140,0,0.12)", border: "1px solid rgba(255,140,0,0.4)", borderRadius: 8, padding: 2 }}>
+            {ROLE_OPTIONS.map((o) => <button
+              key={o.value}
+              className={`btn btn-sm ${role === o.value ? "btn-primary" : ""}`}
+              style={{ border: "none", padding: "4px 10px", borderRadius: 6, display: "inline-flex", alignItems: "center", gap: 4 }}
+              onClick={() => setRole(o.value)}
+              title={t("View as") + ": " + t(o.label)}
+            >
+              {o.icon} <span>{t(o.label)}</span>
+            </button>)}
+          </div>}
+        </div>
+      </div>
+
+      {
+        /* Mobile header */
+      }
+      <header className="mobile-header">
+        <button className="hamburger" onClick={() => setSidebarOpen(true)} aria-label={t("Open navigation")}>
+          <span /><span /><span />
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, cursor: "pointer" }} onClick={() => navigate("/")}>
+          <img src="/favicon.svg" alt="SanskritLab Logo" style={{ width: 24, height: 24, borderRadius: 6, flexShrink: 0 }} />
+          <span className="mobile-title">संस्कृतम्</span>
+        </div>
+        <button className="theme-btn" onClick={toggle} aria-label={t("Toggle theme")}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button>
+      </header>
+
+      <main className="main-content">
+        <Outlet />
+      </main>
+
+      {
+        /* Footer */
+      }
+      <footer className="footer">
+        <div className="footer-grid">
+          <div className="footer-col">
+            <h4>SanskritLab</h4>
+            <a onClick={() => navigate("/learning/tree")}>{t("Learning Path")}</a>
+            <a onClick={() => navigate("/research/corpus")}>{t("Corpus & Search")}</a>
+            <a onClick={() => navigate("/teaching/assessment")}>{t("Assessment")}</a>
+            <a onClick={() => navigate("/viva/simulator")}>{t("Viva Practice")}</a>
+          </div>
+          <div className="footer-col">
+            <h4>{t("For Teachers")}</h4>
+            <a onClick={() => navigate("/teaching/dashboard")}>{t("Teacher Dashboard")}</a>
+            <a onClick={() => navigate("/learning/curriculum")}>{t("Curriculum Builder")}</a>
+            <a onClick={() => navigate("/teaching/workspace")}>{t("Student Workspace")}</a>
+            <a onClick={() => navigate("/viva/analytics")}>{t("Analytics")}</a>
+          </div>
+          <div className="footer-col">
+            <h4>{t("Research")}</h4>
+            <a onClick={() => navigate("/research/ocr")}>{t("Manuscript OCR")}</a>
+
+            <a onClick={() => navigate("/visualization/timeline")}>{t("Timeline")}</a>
+          </div>
+          <div className="footer-col">
+            <h4>{t("Affiliations & Links")}</h4>
+            <a href="https://sainikschoolambikapur.org.in" target="_blank" rel="noopener noreferrer">
+              Sainik School Ambikapur ↗
+            </a>
+            <a href="https://www.youtube.com/@sourabhjain32" target="_blank" rel="noopener noreferrer">
+              Sanskrit Online Pathshala ↗
+            </a>
+
+          </div>
+        </div>
+
+        {/* Hyperlinks for Sainik School Ambikapur & Sanskrit Online Pathshala */}
+        <div
+          className="footer-institutional-links"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 16,
+            flexWrap: "wrap",
+            margin: "16px auto 24px",
+            maxWidth: 720
+          }}
+        >
+          <a
+            href="https://sainikschoolambikapur.org.in"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              display: "flex",
-              justifyContent: "center",
+              display: "inline-flex",
               alignItems: "center",
-              gap: 16,
-              flexWrap: "wrap",
-              margin: "16px auto 24px",
-              maxWidth: 720
+              gap: 8,
+              padding: "8px 18px",
+              borderRadius: 50,
+              background: "var(--vt-orange-light)",
+              color: "var(--vt-orange-dark)",
+              border: "1px solid rgba(255, 106, 0, 0.3)",
+              fontSize: 13.5,
+              fontWeight: 600,
+              textDecoration: "none",
+              transition: "all 0.2s"
             }}
           >
-            <a
-              href="https://sainikschoolambikapur.org.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "8px 18px",
-                borderRadius: 50,
-                background: "var(--vt-orange-light)",
-                color: "var(--vt-orange-dark)",
-                border: "1px solid rgba(255, 106, 0, 0.3)",
-                fontSize: 13.5,
-                fontWeight: 600,
-                textDecoration: "none",
-                transition: "all 0.2s"
-              }}
-            >
-              <ExternalLink size={15} />
-              <span>Sainik School Ambikapur</span>
-            </a>
-            <a
-              href="https://www.youtube.com/@sourabhjain32"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "8px 18px",
-                borderRadius: 50,
-                background: "rgba(220, 38, 38, 0.08)",
-                color: "#dc2626",
-                border: "1px solid rgba(220, 38, 38, 0.3)",
-                fontSize: 13.5,
-                fontWeight: 600,
-                textDecoration: "none",
-                transition: "all 0.2s"
-              }}
-            >
-              <ExternalLink size={15} />
-              <span>Sanskrit Online Pathshala</span>
-            </a>
-          </div>
+            <ExternalLink size={15} />
+            <span>Sainik School Ambikapur</span>
+          </a>
+          <a
+            href="https://www.youtube.com/@sourabhjain32"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 18px",
+              borderRadius: 50,
+              background: "rgba(220, 38, 38, 0.08)",
+              color: "#dc2626",
+              border: "1px solid rgba(220, 38, 38, 0.3)",
+              fontSize: 13.5,
+              fontWeight: 600,
+              textDecoration: "none",
+              transition: "all 0.2s"
+            }}
+          >
+            <ExternalLink size={15} />
+            <span>Sanskrit Online Pathshala</span>
+          </a>
+        </div>
 
-          <div className="footer-bottom">
-            <span>{t("© 2026 SanskritLab. MIT Licensed.")}</span>
-            <span>{t("Made with ❤️ for Sanskrit")}</span>
-          </div>
-        </footer>
-      </div>
-    </div>;
+        <div className="footer-bottom">
+          <span>{t("© 2026 SanskritLab. MIT Licensed.")}</span>
+          <span>{t("Made with ❤️ for Sanskrit")}</span>
+        </div>
+      </footer>
+    </div>
+  </div>;
 }
 export {
   Layout as default

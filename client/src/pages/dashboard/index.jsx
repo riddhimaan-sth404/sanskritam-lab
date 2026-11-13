@@ -1,24 +1,24 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Sparkles,
   ArrowRight,
   BookMarked,
-  Award,
   Search,
   BookOpen,
   Scroll,
-  Layers,
   GraduationCap,
-  Bot,
-  Mic,
-  Compass
+  Compass,
+  Video,
+  Music,
+  Play
 } from "lucide-react";
 import institutionHeroImg from "../../assets/image-aspera.jpg";
 import { DynamicIcon } from "../../components/icons";
 import { useLanguage } from "../../context/LanguageContext";
-import { useRole } from "../../context/RoleContext";
-import ExplorePanel from "../../components/ExplorePanel";
+import { SHLOKA_VIDEOS } from "../../data/shlokaVideos";
+import { SANSKRIT_SONGS } from "../../data/sanskritSongs";
+import DummyMediaPlayerModal from "../../components/DummyMediaPlayerModal";
 
 // Complete directory of all program sections available across SanskritLab
 const allProgramSections = [
@@ -36,8 +36,25 @@ const allProgramSections = [
     category: "research",
     categoryLabel: "Research & Digitization",
     categoryLabelHi: "अनुसन्धानम् एवं डिजिटलीकरणम्",
-    icon: "temple",
+    icon: "search",
     title: "Smart Corpus & Semantic Search",
+    desc: "Explore indexed Sanskrit corpora with morphological matching, parallel translations, and citation lookup.",
+    link: "/research/corpus"
+  },
+  {
+    category: "research",
+    categoryLabel: "Research & Digitization",
+    categoryLabelHi: "अनुसन्धानम् एवं डिजिटलीकरणम्",
+    icon: "feather",
+    title: "Manuscript Annotation",
+    desc: "Collaboratively annotate palm-leaf folios, tag readings, and maintain apparatus notes.",
+    link: "/research/annotate"
+  },
+  {
+    category: "research",
+    categoryLabel: "Research & Digitization",
+    categoryLabelHi: "अनुसन्धानम् एवं डिजिटलीकरणम्",
+    icon: "temple",
     title: "NCERT Sanskrit Library",
     desc: "Complete Class 6–12 textbooks (Deepakam, Shemushi, Bhaswati, Shashwati) with digitized reader.",
     link: "/research/ncert"
@@ -133,6 +150,24 @@ const allProgramSections = [
     category: "learning",
     categoryLabel: "Adaptive Learning",
     categoryLabelHi: "अनुकूली शिक्षणम्",
+    icon: "smile",
+    title: "Child Learning Mode",
+    desc: "Playful phonics, picture stories, games, and gentle interactive exercises designed for young learners.",
+    link: "/learning/child"
+  },
+  {
+    category: "learning",
+    categoryLabel: "Adaptive Learning",
+    categoryLabelHi: "अनुकूली शिक्षणम्",
+    icon: "graduation-cap",
+    title: "Doctoral & Scholar Workspace",
+    desc: "Advanced critical apparatus, variant collation, manuscript study, and academic Sanskrit research.",
+    link: "/learning/research"
+  },
+  {
+    category: "learning",
+    categoryLabel: "Adaptive Learning",
+    categoryLabelHi: "अनुकूली शिक्षणम्",
     icon: "teacher",
     title: "Curriculum Builder",
     desc: "Design custom instructional syllabi, export PDF lesson plans, and structure graded benchmarks.",
@@ -175,6 +210,15 @@ const allProgramSections = [
     title: "Daily Sanskrit",
     desc: "Word, phrase, and proverb of the day along with a 5-minute cultural immersion challenge.",
     link: "/daily"
+  },
+  {
+    category: "tools",
+    categoryLabel: "AI & Linguistic Tools",
+    categoryLabelHi: "कृत्रिमबुद्धिः भाषासाधनानि च",
+    icon: "sparkles",
+    title: "AI Sanskrit Tutor",
+    desc: "Interactive Sanskrit & Hindi conversational tutor for grammar doubts, translation, and guided practice.",
+    link: "/tools/tutor"
   },
   {
     category: "tools",
@@ -436,44 +480,54 @@ const filterCategoryIcons = {
   learning: "/sanskritlab-icons/4_Learning_and_Adaptive_Modules/card-skill-tree.png",
   tools: "/sanskritlab-icons/5_AI_and_Linguistic_Tools/card-ai-tutor.png",
   viva: "/sanskritlab-icons/6_Viva_and_Exam_Practice/card-viva-sim.png",
+  shloka_videos: "/sanskritlab-icons/5_AI_and_Linguistic_Tools/card-shloka.png",
+  sanskrit_songs: "/sanskritlab-icons/5_AI_and_Linguistic_Tools/card-voice.png",
 };
 
 const programFilterCategories = [
-  { id: "all", label: "All Programs", labelHi: "सर्वाणि साधनानि" },
-  { id: "research", label: "Research & OCR", labelHi: "अनुसन्धानम्" },
-  { id: "visualization", label: "3D & Maps", labelHi: "दृश्यीकरणम्" },
-  { id: "teaching", label: "Teaching & School", labelHi: "शिक्षणम्" },
-  { id: "learning", label: "Learning Paths", labelHi: "शिक्षणमार्गाः" },
-  { id: "tools", label: "AI & Linguistics", labelHi: "भाषासाधनानि" },
-  { id: "viva", label: "Viva & Practice", labelHi: "मौखिकपरीक्षा" }
+  { id: "all", label: "सर्वाणि साधनानि", labelHi: "सर्वाणि साधनानि" },
+  { id: "research", label: "अनुसन्धानम्", labelHi: "अनुसन्धानम्" },
+  { id: "visualization", label: "दृश्यीकरणम्", labelHi: "दृश्यीकरणम्" },
+  { id: "teaching", label: "शिक्षणम्", labelHi: "शिक्षणम्" },
+  { id: "learning", label: "शिक्षणमार्गाः", labelHi: "शिक्षणमार्गाः" },
+  { id: "tools", label: "भाषासाधनानि", labelHi: "भाषासाधनानि" },
+  { id: "viva", label: "मौखिकपरीक्षा", labelHi: "मौखिकपरीक्षा" },
+  { id: "shloka_videos", label: "श्लोक-चलचित्राणि", labelHi: "श्लोक-चलचित्राणि" },
+  { id: "sanskrit_songs", label: "संस्कृत-गीतानि", labelHi: "संस्कृत-गीतानि" },
 ];
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t, lang } = useLanguage();
-  const { guest } = useRole();
   const hi = lang === "hi";
 
-  const [activeFilter, setActiveFilter] = useState("all");
+  const filterParam = searchParams.get("filter");
+  const [activeFilter, setActiveFilter] = useState(
+    filterParam && programFilterCategories.some((c) => c.id === filterParam)
+      ? filterParam
+      : "all"
+  );
   const [searchFilter, setSearchFilter] = useState("");
-  const [exploreWord, setExploreWord] = useState(null);
+  const [selectedSkeleton, setSelectedSkeleton] = useState(null);
 
-  // Filter program sections based on category and search query
-  const filteredPrograms = useMemo(() => {
-    return allProgramSections.filter((item) => {
-      const matchCategory =
-        activeFilter === "all" || item.category === activeFilter;
-      if (!matchCategory) return false;
+  const handleNextSkeleton = () => {
+    if (!selectedSkeleton) return;
+    const list = selectedSkeleton.category === "shloka_videos" ? SHLOKA_VIDEOS : SANSKRIT_SONGS;
+    const idx = list.findIndex((x) => x.id === selectedSkeleton.id);
+    if (idx !== -1 && idx < list.length - 1) {
+      setSelectedSkeleton(list[idx + 1]);
+    }
+  };
 
-      if (!searchFilter.trim()) return true;
-      const q = searchFilter.toLowerCase().trim();
-      return (
-        item.title.toLowerCase().includes(q) ||
-        item.desc.toLowerCase().includes(q) ||
-        item.categoryLabel.toLowerCase().includes(q)
-      );
-    });
-  }, [activeFilter, searchFilter]);
+  const handlePrevSkeleton = () => {
+    if (!selectedSkeleton) return;
+    const list = selectedSkeleton.category === "shloka_videos" ? SHLOKA_VIDEOS : SANSKRIT_SONGS;
+    const idx = list.findIndex((x) => x.id === selectedSkeleton.id);
+    if (idx > 0) {
+      setSelectedSkeleton(list[idx - 1]);
+    }
+  };
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
@@ -481,6 +535,68 @@ function Dashboard() {
       el.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const selectCategory = (id) => {
+    setActiveFilter(id);
+    if (id !== "all") {
+      setSearchParams({ filter: id });
+    } else {
+      setSearchParams({});
+    }
+    scrollToSection("programs");
+  };
+
+  useEffect(() => {
+    const f = searchParams.get("filter");
+    if (f && programFilterCategories.some((c) => c.id === f)) {
+      setActiveFilter(f);
+    } else {
+      setActiveFilter("all");
+    }
+  }, [searchParams]);
+
+  // Filter program sections based on category and search query
+  const filteredPrograms = useMemo(() => {
+    const q = searchFilter.toLowerCase().trim();
+
+    if (activeFilter === "shloka_videos") {
+      if (!q) return SHLOKA_VIDEOS;
+      return SHLOKA_VIDEOS.filter(
+        (item) =>
+          item.title?.toLowerCase().includes(q) ||
+          item.desc?.toLowerCase().includes(q) ||
+          item.subTopic?.toLowerCase().includes(q) ||
+          item.subTopicEn?.toLowerCase().includes(q) ||
+          item.id?.toLowerCase().includes(q)
+      );
+    }
+
+    if (activeFilter === "sanskrit_songs") {
+      if (!q) return SANSKRIT_SONGS;
+      return SANSKRIT_SONGS.filter(
+        (item) =>
+          item.title?.toLowerCase().includes(q) ||
+          item.desc?.toLowerCase().includes(q) ||
+          item.songName?.toLowerCase().includes(q) ||
+          item.songNameEn?.toLowerCase().includes(q) ||
+          item.id?.toLowerCase().includes(q)
+      );
+    }
+
+    return allProgramSections.filter((item) => {
+      const matchCategory =
+        activeFilter === "all" || item.category === activeFilter;
+      if (!matchCategory) return false;
+
+      if (!q) return true;
+      return (
+        item.title?.toLowerCase().includes(q) ||
+        item.desc?.toLowerCase().includes(q) ||
+        item.categoryLabel?.toLowerCase().includes(q) ||
+        item.categoryLabelHi?.toLowerCase().includes(q)
+      );
+    });
+  }, [activeFilter, searchFilter]);
 
   return (
     <>
@@ -521,15 +637,25 @@ function Dashboard() {
             <div className="institutional-hero-actions">
               <button
                 className="btn btn-primary"
-                onClick={() => navigate("/tools/shloka")}
+                onClick={() => selectCategory("shloka_videos")}
+                style={{ background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)", color: "#fff", border: "none" }}
               >
-                <Scroll size={16} />
-                <span>{hi ? "श्लोक श्रवणम्" : "Listen to Shlokas"}</span>
+                <Video size={16} />
+                <span>श्लोक-चलचित्राणि (50+ Shloka Videos)</span>
+              </button>
+
+              <button
+                className="btn btn-primary"
+                onClick={() => selectCategory("sanskrit_songs")}
+                style={{ background: "linear-gradient(135deg, #d97706 0%, #b45309 100%)", color: "#fff", border: "none" }}
+              >
+                <Music size={16} />
+                <span>संस्कृत-गीतानि (50+ Sanskrit Songs)</span>
               </button>
 
               <button
                 className="btn btn-outline"
-                onClick={() => scrollToSection("programs")}
+                onClick={() => selectCategory("all")}
               >
                 <Compass size={16} />
                 <span>{hi ? "सर्वाणि साधनानि" : "Explore All Sections"}</span>
@@ -580,7 +706,7 @@ function Dashboard() {
                 <button
                   key={tab.id}
                   className={`programs-tab-btn ${active ? "active" : ""}`}
-                  onClick={() => setActiveFilter(tab.id)}
+                  onClick={() => selectCategory(tab.id)}
                 >
                   {tabIcon && (
                     <img
@@ -589,7 +715,7 @@ function Dashboard() {
                       className="tab-icon-img"
                     />
                   )}
-                  <span>{hi ? tab.labelHi : tab.label}</span>
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
@@ -603,6 +729,16 @@ function Dashboard() {
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
             />
+            {searchFilter && (
+              <button
+                type="button"
+                className="programs-search-clear"
+                onClick={() => setSearchFilter("")}
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </div>
 
@@ -626,38 +762,191 @@ function Dashboard() {
         ) : (
           <div className="card-grid">
             {filteredPrograms.map((p) => {
-              const iconImg = programIconMap[p.link];
+              const iconImg =
+                programIconMap[p.link] ||
+                (p.category === "shloka_videos"
+                  ? "/sanskritlab-icons/5_AI_and_Linguistic_Tools/card-shloka.png"
+                  : p.category === "sanskrit_songs"
+                  ? "/sanskritlab-icons/5_AI_and_Linguistic_Tools/card-voice.png"
+                  : null);
+
+              const handleCardClick = () => {
+                if (p.isSkeleton) {
+                  setSelectedSkeleton(p);
+                } else {
+                  navigate(p.link);
+                }
+              };
+
               return (
                 <div
-                  key={p.title}
-                  className="vt-card"
-                  onClick={() => navigate(p.link)}
+                  key={p.id || p.link}
+                  className={`vt-card${p.isSkeleton ? " video-card" : ""}`}
+                  onClick={handleCardClick}
                 >
-                  <div className="card-icon">
-                    {iconImg ? (
-                      <img
-                        src={iconImg}
-                        alt={p.title}
-                        className="card-icon-img"
-                      />
+                  {p.isSkeleton ? (
+                    /* ─── VIDEO / SONG THUMBNAIL PREVIEW ─── */
+                    <div
+                      className="card-video-thumbnail"
+                      style={{
+                        width: "100%",
+                        aspectRatio: "16 / 9",
+                        borderRadius: 12,
+                        background: p.bgGradient || "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+                        position: "relative",
+                        overflow: "hidden",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        padding: 10,
+                        boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
+                        boxSizing: "border-box"
+                      }}
+                    >
+                      {/* Top Badges */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 2 }}>
+                        <span
+                          style={{
+                            background: "rgba(0,0,0,0.7)",
+                            backdropFilter: "blur(4px)",
+                            color: "#fff",
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            padding: "2px 7px",
+                            borderRadius: 4
+                          }}
+                        >
+                          {p.category === "shloka_videos" ? "VIDEO · HD" : "AUDIO · SONG"}
+                        </span>
+                        <span
+                          style={{
+                            background: "rgba(0,0,0,0.8)",
+                            color: "#fff",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            padding: "2px 8px",
+                            borderRadius: 4
+                          }}
+                        >
+                          {p.duration}
+                        </span>
+                      </div>
+
+                      {/* Center Glowing Play Button */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 2
+                        }}
+                      >
+                        <div
+                          className="thumb-play-btn"
+                          style={{
+                            width: 46,
+                            height: 46,
+                            borderRadius: "50%",
+                            background: "rgba(255, 106, 0, 0.95)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#fff",
+                            boxShadow: "0 4px 16px rgba(255,106,0,0.55)",
+                            transition: "transform 0.2s ease"
+                          }}
+                        >
+                          <Play size={20} fill="#fff" style={{ marginLeft: 2 }} />
+                        </div>
+                      </div>
+
+                      {/* Bottom Verse Line Snippet */}
+                      <div
+                        style={{
+                          zIndex: 2,
+                          background: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.88) 100%)",
+                          margin: "-10px -10px -10px -10px",
+                          padding: "20px 10px 8px"
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 11.5,
+                            fontWeight: 600,
+                            color: p.accentColor || "#fde68a",
+                            display: "block",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis"
+                          }}
+                        >
+                          {p.verse || p.subTopic || p.songName}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Regular tool icon */
+                    <div className="card-icon">
+                      {iconImg ? (
+                        <img
+                          src={iconImg}
+                          alt={p.title}
+                          className="card-icon-img"
+                        />
+                      ) : (
+                        <DynamicIcon name={p.icon} size={28} />
+                      )}
+                    </div>
+                  )}
+
+                  <div className="card-text-group" style={p.isSkeleton ? { marginTop: 10, width: "100%", alignItems: "flex-start", textAlign: "left" } : {}}>
+                    <h3 style={p.isSkeleton ? { textAlign: "left", fontSize: 15 } : {}}>{t(p.title)}</h3>
+                    <p className="card-desc" style={p.isSkeleton ? { textAlign: "left", fontSize: 12 } : {}}>{t(p.desc)}</p>
+                    {p.isSkeleton ? (
+                      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 6 }}>
+                        {p.meter && (
+                          <span style={{ fontSize: 11, background: "rgba(255,140,0,0.12)", color: "var(--vt-orange-dark)", padding: "2px 7px", borderRadius: 4, fontWeight: 600 }}>
+                            छन्दः {p.meter}
+                          </span>
+                        )}
+                        {p.raga && (
+                          <span style={{ fontSize: 11, background: "rgba(3,105,161,0.12)", color: "#0369a1", padding: "2px 7px", borderRadius: 4, fontWeight: 600 }}>
+                            रागः {p.raga}
+                          </span>
+                        )}
+                        {p.composer && (
+                          <span style={{ fontSize: 11, background: "rgba(109,40,217,0.12)", color: "#6d28d9", padding: "2px 7px", borderRadius: 4, fontWeight: 600 }}>
+                            {p.composer}
+                          </span>
+                        )}
+                      </div>
                     ) : (
-                      <DynamicIcon name={p.icon} size={28} />
+                      <span className="card-category-sub">
+                        {hi ? p.categoryLabelHi : p.categoryLabel}
+                      </span>
                     )}
                   </div>
-                  <h3>{t(p.title)}</h3>
-                  <p>{t(p.desc)}</p>
+
                   <span
                     className="card-link"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      justifyContent: "center",
+                      justifyContent: p.isSkeleton ? "flex-start" : "center",
                       gap: 4,
                       width: "100%",
-                      textAlign: "center"
+                      textAlign: p.isSkeleton ? "left" : "center",
+                      marginTop: p.isSkeleton ? 8 : 14
                     }}
                   >
-                    {t("Open Section")} <ArrowRight size={14} />
+                    {p.isSkeleton
+                      ? p.category === "shloka_videos"
+                        ? "▶ चलचित्रं चालयतु (Play Video)"
+                        : "▶ गीतं शृणोतु (Play Song)"
+                      : t("Open Section")}{" "}
+                    <ArrowRight size={14} />
                   </span>
                 </div>
               );
@@ -757,11 +1046,26 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* EXPLORE PANEL MODAL ON WORD CLICK */}
-      {exploreWord && (
-        <ExplorePanel
-          word={exploreWord}
-          onClose={() => setExploreWord(null)}
+      {/* ─── INTERACTIVE DUMMY MEDIA PLAYER MODAL (WITH FULL CONTROLS & URL EMBED) ─── */}
+      {selectedSkeleton && (
+        <DummyMediaPlayerModal
+          item={selectedSkeleton}
+          onClose={() => setSelectedSkeleton(null)}
+          onNext={handleNextSkeleton}
+          onPrev={handlePrevSkeleton}
+          hasNext={
+            selectedSkeleton &&
+            (selectedSkeleton.category === "shloka_videos" ? SHLOKA_VIDEOS : SANSKRIT_SONGS).findIndex(
+              (x) => x.id === selectedSkeleton.id
+            ) <
+              (selectedSkeleton.category === "shloka_videos" ? SHLOKA_VIDEOS : SANSKRIT_SONGS).length - 1
+          }
+          hasPrev={
+            selectedSkeleton &&
+            (selectedSkeleton.category === "shloka_videos" ? SHLOKA_VIDEOS : SANSKRIT_SONGS).findIndex(
+              (x) => x.id === selectedSkeleton.id
+            ) > 0
+          }
         />
       )}
     </>

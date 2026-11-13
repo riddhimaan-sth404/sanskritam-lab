@@ -121,7 +121,7 @@ pub async fn search(query: web::Query<SearchQuery>, corpus: web::Data<CorpusStor
         .filter_map(|t| {
             let in_content = t.content.to_lowercase().contains(&q);
             let in_title = t.title.to_lowercase().contains(&q) || t.title_iast.to_lowercase().contains(&q);
-            let in_trans = t.translation_en.to_lowercase().contains(&q) || t.translation_hi.contains(&q);
+            let in_trans = t.translation_en.to_lowercase().contains(&q) || t.translation_hi.to_lowercase().contains(&q);
 
             if q.is_empty() || in_content || in_title || in_trans {
                 let score = if in_title { 2.0 } else if in_content { 1.5 } else { 1.0 };
@@ -145,7 +145,7 @@ pub async fn search(query: web::Query<SearchQuery>, corpus: web::Data<CorpusStor
         })
         .collect();
 
-    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
+    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
 
     HttpResponse::Ok().json(results)
 }

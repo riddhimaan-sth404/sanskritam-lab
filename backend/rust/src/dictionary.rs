@@ -169,7 +169,8 @@ impl DictionaryStore {
 
 pub async fn lookup(query: web::Query<LookupQuery>, dict: web::Data<DictionaryStore>) -> HttpResponse {
     let target = query.word.trim();
-    if let Some(entry) = dict.entries.get(target) {
+    let normalized = target.trim_end_matches(&['ः', 'ं', '्'][..]);
+    if let Some(entry) = dict.entries.get(target).or_else(|| dict.entries.get(normalized)) {
         HttpResponse::Ok().json(entry)
     } else {
         HttpResponse::NotFound().json(serde_json::json!({
@@ -182,10 +183,10 @@ pub async fn lookup(query: web::Query<LookupQuery>, dict: web::Data<DictionarySt
 pub async fn search_dictionary(query: web::Query<SearchQuery>, dict: web::Data<DictionaryStore>) -> HttpResponse {
     let q = query.q.trim().to_lowercase();
     let matches: Vec<&DictionaryEntry> = dict.entries.values().filter(|e| {
-        e.word.contains(&q)
+        e.word.to_lowercase().contains(&q)
             || e.iast.to_lowercase().contains(&q)
             || e.meanings.iter().any(|m| m.to_lowercase().contains(&q))
-            || e.meanings_hi.iter().any(|m| m.contains(&q))
+            || e.meanings_hi.iter().any(|m| m.to_lowercase().contains(&q))
     }).collect();
 
     HttpResponse::Ok().json(matches)
@@ -216,7 +217,7 @@ pub async fn compound_split(body: web::Json<CompoundSplitRequest>) -> HttpRespon
             "रामश्च लक्ष्मणश्च (Rama and Lakshmana)".into()
         ),
         "यथाशक्ति" => (
-            vec!["शक्तिम्".into(), "अनतिक्रम्य".into()],
+            vec!["यथा".into(), "शक्ति".into()],
             "अव्ययीभाव (Avyayībhāva)".into(),
             "शक्तिम् अनतिक्रम्य (According to one's capacity)".into()
         ),

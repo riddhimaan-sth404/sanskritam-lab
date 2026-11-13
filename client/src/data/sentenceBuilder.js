@@ -123,11 +123,11 @@ const SENTENCES = [
   {
     id: "s11",
     level: "medium",
-    sa: "\u0905\u0939\u092E\u094D \u0938\u0902\u0938\u094D\u0915\u0943\u0924\u092E\u094D \u0905\u0927\u0940\u092E\u0939\u0947",
-    iast: "aham sa\u1E43sk\u1E5Btam adh\u012Bmahe",
+    sa: "\u0935\u092F\u092E\u094D \u0938\u0902\u0938\u094D\u0915\u0943\u0924\u092E\u094D \u0905\u0927\u0940\u092E\u0939\u0947",
+    iast: "vayam sa\u1E43sk\u1E5Btam adh\u012Bmahe",
     en: "We study Sanskrit",
     words: [
-      { sa: "\u0905\u0939\u092E\u094D", en: "we" },
+      { sa: "\u0935\u092F\u092E\u094D", en: "we" },
       { sa: "\u0938\u0902\u0938\u094D\u0915\u0943\u0924\u092E\u094D", en: "Sanskrit (acc.)" },
       { sa: "\u0905\u0927\u0940\u092E\u0939\u0947", en: "study" }
     ]
@@ -184,13 +184,13 @@ const SENTENCES = [
   {
     id: "s16",
     level: "hard",
-    sa: "\u0935\u093F\u0926\u094D\u092F\u093E \u0927\u0928\u092E\u094D \u0938\u0930\u094D\u0935\u0936\u094D\u0930\u0947\u0937\u094D\u0920\u092E\u094D",
-    iast: "vidy\u0101 dhanam sarva\u015Bre\u1E63\u1E6Dham",
-    en: "Knowledge is the best wealth",
+    sa: "\u0935\u093F\u0926\u094D\u092F\u093E \u0936\u094D\u0930\u0947\u0937\u094D\u0920\u0924\u092E\u092E\u094D \u0927\u0928\u092E\u094D",
+    iast: "vidy\u0101 \u015Bre\u1E63\u1E6Dhatamam dhanam",
+    en: "Knowledge is the greatest wealth",
     words: [
-      { sa: "\u0935\u093F\u0926\u094D\u092F\u093E", en: "knowledge (nom.)" },
-      { sa: "\u0927\u0928\u092E\u094D", en: "wealth (nom.)" },
-      { sa: "\u0938\u0930\u094D\u0935\u0936\u094D\u0930\u0947\u0937\u094D\u0920\u092E\u094D", en: "the best of all" }
+      { sa: "\u0935\u093F\u0926\u094D\u092F\u093E", en: "knowledge (nom. f.)" },
+      { sa: "\u0936\u094D\u0930\u0947\u0937\u094D\u0920\u0924\u092E\u092E\u094D", en: "greatest (nom. n.)" },
+      { sa: "\u0927\u0928\u092E\u094D", en: "wealth (nom. n.)" }
     ]
   }
 ];

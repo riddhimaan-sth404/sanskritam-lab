@@ -41,13 +41,17 @@ function JeopardyTestPage() {
   }, []);
   useEffect(() => {
     if (phase !== "quiz") return;
-    if (timeLeft <= 0) {
-      setPhase("done");
-      return;
-    }
-    const id = setInterval(() => setTimeLeft((s) => s - 1), 1e3);
+    const id = setInterval(() => {
+      setTimeLeft((s) => {
+        if (s <= 1) {
+          setPhase("done");
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1e3);
     return () => clearInterval(id);
-  }, [phase, timeLeft]);
+  }, [phase]);
   const question = anytimeTestQuestions[idx];
   const answeredCount = Object.keys(answers).length;
   const choose = (opt) => {
@@ -83,7 +87,7 @@ function JeopardyTestPage() {
       }
       persistTestBestToDb(results.correct);
     }
-  }, [phase]);
+  }, [phase, results.correct, best]);
   const mm = Math.floor(timeLeft / 60);
   const ss = String(timeLeft % 60).padStart(2, "0");
   const minutesTotal = TEST_TIME_SECONDS / 60;
@@ -135,7 +139,7 @@ function JeopardyTestPage() {
               <button className="btn btn-sm btn-secondary" onClick={prev} disabled={idx === 0} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                 <ArrowLeft size={13} /> <span>{t("Prev")}</span>
               </button>
-              {answeredCount === anytimeTestQuestions.length && idx === anytimeTestQuestions.length - 1 ? <button className="btn btn-primary" onClick={next}>{t("Finish")}</button> : <button className="btn btn-primary" onClick={next} disabled={!(question.id in answers)} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+              {idx === anytimeTestQuestions.length - 1 ? <button className="btn btn-primary" onClick={next} disabled={!(question.id in answers)}>{t("Finish")}</button> : <button className="btn btn-primary" onClick={next} disabled={!(question.id in answers)} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                   <span>{t("Next")}</span> <ArrowRight size={13} />
                 </button>}
             </div>

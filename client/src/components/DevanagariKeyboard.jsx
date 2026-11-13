@@ -15,7 +15,6 @@ function DevanagariKeyboard({ targetRef, onClose }) {
   const { t } = useLanguage();
   const [tab, setTab] = useState("consonants");
   const [caps, setCaps] = useState(false);
-  const [halant, setHalant] = useState(false);
   const [copied, setCopied] = useState(false);
   const [internalText, setInternalText] = useState("");
   const keyboardRef = useRef(null);
@@ -41,8 +40,7 @@ function DevanagariKeyboard({ targetRef, onClose }) {
     if (!hasExternalTarget) {
       setInternalText(input.value);
     }
-    if (halant) setHalant(false);
-  }, [getActiveInput, hasExternalTarget, halant]);
+  }, [getActiveInput, hasExternalTarget]);
 
   const typeHalant = useCallback(() => {
     const input = getActiveInput();
@@ -75,7 +73,7 @@ function DevanagariKeyboard({ targetRef, onClose }) {
     const input = getActiveInput();
     const textToCopy = input ? input.value : internalText;
     if (textToCopy) {
-      navigator.clipboard.writeText(textToCopy);
+      navigator.clipboard?.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -84,7 +82,15 @@ function DevanagariKeyboard({ targetRef, onClose }) {
   const handleClear = useCallback(() => {
     const input = getActiveInput();
     if (input) {
-      input.value = "";
+      const proto = (input instanceof HTMLTextAreaElement || input.tagName === "TEXTAREA")
+        ? window.HTMLTextAreaElement.prototype
+        : window.HTMLInputElement.prototype;
+      const descriptor = Object.getOwnPropertyDescriptor(proto, "value");
+      if (descriptor && descriptor.set) {
+        descriptor.set.call(input, "");
+      } else {
+        input.value = "";
+      }
       input.dispatchEvent(new Event("input", { bubbles: true }));
       input.dispatchEvent(new Event("change", { bubbles: true }));
       try {
@@ -95,6 +101,12 @@ function DevanagariKeyboard({ targetRef, onClose }) {
   }, [getActiveInput]);
 
   const layout = devanagariLayouts[tab];
+  const groupsToRender =
+    tab === "consonants" && caps
+      ? [devanagariLayouts.conjuncts, ...layout.groups]
+      : "groups" in layout
+      ? layout.groups
+      : null;
 
   return (
     <div className="devanagari-keyboard" ref={keyboardRef}>
@@ -104,11 +116,14 @@ function DevanagariKeyboard({ targetRef, onClose }) {
           <button
             type="button"
             className={`kb-toggle ${caps ? "active" : ""}`}
-            onClick={() => setCaps((c) => !c)}
+            onClick={() => {
+              setTab("consonants");
+              setCaps((c) => !c);
+            }}
             onMouseDown={(e) => e.preventDefault()}
-            title={t("Caps")}
+            title={t("Toggle Conjuncts (संयुक्ताक्षराणि)")}
           >
-            अा
+            क्ष त्र ज्ञ
           </button>
           <button
             type="button"
@@ -169,8 +184,8 @@ function DevanagariKeyboard({ targetRef, onClose }) {
       </div>
 
       <div className="kb-body">
-        {"groups" in layout
-          ? layout.groups.map((group) => (
+        {groupsToRender
+          ? groupsToRender.map((group) => (
               <div key={group.name} className="kb-row">
                 {group.chars.map((ch) => (
                   <button

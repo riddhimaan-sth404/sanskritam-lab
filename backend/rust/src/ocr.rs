@@ -125,7 +125,11 @@ pub async fn recognize(body: web::Json<RecognizeRequest>) -> HttpResponse {
         .map(|s| s.to_string())
         .collect();
 
-    let lines_detected = recognized_text.split('।').count();
+    let lines_detected = recognized_text
+        .split(|c| c == '।' || c == '\n')
+        .filter(|s| !s.trim().is_empty())
+        .count()
+        .max(1);
 
     HttpResponse::Ok().json(RecognizeResponse {
         text: recognized_text.to_string(),

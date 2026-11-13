@@ -343,16 +343,19 @@ async function loadFlashcardDecks() {
 async function loadFlashcards() {
   const rows = await loadRows("flashcards");
   if (!rows.length) return flashcards;
-  return rows.map((r) => ({
-    id: String(r.id),
-    front: String(r.front),
-    back: String(r.back),
-    backHi: String(r.backHi ?? ""),
-    hint: r.hint ? String(r.hint) : void 0,
-    hintHi: r.hintHi ? String(r.hintHi) : void 0,
-    tags: r.tags ?? [],
-    deckId: String(r.deck_id)
-  }));
+  return rows.map((r) => {
+    const loc = flashcards.find((x) => x.id === String(r.id));
+    return {
+      id: String(r.id),
+      front: String(r.front),
+      back: String(r.back),
+      backHi: String(r.back_hi ?? r.backHi ?? loc?.backHi ?? ""),
+      hint: r.hint ? String(r.hint) : loc?.hint,
+      hintHi: r.hint_hi ?? r.hintHi ? String(r.hint_hi ?? r.hintHi) : loc?.hintHi,
+      tags: r.tags ?? loc?.tags ?? [],
+      deckId: String(r.deck_id ?? loc?.deckId ?? "")
+    };
+  });
 }
 async function loadStoryThemes() {
   const rows = await loadRows("story_themes");

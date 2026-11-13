@@ -8,7 +8,7 @@ import JeopardyHeader from "../../components/jeopardy/JeopardyHeader";
 import { DynamicIcon } from "../../components/icons";
 import "../tools/jeopardy.css";
 const VALUES = [200, 400, 600, 800, 1e3];
-const ICON_CHOICES = ["book", "philosophy", "feathers", "manuscript", "temple", "shloka", "alphabet", "declensions", "teacher", "yoga", "sword", "sandhi", "grammar", "puzzle", "music", "flower"];
+const ICON_CHOICES = ["book", "philosophy", "feather", "manuscript", "temple", "shloka", "alphabet", "declensions", "teacher", "yoga", "sword", "sandhi", "grammar", "puzzle", "music", "flower"];
 const emptyClue = (i) => ({ id: "", value: VALUES[i] ?? 0, clue: "", answer: "" });
 const emptyCategory = () => ({
   id: "",
@@ -66,7 +66,19 @@ function JeopardyBuilderPage() {
   const save = () => {
     if (!draft) return;
     const final = showFinal && finalCat.trim() && finalClue.trim() && finalAnswer.trim() ? { category: finalCat.trim(), categorySanskrit: finalCatSa.trim(), clue: finalClue.trim(), answer: finalAnswer.trim() } : void 0;
-    const quiz = { ...draft, final, categories: draft.categories.filter((c) => c.clues.some((k) => k.clue.trim())) };
+    const cleanedCategories = draft.categories
+      .map((c, ci) => ({
+        ...c,
+        id: c.id || `cat-${ci + 1}`,
+        clues: c.clues
+          .filter((k) => k.clue.trim() || k.answer.trim())
+          .map((k, ki) => ({
+            ...k,
+            id: `cat-${ci + 1}-clue-${ki + 1}-${k.value}`
+          }))
+      }))
+      .filter((c) => c.name.trim() || c.clues.length > 0);
+    const quiz = { ...draft, final, categories: cleanedCategories };
     const err = validateQuiz(quiz);
     if (err === "name") {
       setError(t("Quiz name is required"));
@@ -114,7 +126,7 @@ function JeopardyBuilderPage() {
     setDraft({
       ...draft,
       categories: draft.categories.map(
-        (c, i) => i === ci ? { ...c, clues: c.clues.map((k, j) => j === ki ? { ...k, ...patch, id: (c.name ? c.name : "cat" + ci) + "-" + k.value } : k) } : c
+        (c, i) => i === ci ? { ...c, clues: c.clues.map((k, j) => j === ki ? { ...k, ...patch, id: `cat-${ci + 1}-clue-${ki + 1}-${k.value}` } : k) } : c
       )
     });
   };

@@ -1,4 +1,4 @@
-# CBSE Class 7 Sanskrit (दीपकम - भाग २) Sample Question Paper (80 Marks) & Marking Scheme
+# CBSE Class 7 Sanskrit (दीपकम् - भाग २) Sample Question Paper (80 Marks) & Marking Scheme
 
 ---
 

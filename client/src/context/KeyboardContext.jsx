@@ -7,6 +7,8 @@ function KeyboardProvider({ children }) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [currentTarget, setCurrentTarget] = useState(null);
   const activeInputRef = useRef(null);
+  const keyboardVisibleRef = useRef(false);
+  keyboardVisibleRef.current = keyboardVisible;
 
   // Globally track any focused input or textarea across the entire app
   useEffect(() => {
@@ -18,8 +20,10 @@ function KeyboardProvider({ children }) {
         !target.closest(".devanagari-keyboard")
       ) {
         activeInputRef.current = target;
-        // If keyboard is open, automatically switch target to this newly focused input
-        setCurrentTarget({ current: target });
+        // Only update React state & target while keyboard is visible
+        if (keyboardVisibleRef.current) {
+          setCurrentTarget({ current: target });
+        }
       }
     };
     document.addEventListener("focusin", handleFocusIn);

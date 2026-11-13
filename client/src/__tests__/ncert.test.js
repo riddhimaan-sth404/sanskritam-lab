@@ -65,12 +65,12 @@ describe("NCERT Text Book Map & URL Resolution", () => {
     expect(getChapterTextUrl("ncert-deepakam-6", 1)).toBe("/books-data/class6/fsde101.txt");
     expect(getChapterTextUrl("ncert-deepakam-7", 2)).toBe("/books-data/class7/gsde102.txt");
     expect(getChapterTextUrl("ncert-deepakam-8", 16)).toBe("/books-data/class8/hsde116.txt");
-    expect(getChapterTextUrl("ncert-shemushi-9", 1)).toBe("/books-data/class9/ihsh101.txt");
     expect(getChapterTextUrl("ncert-sharada-9", 1)).toBe("/books-data/class9/ihsh101.txt");
     expect(getChapterTextUrl("ncert-vyakaranavithi", 12)).toBe("/books-data/class9&10grammar/jhva112.txt");
   });
 
   it("returns null text URL for PDF-only books or invalid chapter numbers", () => {
+    expect(getChapterTextUrl("ncert-shemushi-9", 1)).toBeNull();
     expect(getChapterTextUrl("ncert-shemushi-10", 1)).toBeNull();
     expect(getChapterTextUrl("ncert-bhaswati-11", 1)).toBeNull();
     expect(getChapterTextUrl("ncert-deepakam-6", 99)).toBeNull();
@@ -79,6 +79,8 @@ describe("NCERT Text Book Map & URL Resolution", () => {
   });
 
   it("generates correct official NCERT chapter PDF URLs via getChapterPdfUrl", () => {
+    expect(getChapterPdfUrl("ncert-shemushi-9", 1)).toBe("https://ncert.nic.in/textbook/pdf/ihsk101.pdf");
+    expect(getChapterPdfUrl("ncert-sharada-9", 1)).toBe("https://ncert.nic.in/textbook/pdf/ihsh101.pdf");
     expect(getChapterPdfUrl("ncert-shemushi-10", 5)).toBe("https://ncert.nic.in/textbook/pdf/jhsk105.pdf");
     expect(getChapterPdfUrl("ncert-bhaswati-11", 1)).toBe("https://ncert.nic.in/textbook/pdf/khsk101.pdf");
     expect(getChapterPdfUrl("ncert-shashwati-12", 11)).toBe("https://ncert.nic.in/textbook/pdf/lhsk211.pdf");

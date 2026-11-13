@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BookOpen,
   GraduationCap,
@@ -31,6 +31,12 @@ function deriveVocab(sanskrit, preview = "") {
 function ChapterResourcePanel({ book, chapter, pdfUrl, onClose, onChapterChange, totalChapters }) {
   const { t } = useLanguage();
   const [tab, setTab] = useState("read");
+  const [solveAnswer, setSolveAnswer] = useState("");
+  const [solveFeedback, setSolveFeedback] = useState("");
+  useEffect(() => {
+    setSolveAnswer("");
+    setSolveFeedback("");
+  }, [chapter.id]);
   const champ = chapter.titleSanskrit || chapter.title;
   const govClass = Math.max(book.gov_class_min ?? book.govClassMin, 6);
   const grammarTopics = useMemo(() => getGrammarTopics(govClass), [govClass]);
@@ -135,11 +141,29 @@ function ChapterResourcePanel({ book, chapter, pdfUrl, onClose, onChapterChange,
                 {t("Complete the sentence from the chapter and write it in देवनागरी.")}
               </div>
               <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
-                <input placeholder={t("Type your answer…")} style={{ flex: 1, minWidth: 180, padding: "8px 10px", background: "var(--bg-primary)", border: "1px solid var(--border-color)", borderRadius: 6, fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: 15 }} />
-                <button className="btn btn-outline" style={{ fontSize: 12 }} onClick={() => window.alert(t("Check against the textbook PDF for the correct sentence."))}>
+                <input
+                  value={solveAnswer}
+                  onChange={(e) => {
+                    setSolveAnswer(e.target.value);
+                    if (solveFeedback) setSolveFeedback("");
+                  }}
+                  placeholder={t("Type your answer…")}
+                  style={{ flex: 1, minWidth: 180, padding: "8px 10px", background: "var(--bg-primary)", border: "1px solid var(--border-color)", borderRadius: 6, fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: 15 }}
+                />
+                <button
+                  className="btn btn-outline"
+                  style={{ fontSize: 12 }}
+                  disabled={!solveAnswer.trim()}
+                  onClick={() => setSolveFeedback(t("Check against the textbook PDF for the correct sentence."))}
+                >
                   {t("Check")}
                 </button>
               </div>
+              {solveFeedback && (
+                <div style={{ marginTop: 6, fontSize: 12, color: "var(--sanskrit-gold)" }}>
+                  {solveFeedback}
+                </div>
+              )}
             </div>
             <div className="solve-question">
               <div style={{ fontSize: 14, fontWeight: 600 }}>{t("2. Match the words")}</div>

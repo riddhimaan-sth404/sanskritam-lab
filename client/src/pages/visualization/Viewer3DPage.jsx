@@ -105,6 +105,11 @@ function Manuscript3DCanvas({
   const sceneRef = useRef(null);
   const rakingLightRef = useRef(null);
   const leafGroupRef = useRef(null);
+  const isFlippedRef = useRef(isFlipped);
+
+  useEffect(() => {
+    isFlippedRef.current = isFlipped;
+  }, [isFlipped]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -241,7 +246,7 @@ function Manuscript3DCanvas({
 
       // Smooth leaf flip animation
       if (leafGroupRef.current) {
-        const targetRotY = isFlipped ? Math.PI : 0;
+        const targetRotY = isFlippedRef.current ? Math.PI : 0;
         leafGroupRef.current.rotation.y += (targetRotY - leafGroupRef.current.rotation.y) * 0.08;
       }
 

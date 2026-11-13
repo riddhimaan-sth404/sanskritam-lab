@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Download,
@@ -9,17 +9,19 @@ import {
   Sparkles,
   GitBranch,
   BookOpen,
-  Award,
-  Layers,
   FileCode,
-  CheckCircle2,
-  ListPlus,
-  HelpCircle,
-  Copy
+  ListPlus
 } from "lucide-react";
 import { lessons, lessonHi } from "../../data/lessons";
 import { useLanguage } from "../../context/LanguageContext";
-import { toIAST } from "../../services/sanskrit";
+
+const escapeXml = (str) =>
+  String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 
 // Grammatical Concept Dependency Graph Nodes (DAG)
 const CONCEPT_DAG = [
@@ -37,13 +39,13 @@ const CONCEPT_DAG = [
 const CURRICULUM_PRESETS = [
   {
     id: "ncert_middle",
-    title: "CBSE / NCERT Classes 6–8 (Ruchirā Series)",
-    titleHi: "सीबीएसई / एनसीईआरटी कक्षा ६-८ (रुचिरा)",
+    title: "CBSE / NCERT Classes 6–8 (Dīpakam Series)",
+    titleHi: "सीबीएसई / एनसीईआरटी कक्षा ६-८ (दीपकम्)",
     target: "Middle School (Classes 6–8)",
     modules: [
-      { name: "Unit 1: Śabdaparicayaḥ (शब्दपरिचयः १-३)", concepts: ["varna", "shabdarupa"], outcome: "Recognize a-kārānta and ā-kārānta nouns in nominative singular/plural" },
-      { name: "Unit 2: Kriyāpadāni (क्रियापदानि)", concepts: ["dhaturupa"], outcome: "Conjugate present tense (Laṭ Lakāra) for basic roots (paṭh, gam, likh)" },
-      { name: "Unit 3: Subhāṣitāni & Sandhi (सुभाषितानि)", concepts: ["sandhi", "karaka"], outcome: "Memorize didactic shlokas and identify Akasa-savarṇa Dīrgha Sandhi" }
+      { name: "Unit 1: Varṇamālā & Paricayaḥ (वर्णमाला, एषः कः?)", concepts: ["varna", "shabdarupa"], outcome: "Master Devanāgarī script, saṁyukta-vyañjanas, and pronoun/noun agreement in nominative case" },
+      { name: "Unit 2: Kriyāpadāni & Dinacaryā (अहं प्रातः उत्तिष्ठामि)", concepts: ["dhaturupa"], outcome: "Conjugate present tense (Laṭ Lakāra) and use numbers/time in daily-routine dialogues" },
+      { name: "Unit 3: Subhāṣitāni & Sandhi (सुभाषितानि, गीतम्)", concepts: ["sandhi", "karaka"], outcome: "Memorize didactic shlokas (from Hitopadeśa/Gītā) and identify Akasa-savarṇa Dīrgha Sandhi" }
     ]
   },
   {
@@ -132,12 +134,30 @@ export default function CurriculumBuilderPage() {
   const [bloomOutcome, setBloomOutcome] = useState("Prayoga (Apply)");
   const [saveMessage, setSaveMessage] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [savedUnits, setSavedUnits] = useState(() => {
+    try {
+      const raw = localStorage.getItem("sanskritlab_custom_curriculum");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+  const saveTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, []);
 
   const filtered = lessons.filter((l) => l.level === selectedLevel);
 
   // Export as SCORM 1.2 Package (XML manifest + Lesson HTML)
-  const handleExportScorm = () => {
-    const title = customTitle || activeShloka.title;
+  const handleExportScorm = (overrideTitle) => {
+    const rawTitle = (typeof overrideTitle === "string" && overrideTitle.trim())
+      ? overrideTitle.trim()
+      : (customTitle.trim() || activeShloka.title);
+    const title = escapeXml(rawTitle);
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <manifest identifier="SanskritLab_Lesson_${Date.now()}" version="1.2"
           xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
@@ -165,7 +185,8 @@ export default function CurriculumBuilderPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `imsmanifest-${title.replace(/\s+/g, "_")}.xml`;
+    const safeSlug = rawTitle.replace(/[^a-zA-Z0-9_-]+/g, "_").replace(/^_+|_+$/g, "") || "lesson";
+    a.download = `imsmanifest-${safeSlug}.xml`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -188,19 +209,22 @@ export default function CurriculumBuilderPage() {
   const handleSaveCustom = () => {
     if (!customTitle.trim()) return;
     try {
-      const stored = localStorage.getItem("sanskritlab_custom_curriculum");
-      const list = stored ? JSON.parse(stored) : [];
-      list.push({
-        id: "custom-" + Date.now(),
-        title: customTitle,
-        content: customContent,
-        level: selectedLevel,
-        bloomOutcome,
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem("sanskritlab_custom_curriculum", JSON.stringify(list));
+      const next = [
+        ...savedUnits,
+        {
+          id: "custom-" + Date.now(),
+          title: customTitle.trim(),
+          content: customContent,
+          level: selectedLevel,
+          bloomOutcome,
+          createdAt: new Date().toISOString()
+        }
+      ];
+      localStorage.setItem("sanskritlab_custom_curriculum", JSON.stringify(next));
+      setSavedUnits(next);
       setSaveMessage(t("Saved to custom curriculum!"));
-      setTimeout(() => setSaveMessage(""), 3000);
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setSaveMessage(""), 3000);
     } catch {
       // ignore
     }
@@ -411,7 +435,7 @@ export default function CurriculumBuilderPage() {
 
               <button
                 className="btn btn-secondary"
-                onClick={handleExportScorm}
+                onClick={() => handleExportScorm(activeShloka.title)}
                 style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13 }}
               >
                 <FileCode size={14} />
@@ -483,7 +507,7 @@ export default function CurriculumBuilderPage() {
                 <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, background: "rgba(230, 81, 0, 0.1)", color: "var(--vt-orange)" }}>
                   {p.target}
                 </span>
-                <h3 style={{ margin: "8px 0 12px", fontSize: 18 }}>{p.title}</h3>
+                <h3 style={{ margin: "8px 0 12px", fontSize: 18 }}>{hi && p.titleHi ? p.titleHi : p.title}</h3>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {p.modules.map((m, idx) => (
@@ -500,7 +524,7 @@ export default function CurriculumBuilderPage() {
               <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
                 <button
                   className="btn btn-secondary"
-                  onClick={handleExportScorm}
+                  onClick={() => handleExportScorm(hi && p.titleHi ? p.titleHi : p.title)}
                   style={{ width: "100%", fontSize: 12, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}
                 >
                   <FileCode size={13} />
@@ -623,7 +647,7 @@ export default function CurriculumBuilderPage() {
                 </button>
                 <button
                   className="btn btn-secondary"
-                  onClick={handleExportScorm}
+                  onClick={() => handleExportScorm(customTitle)}
                   disabled={!customTitle.trim()}
                   style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
@@ -645,6 +669,46 @@ export default function CurriculumBuilderPage() {
                   </span>
                 )}
               </div>
+
+              {savedUnits.length > 0 && (
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--vt-border)" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--vt-muted)", marginBottom: 8 }}>
+                    {t("Saved Custom Units")} ({savedUnits.length})
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {savedUnits.slice(-5).reverse().map((u) => (
+                      <div
+                        key={u.id}
+                        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", background: "var(--vt-bg)", borderRadius: 6, border: "1px solid var(--vt-border)", fontSize: 13 }}
+                      >
+                        <span
+                          style={{ cursor: "pointer", fontWeight: 600 }}
+                          onClick={() => {
+                            setCustomTitle(u.title);
+                            setCustomContent(u.content || "");
+                            setSelectedLevel(u.level ?? 2);
+                            setBloomOutcome(u.bloomOutcome || "Prayoga (Apply)");
+                          }}
+                        >
+                          {u.title} <span style={{ color: "var(--vt-muted)", fontWeight: 400, fontSize: 11 }}>· {t("Level")} {u.level}</span>
+                        </span>
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => {
+                            const next = savedUnits.filter((x) => x.id !== u.id);
+                            setSavedUnits(next);
+                            try {
+                              localStorage.setItem("sanskritlab_custom_curriculum", JSON.stringify(next));
+                            } catch { }
+                          }}
+                        >
+                          {t("Delete")}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {showPreview && (
                 <div style={{ marginTop: 14, padding: 14, background: "var(--vt-bg)", borderRadius: 8, border: "1px solid var(--vt-border)" }}>

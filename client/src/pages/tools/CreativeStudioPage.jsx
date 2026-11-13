@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles, Volume2, RotateCcw } from "lucide-react";
 import { METERS, VERSE_THEMES, countSyllables } from "../../data/creativeStudio";
 import { loadMeters, loadThemes } from "../../services/contentDb";
@@ -23,8 +23,9 @@ function buildLines(theme, meter, rngSeed) {
     const w1 = takeWord();
     const w2 = takeWord();
     const tpl = pick(theme.templates);
-    const plural = tpl[0].includes("\u0928\u094D\u0924\u0947") || tpl[0].includes("\u0928\u094D\u0924\u093F");
-    const t = tpl[plural ? 0 : 1] ?? tpl[0];
+    const isPluralWord = (w) => w.num === "pl" || /\u093E\u0903$|\u093E\u0923\u093F$|\u093F\u0923\u0903$/.test(w.sa || "");
+    const hasPlural = isPluralWord(w1) || isPluralWord(w2);
+    const t = tpl[hasPlural ? 1 : 0] ?? tpl[0];
     const sa = t.replace("{1}", w1.sa).replace("{2}", w2.sa);
     lines.push({
       sa,
@@ -43,16 +44,31 @@ function CreativeStudioPage() {
   const [meterIdx, setMeterIdx] = useState(0);
   const [lines, setLines] = useState([]);
   const [busy, setBusy] = useState(false);
+  const speakTimersRef = useRef([]);
+  const clearSpeakTimers = () => {
+    speakTimersRef.current.forEach((id) => clearTimeout(id));
+    speakTimersRef.current = [];
+  };
+  useEffect(() => () => clearSpeakTimers(), []);
   useEffect(() => {
+    let live = true;
     loadThemes().then((th) => {
+      if (!live || !Array.isArray(th) || !th.length) return;
       setThemes(th);
       setThemeId((id) => th.some((x) => x.id === id) ? id : th[0].id);
     });
-    loadMeters().then(setMeters);
+    loadMeters().then((ms) => {
+      if (live && Array.isArray(ms) && ms.length) setMeters(ms);
+    });
+    return () => {
+      live = false;
+    };
   }, []);
   const theme = useMemo(() => themes.find((x) => x.id === themeId) ?? themes[0], [themes, themeId]);
-  const meter = meters[meterIdx];
+  const meter = meters[meterIdx] ?? meters[0];
   const compose = async () => {
+    if (!theme || !meter) return;
+    clearSpeakTimers();
     setBusy(true);
     setLines(buildLines(theme, meter, Math.random()));
     try {
@@ -69,7 +85,8 @@ function CreativeStudioPage() {
     setBusy(false);
   };
   const speakVerse = () => {
-    lines.forEach((l, i) => setTimeout(() => speakWithFallback(l.sa), i * 4e3));
+    clearSpeakTimers();
+    speakTimersRef.current = lines.map((l, i) => setTimeout(() => speakWithFallback(l.sa), i * 4e3));
   };
   return <div className="page-container">
       <div className="page-header">
@@ -94,7 +111,7 @@ function CreativeStudioPage() {
           </button>
         </div>
 
-        <p style={{ fontSize: 13, opacity: 0.7, margin: "0 0 14px" }}>{meter.name} — {meter.desc}</p>
+        <p style={{ fontSize: 13, opacity: 0.7, margin: "0 0 14px" }}>{meter?.name} — {meter?.desc || meter?.description || ""}</p>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
           {theme.words.map((w) => <span key={w.sa} className="badge">{w.sa} <em style={{ opacity: 0.7 }}>{w.en}</em></span>)}

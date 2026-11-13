@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Target,
   BookOpen,
@@ -29,31 +29,50 @@ function WhoSaidItPage() {
   const [mode, setMode] = useState("quiz");
   const [quiz, setQuiz] = useState(() => makeQuiz(QUOTES));
   const [qi, setQi] = useState(0);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(() => {
+    const initialSpeakers = [...new Set(QUOTES.map((qq) => qq.speaker))];
+    return quiz[0] ? makeOptions(quiz[0], initialSpeakers) : [];
+  });
   const [answered, setAnswered] = useState(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [cat, setCat] = useState("all");
+  const timerRef = useRef(null);
   useEffect(() => {
     loadQuotes().then(setQuotes);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
   const q = quiz[qi];
   const speakers = useMemo(() => [...new Set(quotes.map((qq) => qq.speaker))], [quotes]);
+  useEffect(() => {
+    if (quiz[0] && options.length === 0) {
+      setOptions(makeOptions(quiz[0], speakers));
+    }
+  }, [quiz, options.length, speakers]);
   const dayQ = useMemo(() => quotes[Math.floor(Date.now() / 864e5) % quotes.length], [quotes]);
   const start = (fresh = true) => {
-    setQuiz(fresh ? makeQuiz(quotes) : quiz);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    const nextQuiz = fresh ? makeQuiz(quotes) : quiz;
+    setQuiz(nextQuiz);
     setQi(0);
     setScore(0);
     setFinished(false);
     setAnswered(null);
-    setOptions(makeOptions(quiz[0], speakers));
+    setOptions(nextQuiz[0] ? makeOptions(nextQuiz[0], speakers) : []);
   };
   const pick = (s) => {
     if (answered) return;
     setAnswered(s);
     if (s === q.speaker) setScore((sc) => sc + 1);
-    setTimeout(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
       if (qi + 1 >= quiz.length) {
         setFinished(true);
       } else {

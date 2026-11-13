@@ -201,7 +201,10 @@ const IAST_TO_DEV = {
   ph: "\u092B",
   bh: "\u092D",
   \u015B: "\u0936",
-  \u1E63: "\u0937"
+  \u1E63: "\u0937",
+  j\u00F1: "\u091C\u094D\u091E",
+  ai: "\u0910",
+  au: "\u0914"
 };
 const IAST_BASE = {
   a: "\u0905",
@@ -246,11 +249,16 @@ function toDevanagari(input) {
   let out = "";
   let i = 0;
   const isVowel = (ch) => /[aeiouāīūṛṝḷêô]/.test(ch);
+  const isDiphthong = (pair) => pair === "ai" || pair === "au";
+  const isConsonantStart = (ch) => Boolean(
+    ch && (/[bcdfghjklmnpqrstvwxyz]/.test(ch) || (IAST_TO_DEV[ch] && !isVowel(ch) && ch !== "\u1E43" && ch !== "\u1E25"))
+  );
   while (i < s.length) {
     const c = s[i];
-    if (c === "a" && i === 0) {
-      out += "\u0905";
-      i += 1;
+    const nextTwoStandalone = s.slice(i, i + 2);
+    if (isDiphthong(nextTwoStandalone)) {
+      out += IAST_BASE[nextTwoStandalone];
+      i += 2;
       continue;
     }
     let found = null;
@@ -270,18 +278,20 @@ function toDevanagari(input) {
       out += found;
       const matchedKey = s.slice(i, i + len);
       i += len;
+      const nextPair = s.slice(i, i + 2);
       const next = s[i];
-      if (next && isVowel(next)) {
-        if (next === "a") {
-          i += 1;
-        } else {
-          out += IAST_SIGNS[next] || "";
-          i += 1;
-        }
-      } else if (!isVowel(matchedKey) && matchedKey !== "\u1E43" && matchedKey !== "\u1E25") {
-        if (next && (/[bcdfghjklmnpqrstvwxyz]/.test(next) || IAST_TO_DEV[next])) {
-          out += "\u094D";
-        } else if (!next) {
+      if (!isVowel(matchedKey) && matchedKey !== "\u1E43" && matchedKey !== "\u1E25") {
+        if (isDiphthong(nextPair)) {
+          out += IAST_SIGNS[nextPair];
+          i += 2;
+        } else if (next && isVowel(next)) {
+          if (next === "a") {
+            i += 1;
+          } else {
+            out += IAST_SIGNS[next] || "";
+            i += 1;
+          }
+        } else if (isConsonantStart(next) || !next) {
           out += "\u094D";
         }
       }
@@ -298,15 +308,17 @@ function toDevanagari(input) {
     if (base) {
       out += base;
       i += 1;
+      const nextPair = s.slice(i, i + 2);
       const next = s[i];
-      if (next === "a") {
+      if (isDiphthong(nextPair)) {
+        out += IAST_SIGNS[nextPair];
+        i += 2;
+      } else if (next === "a") {
         i += 1;
       } else if (next && isVowel(next)) {
         out += IAST_SIGNS[next] || "";
         i += 1;
-      } else if (next && (/[bcdfghjklmnpqrstvwxyz]/.test(next) || IAST_TO_DEV[next])) {
-        out += "\u094D";
-      } else if (!next) {
+      } else if (isConsonantStart(next) || !next) {
         out += "\u094D";
       }
       continue;
@@ -320,8 +332,9 @@ const SANDHI_RULES = [
   { name: "D\u012Brgha", devName: "\u0926\u0940\u0930\u094D\u0918", rule: "Same vowel doubles: \u0905/\u0906 + \u0905/\u0906 \u2192 \u0906", example: "\u0930\u093E\u092E + \u0905\u0917\u094D\u0930 = \u0930\u093E\u092E\u093E\u0917\u094D\u0930" },
   { name: "Gu\u1E47a", devName: "\u0917\u0941\u0923", rule: "\u0905/\u0906 + \u0907/\u0908 \u2192 \u090F \xB7 \u0905/\u0906 + \u0909/\u090A \u2192 \u0913 \xB7 \u0905/\u0906 + \u090B \u2192 \u0905\u0930\u094D", example: "\u0926\u0947\u0935 + \u0907\u0928\u094D\u0926\u094D\u0930 = \u0926\u0947\u0935\u0947\u0928\u094D\u0926\u094D\u0930" },
   { name: "V\u1E5Bddhi", devName: "\u0935\u0943\u0926\u094D\u0927\u093F", rule: "\u0905/\u0906 + \u090F \u2192 \u0910 \xB7 \u0905/\u0906 + \u0913 \u2192 \u0914", example: "\u0938\u0926\u093E + \u090F\u0935 = \u0938\u0926\u0948\u0935" },
-  { name: "Ya\u1E47", devName: "\u092F\u0923\u094D", rule: "\u0907/\u0908 + vowel \u2192 \u092F\u094D \xB7 \u0909/\u090A + vowel \u2192 \u0935\u094D \xB7 \u090B + vowel \u2192 \u0930\u094D", example: "\u0907\u0924\u093F + \u0906\u0926\u093F = \u0907\u0924\u094D\u092F\u093E\u0926\u093F" },
-  { name: "Visarga", devName: "\u0935\u093F\u0938\u0930\u094D\u0917", rule: "\u0905\u0903 + soft consonant \u2192 \u0913 \xB7 \u0905\u0903 + vowel \u2192 \u0905 (vowel merges)", example: "\u0928\u0930\u0903 + \u0907\u0935 = \u0928\u0930 \u0907\u0935" }
+  { name: "Ya\u1E47", devName: "\u092F\u0923\u094D", rule: "\u0907/\u0908 + dissimilar vowel \u2192 \u092F\u094D \xB7 \u0909/\u090A + dissimilar vowel \u2192 \u0935\u094D \xB7 \u090B + dissimilar vowel \u2192 \u0930\u094D", example: "\u0907\u0924\u093F + \u0906\u0926\u093F = \u0907\u0924\u094D\u092F\u093E\u0926\u093F" },
+  { name: "Ay\u0101di / P\u016Brvar\u016Bpa", devName: "\u0905\u092F\u093E\u0926\u093F / \u092A\u0942\u0930\u094D\u0935\u0930\u0942\u092A", rule: "\u090F/\u0910/\u0913/\u0914 + vowel \u2192 \u0905\u092F\u094D/\u0906\u092F\u094D/\u0905\u0935\u094D/\u0906\u0935\u094D \xB7 pada-final \u090F/\u0913 + \u0905 \u2192 \u090F\u093D/\u0913\u093D", example: "\u0928\u0948 + \u0905\u0915\u0903 = \u0928\u093E\u092F\u0915\u0903 \xB7 \u0924\u0947 + \u0905\u092A\u093F = \u0924\u0947\u093D\u092A\u093F" },
+  { name: "Visarga", devName: "\u0935\u093F\u0938\u0930\u094D\u0917", rule: "\u0905\u0903 + \u0905 \u2192 \u0913\u093D \xB7 \u0905\u0903 + soft consonant \u2192 \u0913 \xB7 \u0907/\u0909\u0903 + vowel/soft \u2192 \u0930\u094D \xB7 \u0903 + \u091A/\u091F/\u0924 \u2192 \u0936\u094D/\u0937\u094D/\u0938\u094D", example: "\u0930\u093E\u092E\u0903 + \u0905\u0938\u094D\u0924\u093F = \u0930\u093E\u092E\u094B\u093D\u0938\u094D\u0924\u093F \xB7 \u0928\u092E\u0903 + \u0924\u0947 = \u0928\u092E\u0938\u094D\u0924\u0947" }
 ];
 function endsWithVowel(w) {
   if (!w) return null;
@@ -356,15 +369,15 @@ function joinVowel(a, b) {
   const pairs = {
     a: { a: "\u0101", \u0101: "\u0101", i: "e", \u012B: "e", u: "o", \u016B: "o", \u1E5B: "ar", e: "ai", ai: "ai", o: "au", au: "au" },
     \u0101: { a: "\u0101", \u0101: "\u0101", i: "e", \u012B: "e", u: "o", \u016B: "o", \u1E5B: "ar", e: "ai", ai: "ai", o: "au", au: "au" },
-    i: { i: "\u012B", \u012B: "\u012B", a: "y", \u0101: "y", u: "y", \u016B: "y", e: "y", o: "y" },
-    \u012B: { i: "\u012B", \u012B: "\u012B", a: "y", \u0101: "y", u: "y", \u016B: "y", e: "y", o: "y" },
-    u: { u: "\u016B", \u016B: "\u016B", a: "v", \u0101: "v", i: "v", \u012B: "v", e: "v", o: "v" },
-    \u016B: { u: "\u016B", \u016B: "\u016B", a: "v", \u0101: "v", i: "v", \u012B: "v", e: "v", o: "v" },
-    \u1E5B: { a: "r", \u0101: "r", i: "r", u: "r" }
+    i: { i: "\u012B", \u012B: "\u012B", a: "y", \u0101: "y", u: "y", \u016B: "y", \u1E5B: "y", e: "y", ai: "y", o: "y", au: "y" },
+    \u012B: { i: "\u012B", \u012B: "\u012B", a: "y", \u0101: "y", u: "y", \u016B: "y", \u1E5B: "y", e: "y", ai: "y", o: "y", au: "y" },
+    u: { u: "\u016B", \u016B: "\u016B", a: "v", \u0101: "v", i: "v", \u012B: "v", \u1E5B: "v", e: "v", ai: "v", o: "v", au: "v" },
+    \u016B: { u: "\u016B", \u016B: "\u016B", a: "v", \u0101: "v", i: "v", \u012B: "v", \u1E5B: "v", e: "v", ai: "v", o: "v", au: "v" },
+    \u1E5B: { \u1E5B: "\u1E5D", a: "r", \u0101: "r", i: "r", \u012B: "r", u: "r", \u016B: "r", e: "r", ai: "r", o: "r", au: "r" }
   };
   return pairs[a]?.[b] ?? null;
 }
-const VOWEL_SIGN = { a: "", \u0101: "\u093E", i: "\u093F", \u012B: "\u0940", u: "\u0941", \u016B: "\u0942", \u1E5B: "\u0943", e: "\u0947", ai: "\u0948", o: "\u094B", au: "\u094C", ar: "\u0905\u0930\u094D" };
+const VOWEL_SIGN = { a: "", \u0101: "\u093E", i: "\u093F", \u012B: "\u0940", u: "\u0941", \u016B: "\u0942", \u1E5B: "\u0943", \u1E5D: "\u0944", e: "\u0947", ai: "\u0948", o: "\u094B", au: "\u094C", ar: "\u0930\u094D" };
 function tryJoinSandhi(first, second) {
   const a = first.trim();
   const b = second.trim();
@@ -377,39 +390,91 @@ function tryJoinSandhi(first, second) {
       if (joined.length === 1 && "yvr".includes(joined)) {
         const sv = { y: "\u092F", v: "\u0935", r: "\u0930" }[joined] || "\u092F";
         const stripped = stripEndVowel(a);
-        const baseWithVirama = stripped.endsWith("\u094D") ? stripped : stripped + "\u094D";
+        const baseWithVirama = !stripped ? "" : stripped.endsWith("\u094D") ? stripped : stripped + "\u094D";
         return { ok: true, result: baseWithVirama + sv + VOWEL_SIGN[startV] + stripStartVowel(b), explanation: `Ya\u1E47 sandhi: ${endV}/${startV} \u2192 ${joined}\u094D` };
       }
+      if (joined === "ar") {
+        const baseClean2 = stripEndVowel(a).replace(/\u094D$/, "");
+        return { ok: true, result: baseClean2 + "\u0930\u094D" + stripStartVowel(b), explanation: `Gu\u1E47a sandhi: ${endV}/\u1E5B \u2192 ar` };
+      }
       const rule = endV + "/" + startV;
-      const ruleName = rule === "a/a" || rule === "a/\u0101" || rule === "\u0101/a" || rule === "\u0101/\u0101" ? "D\u012Brgha" : /^[aā][iīuūṛ]$/.test(rule) ? "Gu\u1E47a" : /^[aā][eo]$/.test(rule) ? "V\u1E5Bddhi" : "Sandhi";
+      const rulePair = endV + startV;
+      const ruleName = rule === "a/a" || rule === "a/\u0101" || rule === "\u0101/a" || rule === "\u0101/\u0101" || rule === "\u1E5B/\u1E5B" ? "D\u012Brgha" : /^[a\u0101][i\u012Bu\u016B\u1E5B]$/.test(rulePair) ? "Gu\u1E47a" : /^[a\u0101](e|ai|o|au)$/.test(rulePair) ? "V\u1E5Bddhi" : "Sandhi";
       const baseClean = stripEndVowel(a).replace(/\u094D$/, "");
       return { ok: true, result: baseClean + VOWEL_SIGN[joined] + stripStartVowel(b), explanation: `${ruleName} sandhi: ${rule} \u2192 ${joined}` };
     }
-    if (endV === "a" && startV !== "a") {
-      return { ok: true, result: stripEndVowel(a) + b, explanation: `Elision: final \u0905 dropped before vowel \u2192 ${a} + ${b}` };
+    if (endV === "e" || endV === "ai" || endV === "o" || endV === "au") {
+      const baseClean = stripEndVowel(a).replace(/\u094D$/, "");
+      const isInternalStemSuffix = /^(\u0905\u0928\u092E\u094D|\u0905\u0928\u0903|\u0905\u0924\u093F|\u0905\u0928\u094D|\u0905\u0928\u0940\u092F|\u0905\u0915\u0903)$/.test(b);
+      if ((endV === "e" || endV === "o") && startV === "a" && !isInternalStemSuffix) {
+        return { ok: true, result: baseClean + VOWEL_SIGN[endV] + "\u093D" + stripStartVowel(b), explanation: `P\u016Brvar\u016Bpa sandhi: ${endV} + a \u2192 ${endV}\u093D` };
+      }
+      const ayadiMap = { e: "\u092F", ai: "\u093E\u092F", o: "\u0935", au: "\u093E\u0935" };
+      return { ok: true, result: baseClean + ayadiMap[endV] + VOWEL_SIGN[startV] + stripStartVowel(b), explanation: `Ay\u0101di sandhi: ${endV} + vowel \u2192 ${ayadiMap[endV]}\u094D` };
     }
   }
   if (a.endsWith("\u0903")) {
+    const pre = a.slice(0, -1);
+    const preV = endsWithVowel(pre);
     const b0 = b[0];
     if (b0 && CONSONANTS_DEV.includes(b0)) {
-      if ("\u0915\u0916\u092A\u092B".includes(b0)) return { ok: true, result: a.slice(0, -1) + "\u0903" + b, explanation: `Visarga stays before ${b0} (surds)` };
-      return { ok: true, result: a.slice(0, -1) + "\u094B " + b, explanation: `Visarga \u2192 \u0913 before soft ${b0}` };
+      if ("\u091A\u091B\u0936".includes(b0)) {
+        return { ok: true, result: pre + "\u0936\u094D" + b, explanation: `Visarga \u2192 \u0936\u094D before ${b0}` };
+      }
+      if ("\u091F\u0920\u0937".includes(b0)) {
+        return { ok: true, result: pre + "\u0937\u094D" + b, explanation: `Visarga \u2192 \u0937\u094D before ${b0}` };
+      }
+      if ("\u0924\u0925\u0938".includes(b0)) {
+        return { ok: true, result: pre + "\u0938\u094D" + b, explanation: `Visarga \u2192 \u0938\u094D before ${b0}` };
+      }
+      if ("\u0915\u0916\u092A\u092B".includes(b0)) {
+        if ((pre === "\u0928\u093F" || pre === "\u0926\u0941") && b0 !== "\u0916") {
+          return { ok: true, result: pre + "\u0937\u094D" + b, explanation: `Visarga after \u0907/\u0909 \u2192 \u0937\u094D before ${b0}` };
+        }
+        return { ok: true, result: a + " " + b, explanation: `Visarga stays before ${b0} (hard voiceless)` };
+      }
+      if (preV === "a") {
+        return { ok: true, result: pre + "\u094B " + b, explanation: `Visarga (\u0905\u0903) \u2192 \u0913 before soft ${b0}` };
+      }
+      if (preV === "\u0101") {
+        return { ok: true, result: pre + " " + b, explanation: `Visarga after \u0906 dropped before soft ${b0}` };
+      }
+      if (b0 === "\u0930" && pre === "\u0928\u093F") {
+        return { ok: true, result: "\u0928\u0940" + b, explanation: `Visarga dropped before \u0930; preceding \u0907 lengthens to \u0908` };
+      }
+      return { ok: true, result: pre + "\u0930\u094D" + b, explanation: `Rutva sandhi: Visarga \u2192 \u0930\u094D before soft ${b0}` };
     }
     if (startV) {
-      return { ok: true, result: a.slice(0, -1) + " " + b, explanation: `Visarga elided before vowel: ${a} + ${b}` };
+      if (preV === "a") {
+        if (startV === "a") {
+          return { ok: true, result: pre + "\u094B\u093D" + stripStartVowel(b), explanation: `Utva + P\u016Brvar\u016Bpa: \u0905\u0903 + \u0905 \u2192 \u0913\u093D` };
+        }
+        return { ok: true, result: pre + " " + b, explanation: `Visarga elided before dissimilar vowel: ${a} + ${b}` };
+      }
+      if (preV === "\u0101") {
+        return { ok: true, result: pre + " " + b, explanation: `Visarga after \u0906 dropped before vowel: ${a} + ${b}` };
+      }
+      return { ok: true, result: pre + "\u0930" + VOWEL_SIGN[startV] + stripStartVowel(b), explanation: `Rutva sandhi: Visarga \u2192 \u0930 before vowel` };
     }
   }
   if (/[कखगघचछजझटठडढणतथदधनपफबभमयरलवशषसह]्$/.test(a)) {
     const b0 = b[0];
     const finalConsonant = a.slice(-2, -1);
     if (b0 && CONSONANTS_DEV.includes(b0)) {
+      if (a.endsWith("\u092E\u094D")) {
+        return { ok: true, result: a.slice(0, -2) + "\u0902 " + b, explanation: `Anusv\u0101ra sandhi: \u092E\u094D \u2192 \u0902 before consonant ${b0}` };
+      }
       const map = {
         "\u091A": ["\u091A\u094D\u091A", "\u0924\u094D + \u091A \u2192 \u091A\u094D\u091A"],
         "\u091B": ["\u091A\u094D\u091B", "\u0924\u094D + \u091B \u2192 \u091A\u094D\u091B"],
+        "\u091C": ["\u091C\u094D\u091C", "\u0924\u094D + \u091C \u2192 \u091C\u094D\u091C"],
+        "\u091D": ["\u091C\u094D\u091D", "\u0924\u094D + \u091D \u2192 \u091C\u094D\u091D"],
         "\u091F": ["\u091F\u094D\u091F", "\u0924\u094D + \u091F \u2192 \u091F\u094D\u091F"],
         "\u0924": ["\u0924\u094D\u0924", "\u0924\u094D + \u0924 \u2192 \u0924\u094D\u0924"],
         "\u0926": ["\u0926\u094D\u0926", "\u0924\u094D + \u0926 \u2192 \u0926\u094D\u0926"],
         "\u0928": ["\u0928\u094D\u0928", "\u0924\u094D + \u0928 \u2192 \u0928\u094D\u0928"],
+        "\u0932": ["\u0932\u094D\u0932", "\u0924\u094D + \u0932 \u2192 \u0932\u094D\u0932"],
+        "\u0936": ["\u091A\u094D\u091B", "\u0924\u094D + \u0936 \u2192 \u091A\u094D\u091B"],
         "\u0938": ["\u0924\u094D\u0938", "\u0924\u094D + \u0938 \u2192 \u0924\u094D\u0938"]
       };
       if (a.endsWith("\u0924\u094D") && map[b0]) {
@@ -440,7 +505,7 @@ function trySplitSandhi(word, pairs) {
   const results = [];
   for (const [a, b] of pairs) {
     const joined = tryJoinSandhi(a, b);
-    if (joined.ok && joined.result.replace(/[ ्]/, "") === word.replace(/[ ्]/g, "")) {
+    if (joined.ok && joined.result.replace(/[ ्]/g, "") === word.replace(/[ ्]/g, "")) {
       results.push({ ok: true, result: `${a} + ${b}`, explanation: `${a} + ${b} = ${joined.result} (${joined.explanation})` });
     }
   }
@@ -473,20 +538,20 @@ const DHATUS = [
   { root: "\u092A\u093E", iast: "p\u0101", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to drink", present: "\u092A\u093F\u092C\u0924\u093F" },
   { root: "\u0935\u0938\u094D", iast: "vas", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to dwell", present: "\u0935\u0938\u0924\u093F" },
   { root: "\u0930\u0941\u091A\u094D", iast: "ruc", gana: "\u0926\u093F\u0935\u093E\u0926\u093F", ganaNum: 4, meaning: "to shine, please", present: "\u0930\u094B\u091A\u0924\u0947" },
-  { root: "\u0935\u0943", iast: "v\u1E5B", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to choose", present: "\u0935\u0943\u0923\u094B\u0924\u093F" },
-  { root: "\u0926\u0943\u0936\u094D", iast: "d\u1E5B\u015B", gana: "\u0926\u093F\u0935\u093E\u0926\u093F", ganaNum: 4, meaning: "to see", present: "\u092A\u0936\u094D\u092F\u0924\u093F" },
+  { root: "\u0935\u0943", iast: "v\u1E5B", gana: "\u0938\u094D\u0935\u093E\u0926\u093F", ganaNum: 5, meaning: "to choose, cover", present: "\u0935\u0943\u0923\u094B\u0924\u093F" },
+  { root: "\u0926\u0943\u0936\u094D", iast: "d\u1E5B\u015B", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to see", present: "\u092A\u0936\u094D\u092F\u0924\u093F" },
   { root: "\u0916\u093E\u0926\u094D", iast: "kh\u0101d", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to eat", present: "\u0916\u093E\u0926\u0924\u093F" },
   { root: "\u091C\u093F", iast: "ji", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to conquer", present: "\u091C\u092F\u0924\u093F" },
-  { root: "\u0926\u0943", iast: "d\u1E5B", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to regard", present: "\u0926\u0926\u0930\u094D\u0936" },
+  { root: "\u0926\u0943", iast: "d\u1E5B", gana: "\u0924\u0941\u0926\u093E\u0926\u093F", ganaNum: 6, meaning: "to regard, honor (with \u0101-)", present: "\u0906\u0926\u094D\u0930\u093F\u092F\u0924\u0947" },
   { root: "\u092C\u0941\u0927\u094D", iast: "budh", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to wake, know", present: "\u092C\u094B\u0927\u0924\u093F" },
   { root: "\u092D\u091C\u094D", iast: "bhaj", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to share, worship", present: "\u092D\u091C\u0924\u093F" },
-  { root: "\u092E\u0943", iast: "m\u1E5B", gana: "\u0926\u093F\u0935\u093E\u0926\u093F", ganaNum: 4, meaning: "to die", present: "\u092E\u094D\u0930\u093F\u092F\u0924\u0947" },
+  { root: "\u092E\u0943", iast: "m\u1E5B", gana: "\u0924\u0941\u0926\u093E\u0926\u093F", ganaNum: 6, meaning: "to die", present: "\u092E\u094D\u0930\u093F\u092F\u0924\u0947" },
   { root: "\u092F\u0941\u0927\u094D", iast: "yudh", gana: "\u0926\u093F\u0935\u093E\u0926\u093F", ganaNum: 4, meaning: "to fight", present: "\u092F\u0941\u0927\u094D\u092F\u0924\u0947" },
-  { root: "\u0935\u093F\u0936\u094D", iast: "vi\u015B", gana: "\u0938\u094D\u0935\u093E\u0926\u093F", ganaNum: 6, meaning: "to enter", present: "\u0935\u093F\u0936\u0924\u093F" },
+  { root: "\u0935\u093F\u0936\u094D", iast: "vi\u015B", gana: "\u0924\u0941\u0926\u093E\u0926\u093F", ganaNum: 6, meaning: "to enter", present: "\u0935\u093F\u0936\u0924\u093F" },
   { root: "\u0938\u0943", iast: "s\u1E5B", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to flow, run", present: "\u0938\u0930\u0924\u093F" },
   { root: "\u0905\u0938\u094D", iast: "as", gana: "\u0905\u0926\u093E\u0926\u093F", ganaNum: 2, meaning: "to be (copula)", present: "\u0905\u0938\u094D\u0924\u093F" },
   { root: "\u0930\u092E\u094D", iast: "ram", gana: "\u092D\u094D\u0935\u093E\u0926\u093F", ganaNum: 1, meaning: "to delight", present: "\u0930\u092E\u0924\u0947" },
-  { root: "\u092A\u094D\u0930\u091A\u094D\u091B\u094D", iast: "pracch", gana: "\u0938\u094D\u0935\u093E\u0926\u093F", ganaNum: 6, meaning: "to ask", present: "\u092A\u0943\u091A\u094D\u091B\u0924\u093F" }
+  { root: "\u092A\u094D\u0930\u091A\u094D\u091B\u094D", iast: "pracch", gana: "\u0924\u0941\u0926\u093E\u0926\u093F", ganaNum: 6, meaning: "to ask", present: "\u092A\u0943\u091A\u094D\u091B\u0924\u093F" }
 ];
 function dayOfYear(d = /* @__PURE__ */ new Date()) {
   const start = new Date(d.getFullYear(), 0, 0);
@@ -496,10 +561,10 @@ let cachedWordOfDay = null;
 async function wordOfDay() {
   if (cachedWordOfDay) return cachedWordOfDay;
   try {
-    const { data } = await supabase.from("dictionary").select("word, meanings, meanings_hi").order("id").limit(200);
+    const { data } = await supabase.from("dictionary").select("word, meanings").order("id").limit(200);
     if (data && data.length > 0) {
       const row = data[dayOfYear() % data.length];
-      cachedWordOfDay = { word: row.word, meanings: row.meanings || [], meaningsHi: row.meanings_hi || [], iast: toIAST(row.word) };
+      cachedWordOfDay = { word: row.word, meanings: row.meanings || [], meaningsHi: [], iast: toIAST(row.word) };
       return cachedWordOfDay;
     }
   } catch {
@@ -559,7 +624,7 @@ const DAILY_CHALLENGE_QUESTIONS = [
   { prompt: '"to go" \u2014 which dh\u0101tu?', promptHi: '"\u091C\u093E\u0928\u093E" \u2014 \u0915\u094C\u0928 \u0938\u0940 \u0927\u093E\u0924\u0941?', options: ["\u0915\u0943", "\u0917\u092E\u094D", "\u092D\u0942", "\u092A\u0920\u094D"], optionsHi: ["\u0915\u0943", "\u0917\u092E\u094D", "\u092D\u0942", "\u092A\u0920\u094D"], correct: 1, explanation: "\u0917\u092E\u094D (gam) = to go \u2192 \u0917\u091A\u094D\u091B\u0924\u093F.", explanationHi: "\u0917\u092E\u094D (gam) = \u091C\u093E\u0928\u093E \u2192 \u0917\u091A\u094D\u091B\u0924\u093F\u0964" },
   { prompt: "\u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0903 means?", promptHi: "\u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0903 \u0915\u093E \u0905\u0930\u094D\u0925?", options: ["Goodbye", "Thank you", "Welcome", "Sorry"], optionsHi: ["\u0905\u0932\u0935\u093F\u0926\u093E", "\u0927\u0928\u094D\u092F\u0935\u093E\u0926", "\u0938\u094D\u0935\u093E\u0917\u0924", "\u0915\u094D\u0937\u092E\u093E"], correct: 1, explanation: "\u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0903 = thank you.", explanationHi: "\u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0903 = \u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0964" },
   { prompt: "Who wrote the R\u0101m\u0101ya\u1E47a?", promptHi: "\u0930\u093E\u092E\u093E\u092F\u0923 \u0915\u093F\u0938\u0928\u0947 \u0932\u093F\u0916\u0940?", options: ["Vy\u0101sa", "V\u0101lm\u012Bki", "K\u0101lid\u0101sa", "Bharata"], optionsHi: ["\u0935\u094D\u092F\u093E\u0938", "\u0935\u093E\u0932\u094D\u092E\u0940\u0915\u093F", "\u0915\u093E\u0932\u093F\u0926\u093E\u0938", "\u092D\u0930\u0924"], correct: 1, explanation: "V\u0101lm\u012Bki composed the R\u0101m\u0101ya\u1E47a, the \u0101di-k\u0101vya.", explanationHi: "\u0935\u093E\u0932\u094D\u092E\u0940\u0915\u093F \u0928\u0947 \u0930\u093E\u092E\u093E\u092F\u0923 \u0915\u0940 \u0930\u091A\u0928\u093E \u0915\u0940, \u091C\u094B \u0906\u0926\u093F-\u0915\u093E\u0935\u094D\u092F \u0939\u0948\u0964" },
-  { prompt: "\u0928\u092E\u0938\u094D\u0924\u0947 is used to?", promptHi: "\u0928\u092E\u0938\u094D\u0924\u0947 \u0915\u093E \u092A\u094D\u0930\u092F\u094B\u0917 \u0915\u093F\u0938\u0932\u093F\u090F \u0939\u094B\u0924\u093E \u0939\u0948?", options: ["Say goodbye only", "Greet with respect", "Ask a question", "Express anger"], optionsHi: ["\u0915\u0947\u0935\u0932 \u0935\u093F\u0926\u093E\u0908", "\u0938\u092E\u094D\u092E\u093E\u0928 \u0938\u0947 \u0905\u092D\u093F\u0935\u093E\u0926\u0928", "\u092A\u094D\u0930\u0936\u094D\u0928 \u092A\u0942\u091B\u0928\u093E", "\u0915\u094D\u0930\u094B\u091C\u093C \u0935\u094D\u092F\u0915\u094D\u0924 \u0915\u0930\u0928\u093E"], correct: 1, explanation: '\u0928\u092E\u0938\u094D\u0924\u0947 = a respectful greeting ("I bow to you").', explanationHi: '\u0928\u092E\u0938\u094D\u0924\u0947 = \u0938\u092E\u094D\u092E\u093E\u0928\u092A\u0942\u0930\u094D\u0935\u0915 \u0905\u092D\u093F\u0935\u093E\u0926\u0928 ("\u092E\u0948\u0902 \u0906\u092A\u0915\u094B \u0928\u092E\u0928 \u0915\u0930\u0924\u093E \u0939\u0942\u0901")\u0964' },
+  { prompt: "\u0928\u092E\u0938\u094D\u0924\u0947 is used to?", promptHi: "\u0928\u092E\u0938\u094D\u0924\u0947 \u0915\u093E \u092A\u094D\u0930\u092F\u094B\u0917 \u0915\u093F\u0938\u0932\u093F\u090F \u0939\u094B\u0924\u093E \u0939\u0948?", options: ["Say goodbye only", "Greet with respect", "Ask a question", "Express anger"], optionsHi: ["\u0915\u0947\u0935\u0932 \u0935\u093F\u0926\u093E\u0908", "\u0938\u092E\u094D\u092E\u093E\u0928 \u0938\u0947 \u0905\u092D\u093F\u0935\u093E\u0926\u0928", "\u092A\u094D\u0930\u0936\u094D\u0928 \u092A\u0942\u091B\u0928\u093E", "\u0915\u094D\u0930\u094B\u0927 \u0935\u094D\u092F\u0915\u094D\u0924 \u0915\u0930\u0928\u093E"], correct: 1, explanation: '\u0928\u092E\u0938\u094D\u0924\u0947 = a respectful greeting ("I bow to you").', explanationHi: '\u0928\u092E\u0938\u094D\u0924\u0947 = \u0938\u092E\u094D\u092E\u093E\u0928\u092A\u0942\u0930\u094D\u0935\u0915 \u0905\u092D\u093F\u0935\u093E\u0926\u0928 ("\u092E\u0948\u0902 \u0906\u092A\u0915\u094B \u0928\u092E\u0928 \u0915\u0930\u0924\u093E \u0939\u0942\u0901")\u0964' },
   { prompt: "The G\u012Bt\u0101 is part of which epic?", promptHi: "\u0917\u0940\u0924\u093E \u0915\u093F\u0938 \u092E\u0939\u093E\u0915\u093E\u0935\u094D\u092F \u0915\u093E \u092D\u093E\u0917 \u0939\u0948?", options: ["R\u0101m\u0101ya\u1E47a", "Mah\u0101bh\u0101rata", "Pur\u0101\u1E47as", "Vedas"], optionsHi: ["\u0930\u093E\u092E\u093E\u092F\u0923", "\u092E\u0939\u093E\u092D\u093E\u0930\u0924", "\u092A\u0941\u0930\u093E\u0923", "\u0935\u0947\u0926"], correct: 1, explanation: "The Bhagavad G\u012Bt\u0101 is in the Bh\u012B\u1E63ma Parva of the Mah\u0101bh\u0101rata.", explanationHi: "\u092D\u0917\u0935\u0926\u094D\u0917\u0940\u0924\u093E \u092E\u0939\u093E\u092D\u093E\u0930\u0924 \u0915\u0947 \u092D\u0940\u0937\u094D\u092E \u092A\u0930\u094D\u0935 \u092E\u0947\u0902 \u0939\u0948\u0964" },
   { prompt: "What is \u0926\u0940\u0930\u094D\u0918 sandhi?", promptHi: "\u0926\u0940\u0930\u094D\u0918 \u0938\u0902\u0927\u093F \u0915\u094D\u092F\u093E \u0939\u0948?", options: ["Same vowels double", "Vowel disappears", "Consonant changes", "No change"], optionsHi: ["\u090F\u0915 \u0939\u0940 \u0938\u094D\u0935\u0930 \u0926\u094B\u0939\u0930\u093E\u0924\u093E \u0939\u0948", "\u0938\u094D\u0935\u0930 \u0932\u0941\u092A\u094D\u0924 \u0939\u094B \u091C\u093E\u0924\u093E \u0939\u0948", "\u0935\u094D\u092F\u0902\u091C\u0928 \u092C\u0926\u0932\u0924\u093E \u0939\u0948", "\u0915\u094B\u0908 \u092A\u0930\u093F\u0935\u0930\u094D\u0924\u0928 \u0928\u0939\u0940\u0902"], correct: 0, explanation: "D\u012Brgha: \u0905 + \u0905 \u2192 \u0906 (same vowel lengthens).", explanationHi: "\u0926\u0940\u0930\u094D\u0918: \u0905 + \u0905 \u2192 \u0906 (\u090F\u0915 \u0939\u0940 \u0938\u094D\u0935\u0930 \u0932\u0902\u092C\u093E \u0939\u094B\u0924\u093E \u0939\u0948)\u0964" },
   { prompt: '"Where are you going?" in Sanskrit?', promptHi: '\u0938\u0902\u0938\u094D\u0915\u0943\u0924 \u092E\u0947\u0902 "\u0924\u0941\u092E \u0915\u0939\u093E\u0901 \u091C\u093E \u0930\u0939\u0947 \u0939\u094B?" \u0915\u0948\u0938\u0947 \u0915\u0939\u0924\u0947 \u0939\u0948\u0902?', options: ["\u0924\u094D\u0935\u0902 \u0915\u0941\u0924\u094D\u0930 \u0917\u091A\u094D\u091B\u0938\u093F", "\u0905\u0939\u0902 \u0907\u0939 \u0924\u093F\u0937\u094D\u0920\u093E\u092E\u093F", "\u0924\u0935 \u0928\u093E\u092E \u0915\u093F\u092E\u094D", "\u0907\u0926\u0902 \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D"], optionsHi: ["\u0924\u094D\u0935\u0902 \u0915\u0941\u0924\u094D\u0930 \u0917\u091A\u094D\u091B\u0938\u093F", "\u0905\u0939\u0902 \u0907\u0939 \u0924\u093F\u0937\u094D\u0920\u093E\u092E\u093F", "\u0924\u0935 \u0928\u093E\u092E \u0915\u093F\u092E\u094D", "\u0907\u0926\u0902 \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D"], correct: 0, explanation: "\u0924\u094D\u0935\u0902 \u0915\u0941\u0924\u094D\u0930 \u0917\u091A\u094D\u091B\u0938\u093F = Where are you going?", explanationHi: "\u0924\u094D\u0935\u0902 \u0915\u0941\u0924\u094D\u0930 \u0917\u091A\u094D\u091B\u0938\u093F = \u0924\u0941\u092E \u0915\u0939\u093E\u0901 \u091C\u093E \u0930\u0939\u0947 \u0939\u094B?" },
@@ -719,7 +784,6 @@ async function searchAll(q, limit = 16) {
 
         if (score > 0) {
           scoredDict.push({ entry, score });
-          if (scoredDict.length >= 60) break;
         }
       }
 
@@ -746,10 +810,7 @@ async function searchAll(q, limit = 16) {
   // 7. Optional Supabase remote queries if connected
   if (import.meta.env?.VITE_SUPABASE_URL) {
     try {
-      const [dictR, lessonsR] = await Promise.all([
-        supabase.from("dictionary").select("word, meanings, meanings_hi").ilike("word", `%${query}%`).limit(3),
-        supabase.from("lessons").select("id, title, level").ilike("title", `%${query}%`).limit(2)
-      ]);
+      const dictR = await supabase.from("dictionary").select("word, meanings").ilike("word", `%${query}%`).limit(3);
       if (dictR?.data) {
         for (const d of dictR.data) {
           if (!seen.has(d.word)) {
@@ -759,7 +820,6 @@ async function searchAll(q, limit = 16) {
               id: d.word,
               title: d.word,
               sub: (d.meanings || []).slice(0, 2).join(" · "),
-              subHi: (d.meanings_hi || []).slice(0, 2).join(" · ") || void 0,
               extra: toIAST(d.word)
             });
           }

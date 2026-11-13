@@ -440,7 +440,7 @@ export const SHLOKAS = [
     words: [
       { word: "निषाद", meaning: "O Hunter", meaningHi: "हे बहेलिए" },
       { word: "प्रतिष्ठाम्", meaning: "Renown / stability", meaningHi: "प्रतिष्ठा" },
-      { word: "कौञ्चमिथुनात्", meaning: "From the pair of birds", meaningHi: "क्रौंच पक्षी के जोड़े से" },
+      { word: "क्रौञ्चमिथुनात्", meaning: "From the pair of birds", meaningHi: "क्रौंच पक्षी के जोड़े से" },
       { word: "अवधीः", meaning: "You killed", meaningHi: "तूने वध किया" }
     ]
   },
@@ -449,8 +449,8 @@ export const SHLOKAS = [
     book: "ramayana",
     bookTitle: "Vālmīki Rāmāyaṇa",
     bookTitleSanskrit: "वाल्मीकि रामायणम्",
-    dev: "तपःस्वाध्यायनीरतां तपस्वी वाग्विदां वरम्। नारदं परिपप्रच्छ वाल्मीकिर्मुनिपुङ्गवम्॥",
-    iast: "tapaḥsvādhyāyanīratāṃ tapasvī vāgvidāṃ varam | nāradaṃ paripapraccha vālmīkir munipuṅgavam ||",
+    dev: "तपःस्वाध्यायनिरतं तपस्वी वाग्विदां वरम्। नारदं परिपप्रच्छ वाल्मीकिर्मुनिपुङ्गवम्॥",
+    iast: "tapaḥsvādhyāyanirataṃ tapasvī vāgvidāṃ varam | nāradaṃ paripapraccha vālmīkir munipuṅgavam ||",
     translation: "Ascetic Vālmīki inquired of Sage Nārada, the master of eloquence, ever devoted to austerity and self-study, seeking to know the ideal human possessing every virtuous trait.",
     translationHi: "तप और स्वाध्याय में निरंतर लीन रहने वाले वाल्मीकि मुनि ने वाकपटु वक्ता और मुनिश्रेष्ठ नारद जी से आदर्श पुरुष के सद्गुणों के विषय में आदरपूर्वक पूछा।",
     source: "Vālmīki Rāmāyaṇa 1.1.1",
@@ -508,7 +508,7 @@ export const SHLOKAS = [
     book: "ramayana",
     bookTitle: "Vālmīki Rāmāyaṇa",
     bookTitleSanskrit: "वाल्मीकि रामायणम्",
-    dev: "शोकनाशयते धैर्यं शोकनाशयते श्रुतम्। शोकनाशयते सर्वं नास्ति शोकसमों रिपुः॥",
+    dev: "शोको नाशयते धैर्यं शोको नाशयते श्रुतम्। शोको नाशयते सर्वं नास्ति शोकसमो रिपुः॥",
     iast: "śoko nāśayate dhairyaṃ śoko nāśayate śrutam | śoko nāśayate sarvaṃ nāsti śokasamo ripuḥ ||",
     translation: "Grief and despondency destroy courage; grief destroys learned wisdom; grief destroys everything. Indeed, there is no enemy as devastating as grief.",
     translationHi: "शोक धैर्य को नष्ट कर देता है, शोक ज्ञान को नष्ट कर देता है और शोक मनुष्य के सर्वस्व को नष्ट कर देता है। संसार में शोक के समान कोई दूसरा शत्रु नहीं है।",
@@ -1050,7 +1050,7 @@ export const SHLOKAS = [
     categoryLabelHi: "सुभाषितानि नीतिश्च",
     words: [
       { word: "सहसा", meaning: "Hastily / suddenly", meaningHi: "बिना विचारे" },
-      { word: "अविवेकी", meaning: "Thoughtlessness", meaningHi: "अविवेक" },
+      { word: "अविवेकः", meaning: "Thoughtlessness", meaningHi: "अविवेक" },
       { word: "विमृश्यकारिणम्", meaning: "One who reflects first", meaningHi: "विचार कर कार्य करने वाले को" },
       { word: "सम्पदः", meaning: "Prosperities / fortunes", meaningHi: "संपत्तियां" }
     ]
@@ -1080,8 +1080,8 @@ export const SHLOKAS = [
     book: "panchatantra",
     bookTitle: "Pañcatantra",
     bookTitleSanskrit: "पञ्चतन्त्रम्",
-    dev: "शोकरातिभयत्राणं प्रीतिविश्रम्भभाजनम्। केन रत्नमिदं सृष्टं मित्रमित्यक्षरद्वयम्॥",
-    iast: "śokāratibhayatrāṇaṃ prītiviśrambhabhājanam | kena ratnam idaṃ sṛṣṭaṃ mitram ity akṣaradvayam ||",
+    dev: "शोकारातिभयत्राणं प्रीतिविश्रम्भभाजनम्। केन रत्नमिदं सृष्टं मित्रमित्यक्षरद्वयम्॥",
+    iast: "śokārātibhayatrāṇaṃ prītiviśrambhabhājanam | kena ratnam idaṃ sṛṣṭaṃ mitram ity akṣaradvayam ||",
     translation: "A shield against sorrow, anguish, and fear, a vessel of boundless love and trustworthy faith: by which visionary creator was this two-syllable jewel called 'Mitra' (Friend) created?",
     translationHi: "शोक, कष्ट और भय से रक्षा करने वाला, तथा प्रेम और विश्वास का पात्र — 'मित्र' इन दो अक्षरों के अमूल्य रत्न को किसने गढ़ा है?",
     source: "Pañcatantra (Mitralābha)",
@@ -1477,7 +1477,7 @@ export const SHLOKAS = [
     bookTitle: "Stotras & Subhāṣitāni",
     bookTitleSanskrit: "स्तोत्राणि सुभाषितानि च",
     dev: "वक्रतुण्ड महाकाय सूर्यकोटिसमप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥",
-    iast: "vakratuṇḍa mahākāya sūryakoṭisamaprabha | nirvighnaṃ kuru me deva sarvakāryeṣu सर्वदा ||",
+    iast: "vakratuṇḍa mahākāya sūryakoṭisamaprabha | nirvighnaṃ kuru me deva sarvakāryeṣu sarvadā ||",
     translation: "O Lord with the curved trunk, colossal divine form, radiant as ten million suns: please remove all obstacles from every one of my endeavors, always.",
     translationHi: "हे वक्र सूंड वाले, विशालकाय, करोड़ों सूर्यों के समान तेजस्वी देव, मेरे सभी कार्यों को सदा बाधा-रहित और निर्विघ्न करें।",
     source: "Gaṇeśa Purāṇa",

@@ -8,28 +8,28 @@ export const ncertTextBookMap = {
     prefix: "fsde1",
     totalChapters: 16,
     hasIntro: true,
-    title: "दीपकम - भाग १ (कक्षा ६)"
+    title: "दीपकम् - भाग १ (कक्षा ६)"
   },
   "ncert-deepakam-7": {
     folder: "class7",
     prefix: "gsde1",
     totalChapters: 15,
     hasIntro: true,
-    title: "दीपकम - भाग २ (कक्षा ७)"
+    title: "दीपकम् - भाग २ (कक्षा ७)"
   },
   "ncert-deepakam-8": {
     folder: "class8",
     prefix: "hsde1",
     totalChapters: 16,
     hasIntro: true,
-    title: "दीपकम - भाग ३ (कक्षा ८)"
+    title: "दीपकम् - भाग ३ (कक्षा ८)"
   },
   "ncert-shemushi-9": {
-    folder: "class9",
-    prefix: "ihsh1",
-    totalChapters: 16,
+    prefix: "ihsk1",
+    totalChapters: 10,
     hasIntro: true,
-    title: "शारदा / शेमुषी - प्रथमो भागः (कक्षा ९)"
+    isPdfOnly: true,
+    title: "शेमुषी - प्रथमो भागः (कक्षा ९)"
   },
   "ncert-sharada-9": {
     folder: "class9",

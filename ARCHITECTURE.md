@@ -107,7 +107,7 @@ graph TB
 | **Unit & Integration Testing**| **Vitest 4.1**, **JSDOM 29.1** | Fast in-memory unit testing for linguistic services, lexical searches, and curriculum integrity. |
 | **Native Backend Server** | **Rust (Actix-Web 4, Tokio, Serde)** | Native binary REST API providing microsecond grammar parsing, corpus exploration, and assessment generation. |
 | **Desktop Shell** | **Python 3.10+, PySide6 (Qt6)** | Multi-window desktop application with embedded native controls and backend integration. |
-| **Cloud Database** | **Supabase (PostgreSQL 15, RLS)** | Optional remote storage for user profiles, classroom assignments, and corpus sync. |
+| **Cloud Database** | **Supabase (PostgreSQL 17, RLS)** | Optional remote storage for user profiles, classroom assignments, and corpus sync. |
 | **Deployment / CI** | **Vercel SPA + Edge/Serverless, Vite Build** | Zero-config continuous deployment with `vercel.json` rewrites (`/(.*) -> /index.html`), asset caching headers, and `.github/workflows/vercel.yml` CI/CD. |
 
 ---
@@ -157,7 +157,7 @@ client/src/
 ## 5. Linguistic Engine & Offline Data Pipeline
 
 ### 5.1 Universal Search Architecture (Sanskrit Khoj — `searchAll`)
-The `searchAll` engine ([client/src/services/sanskrit.js](file:///d:/Projects/sanskrit/client/src/services/sanskrit.js)) provides synchronous/asynchronous multi-entity discovery across 6 discrete data domains without network latency:
+The `searchAll` engine ([client/src/services/sanskrit.js](./client/src/services/sanskrit.js)) provides synchronous/asynchronous multi-entity discovery across 6 discrete data domains without network latency:
 
 ```mermaid
 flowchart TD
@@ -181,7 +181,7 @@ flowchart TD
 ```
 
 ### 5.2 Monier-Williams Varna Indexing Engine
-The Monier-Williams lexicon ([client/src/pages/tools/DictionaryPage.jsx](file:///d:/Projects/sanskrit/client/src/pages/tools/DictionaryPage.jsx)) indexes all 59,995 words into 44 traditional Sanskrit Varna (alphabet) buckets in ~6 milliseconds:
+The Monier-Williams lexicon ([client/src/pages/tools/DictionaryPage.jsx](./client/src/pages/tools/DictionaryPage.jsx)) indexes all 59,995 words into 44 traditional Sanskrit Varna (alphabet) buckets in ~6 milliseconds:
 
 1. **Phonetic Categorization**:
    - **स्वराः (Vowels)**: `अ`, `आ`, `इ`, `ई`, `उ`, `ऊ`, `ऋ`, `ऌ`, `ए`, `ऐ`, `ओ`, `औ`
@@ -225,7 +225,7 @@ backend/rust/src/
 
 ## 7. Desktop Shell Architecture (PySide6)
 
-The optional native desktop application ([desktop/main.py](file:///d:/Projects/sanskrit/desktop/main.py)) wraps SanskritLab into an installable desktop program:
+The optional native desktop application ([desktop/main.py](./desktop/main.py)) wraps SanskritLab into an installable desktop program:
 - **Framework**: Python 3.10+ with Qt6 bindings (`PySide6`).
 - **Communication**: Native HTTP requests to `http://127.0.0.1:8080`.
 - **Capabilities**: Local filesystem manuscript import, direct printer integration, and offline workspace persistence.
@@ -262,7 +262,7 @@ graph LR
 ## 10. Development & Deployment Workflows
 
 ### 10.1 Local Execution
-- **One-Click Startup**: Running [run.bat](file:///d:/Projects/sanskrit/run.bat) boots the Rust backend on port `8080` and the Vite frontend on port `5173`.
+- **One-Click Startup**: Running [run.bat](./run.bat) boots the Rust backend on port `8080` and the Vite frontend on port `5173`.
 - **Manual Startup**:
   - Backend: `cd backend/rust && cargo run`
   - Frontend: `cd client && npm run dev`
@@ -270,7 +270,7 @@ graph LR
 
 ### 10.2 Production Deployment (Vercel SPA & Serverless)
 - The frontend builds cleanly via `npm run build` into `client/dist`.
-- Static routing rules and caching are enforced via [vercel.json](file:///d:/Projects/sanskrit/vercel.json) and [client/vercel.json](file:///d:/Projects/sanskrit/client/vercel.json):
+- Static routing rules and caching are enforced via [vercel.json](./vercel.json) and [client/vercel.json](./client/vercel.json):
   ```json
   {
     "$schema": "https://openapi.vercel.sh/vercel.json",
@@ -293,4 +293,4 @@ graph LR
     ]
   }
   ```
-- Automated preview and production deployments are managed via [.github/workflows/vercel.yml](file:///d:/Projects/sanskrit/.github/workflows/vercel.yml) targeting scope `riddhimaan-singh`.
+- Automated preview and production deployments are managed via [.github/workflows/vercel.yml](./.github/workflows/vercel.yml) targeting scope `riddhimaan-singh`.

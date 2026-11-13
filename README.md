@@ -161,7 +161,7 @@ SanskritLab/
 │   │   ├── pages/             # Pages (SearchPage, LessonPage, Jeopardy, Tools, Dashboard)
 │   │   ├── services/          # Multi-entity searchAll engine, API client, Supabase
 │   │   ├── data/              # Monier-Williams lexicon (~60k words), lessons, books, shlokas
-│   │   └── __tests__/         # Vitest unit test suite (54+ automated tests)
+│   │   └── __tests__/         # Vitest unit test suite (74 automated tests)
 ├── backend/
 │   └── rust/                  # High-performance native Rust engine (Actix-Web)
 ├── desktop/                   # PySide6 desktop application
@@ -170,7 +170,7 @@ SanskritLab/
 └── README.md                  # Project documentation
 ```
 
-For complete technical specifications, data pipelines, and component diagrams, see **[ARCHITECTURE.md](file:///d:/Projects/sanskrit/ARCHITECTURE.md)**.
+For complete technical specifications, data pipelines, and component diagrams, see **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 
 
 ---

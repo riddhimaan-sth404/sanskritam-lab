@@ -1,5 +1,27 @@
-import { supabase, auth as supabaseAuth } from "./supabase";
+import { supabase, auth as supabaseAuth, SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase";
 import { userStore } from "./localStore";
+
+const isSupabaseConfigured = Boolean(
+  SUPABASE_URL &&
+  !SUPABASE_URL.includes("placeholder-url") &&
+  SUPABASE_ANON_KEY &&
+  !SUPABASE_ANON_KEY.includes("placeholder-anon-key")
+);
+
+async function hashLocalPassword(email, password) {
+  const input = `${email.toLowerCase().trim()}:${password}`;
+  if (typeof crypto !== "undefined" && crypto.subtle) {
+    const bytes = new TextEncoder().encode(input);
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16);
+}
 
 function toAuthUser(u) {
   if (!u) return null;
@@ -88,47 +110,63 @@ export function onAuthChange(cb) {
 
 export async function signIn(email, password) {
   state = { ...state, isLoading: true, error: null };
+  notify();
   if (!email || !password) {
     const msg = "Email and password required";
     state = { ...state, isLoading: false, error: msg };
+    notify();
     throw new Error(msg);
   }
 
   try {
-    const { data, error } = await supabaseAuth.signIn(email, password);
-    if (error) throw error;
-    if (data?.user) {
+    if (isSupabaseConfigured) {
+      const { data, error } = await supabaseAuth.signIn(email, password);
+      if (error) throw error;
+      if (!data?.user) {
+        throw new Error("Sign in failed: no user returned");
+      }
       const authUser = toAuthUser(data.user);
       state = { user: authUser, isLoading: false, error: null };
       userStore.setSession(authUser);
       notify();
       return authUser;
     }
-  } catch (err) {
-    // If Supabase is unreachable or placeholder, try local store fallback
+
     const localUser = userStore.getByEmail(email);
-    if (localUser) {
-      const authUser = toAuthUser(localUser);
-      state = { user: authUser, isLoading: false, error: null };
-      userStore.setSession(authUser);
-      notify();
-      return authUser;
+    const pwHash = await hashLocalPassword(email, password);
+    if (!localUser || !localUser.passwordHash || localUser.passwordHash !== pwHash) {
+      throw new Error("Invalid email or password");
     }
-    state = { ...state, isLoading: false, error: err.message };
+    const authUser = toAuthUser(localUser);
+    state = { user: authUser, isLoading: false, error: null };
+    userStore.setSession(authUser);
+    notify();
+    return authUser;
+  } catch (err) {
+    state = { ...state, isLoading: false, error: err.message || "Sign in failed" };
+    notify();
     throw err;
+  } finally {
+    if (state.isLoading) {
+      state = { ...state, isLoading: false };
+      notify();
+    }
   }
 }
 
 export async function signUp(email, password, displayName, opts = {}) {
   state = { ...state, isLoading: true, error: null };
+  notify();
   if (!email || !password || !displayName) {
     const msg = "All fields required";
     state = { ...state, isLoading: false, error: msg };
+    notify();
     throw new Error(msg);
   }
   if (password.length < 6) {
     const msg = "Password must be at least 6 characters";
     state = { ...state, isLoading: false, error: msg };
+    notify();
     throw new Error(msg);
   }
 
@@ -140,14 +178,15 @@ export async function signUp(email, password, displayName, opts = {}) {
   };
 
   try {
-    const { data, error } = await supabaseAuth.signUp(email, password, meta);
-    if (error) throw error;
-    const user = data?.user ?? null;
-    const authUser = user ? toAuthUser(user) : null;
-
-    if (authUser) {
+    if (isSupabaseConfigured) {
+      const { data, error } = await supabaseAuth.signUp(email, password, meta);
+      if (error) throw error;
+      const user = data?.user ?? null;
+      if (!user) {
+        throw new Error("Account creation failed: no user returned");
+      }
+      const authUser = toAuthUser(user);
       userStore.save(authUser);
-      // Only set active session if session returned (e.g. email confirmation disabled)
       if (data?.session) {
         userStore.setSession(authUser);
         state = { user: authUser, isLoading: false, error: null };
@@ -157,15 +196,20 @@ export async function signUp(email, password, displayName, opts = {}) {
       notify();
       return { user: authUser, session: data?.session || null };
     }
-  } catch (err) {
-    console.warn("[auth] Remote signup failed, saving to localStore fallback:", err.message);
+
+    const existing = userStore.getByEmail(email);
+    if (existing) {
+      throw new Error("An account with this email already exists on this device");
+    }
+    const passwordHash = await hashLocalPassword(email, password);
     const localUser = {
       id: "local-" + Date.now(),
-      email,
+      email: email.trim(),
       displayName,
       accountType: opts.accountType || "learner",
       schoolId: opts.schoolId || null,
-      username: opts.username || null,
+      username: opts.username ? opts.username.toLowerCase().trim() : null,
+      passwordHash,
       created_at: new Date().toISOString()
     };
     userStore.save(localUser);
@@ -174,6 +218,15 @@ export async function signUp(email, password, displayName, opts = {}) {
     state = { user: authUser, isLoading: false, error: null };
     notify();
     return { user: authUser, session: { access_token: "local-session" } };
+  } catch (err) {
+    state = { ...state, isLoading: false, error: err.message || "Sign up failed" };
+    notify();
+    throw err;
+  } finally {
+    if (state.isLoading) {
+      state = { ...state, isLoading: false };
+      notify();
+    }
   }
 }
 
