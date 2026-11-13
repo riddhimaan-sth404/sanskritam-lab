@@ -50,9 +50,9 @@ function AnalyticsPage() {
         <p>{t("Track student performance, highlight weak areas, and get customized study paths")}</p>
       </div>
 
-      {real && <div className="card" style={{ marginBottom: 24, padding: 20 }}>
+      {real ? <div className="card" style={{ marginBottom: 24, padding: 20 }}>
           <h3 style={{ marginTop: 0, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            <TrendingUp size={18} color="var(--vt-orange)" /> <span>{t("Real data")}</span>
+            <TrendingUp size={18} color="var(--vt-orange)" /> <span>{t("Your Learning Analytics")}</span>
           </h3>
           <div className="analytics-grid" style={{ marginBottom: 0 }}>
             <div className="stat-card">
@@ -80,26 +80,24 @@ function AnalyticsPage() {
               <div className="stat-label">{t("Language Lab Avg")} ({real.labAttempts})</div>
             </div>
           </div>
-        </div>}
-
-      <div className="analytics-grid">
+        </div> : <div className="analytics-grid">
         <div className="stat-card">
           <div className="stat-value">84%</div>
-          <div className="stat-label">{t("Overall Accuracy")}</div>
+          <div className="stat-label">{t("Overall Accuracy")} ({t("Sample")})</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">128</div>
-          <div className="stat-label">{t("Exercises Done")}</div>
+          <div className="stat-label">{t("Exercises Done")} ({t("Sample")})</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">14</div>
-          <div className="stat-label">{t("Day Streak")}</div>
+          <div className="stat-label">{t("Day Streak")} ({t("Sample")})</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">2h 15m</div>
-          <div className="stat-label">{t("Study Time Today")}</div>
+          <div className="stat-label">{t("Study Time Today")} ({t("Sample")})</div>
         </div>
-      </div>
+      </div>}
 
       <div className="grid-2" style={{ alignItems: "start" }}>
         <div className="card">

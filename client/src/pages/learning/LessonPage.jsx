@@ -1,37 +1,13 @@
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { BookOpen, Check, X } from "lucide-react";
 import { lessons, lessonHi } from "../../data/lessons";
 import { useProgress } from "../../hooks/useProgress";
-import { useKeyboard } from "../../context/KeyboardContext";
 import { useLanguage } from "../../context/LanguageContext";
-function QuizInput({ onReady }) {
-  const inputRef = useRef(null);
-  const { t } = useLanguage();
-  useEffect(() => {
-    onReady(inputRef);
-  }, []);
-  return <input
-    ref={inputRef}
-    placeholder={t("Type your answer in \u0926\u0947\u0935\u0928\u093E\u0917\u0930\u0940...")}
-    style={{
-      marginTop: 8,
-      width: "100%",
-      padding: "10px 12px",
-      background: "var(--bg-secondary)",
-      color: "var(--vt-text)",
-      border: "1px solid var(--border-color)",
-      borderRadius: 6,
-      fontFamily: "'Noto Sans Devanagari', sans-serif",
-      fontSize: 16
-    }}
-  />;
-}
 function LessonPage() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const { completeLesson } = useProgress();
-  const { openKeyboard } = useKeyboard();
   const { t, lang } = useLanguage();
   const [searchParams] = useSearchParams();
   const lesson = lessons.find((l) => l.id === lessonId);
@@ -39,6 +15,12 @@ function LessonPage() {
   const [quizActive, setQuizActive] = useState(searchParams.has("quiz"));
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizDone, setQuizDone] = useState(false);
+  useEffect(() => {
+    setSectionIdx(0);
+    setQuizActive(searchParams.has("quiz"));
+    setQuizAnswers({});
+    setQuizDone(false);
+  }, [lessonId]);
   const quizScore = useMemo(() => {
     if (!lesson) return 0;
     const correct = lesson.quiz.filter((q) => quizAnswers[q.id] === q.correctIndex).length;
@@ -157,9 +139,6 @@ function LessonPage() {
                       {quizDone && oi === answer && oi !== q.correctIndex && <X size={16} color="var(--vt-red)" />}
                     </button>;
     })}
-                {!quizDone && searchParams.has("quiz") && <QuizInput onReady={(ref) => {
-      if (qi === 0) openKeyboard(ref);
-    }} />}
                 {quizDone && <div style={{ fontSize: 13, color: "var(--vt-text-light)", marginTop: 6, padding: "8px 12px", background: "var(--bg-secondary)", border: "1px solid var(--border-color)", borderRadius: 6 }}>
                     {q.explanation}
                   </div>}

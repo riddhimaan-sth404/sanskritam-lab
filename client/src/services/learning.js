@@ -14,6 +14,17 @@ const initialSkills = {
   "skill-paleography": { id: "skill-paleography", name: "Paleography", description: "Br\u0101hm\u012B, Gupta, Siddham\u0101t\u1E5Bk\u0101, N\u0101gar\u012B, Grantha scripts", icon: "paleography", unlocked: true, completed: false, progress: 0, prerequisites: [], lessonIds: ["paleography", "manuscript-studies"] },
   "skill-phd-research": { id: "skill-phd-research", name: "PhD Research", description: "Critical edition preparation, publication ethics, thesis writing", icon: "temple", unlocked: true, completed: false, progress: 0, prerequisites: [], lessonIds: ["critical-edition", "critical-edition-theory", "digital-humanities", "publication"] }
 };
+function cloneSkills(skills = initialSkills) {
+  const out = {};
+  for (const [k, s] of Object.entries(skills)) {
+    out[k] = {
+      ...s,
+      prerequisites: [...(s.prerequisites || [])],
+      lessonIds: [...(s.lessonIds || [])]
+    };
+  }
+  return out;
+}
 function getDefaultProgress() {
   return {
     completedLessons: [],
@@ -23,7 +34,7 @@ function getDefaultProgress() {
     currentGovClass: "class-1-2",
     streak: 0,
     xp: 0,
-    skills: { ...initialSkills }
+    skills: cloneSkills(initialSkills)
   };
 }
 function loadProgress() {
@@ -60,7 +71,11 @@ function calculateXP(quizScore, difficulty) {
   return Math.round(quizScore * 10 * (1 + difficulty * 0.5));
 }
 function updateProgress(progress, lessonId, quizScore, difficulty) {
-  const p = { ...progress };
+  const p = {
+    ...progress,
+    quizScores: { ...(progress.quizScores || {}) },
+    skills: cloneSkills(progress.skills || initialSkills)
+  };
   const earned = calculateXP(quizScore, difficulty);
   if (!p.completedLessons.includes(lessonId)) {
     p.completedLessons = [...p.completedLessons, lessonId];

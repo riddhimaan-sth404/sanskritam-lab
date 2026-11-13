@@ -1,4 +1,4 @@
-﻿-- SanskritLab Complete Data Seed
+-- SanskritLab Complete Data Seed
 -- Run this AFTER schema.sql in Supabase SQL Editor
 -- Contains: 30+ lessons, 100+ dictionary entries, 20+ texts, 10+ manuscripts
 
@@ -9,9 +9,9 @@
 INSERT INTO lessons (id, title, subtitle, level, track, duration, content, quiz, unlockables, sort_order) VALUES
 
 -- LEVEL 0: Alphabet (Child)
-('alphabet-vowels', 'स्वराः — The Vowels', 'Learn the 13 vowels of Devanāgarī', 0, 'child', '15 min',
-  '{"introduction":"Sanskrit has 13 vowels called स्वराः (svarāḥ). They are the foundation of all pronunciation.","sections":[{"heading":"Simple Vowels","body":"अ a — आ ā — इ i — ई ī — उ u — ऊ ū — ऋ ṛ — ॠ ṝ — ऌ ḷ","devanagari":"अ आ इ ई उ ऊ ऋ ॠ ऌ","transliteration":"a ā i ī u ū ṛ ṝ ḷ","examples":[{"text":"अग्नि","meaning":"fire"},{"text":"इन्द्र","meaning":"Indra"},{"text":"उषा","meaning":"dawn"}]},{"heading":"Diphthongs","body":"ए e — ऐ ai — ओ o — औ au — अं ṃ — अः ḥ","devanagari":"ए ऐ ओ औ अं अः","transliteration":"e ai o au aṃ aḥ"}],"summary":"Practice each sound. Open wide for ā, round lips for u."}',
-  '[{"id":"q-v1","prompt":"Which vowel is इ?","options":["a","ā","i","u"],"correctIndex":2,"explanation":"इ is short i.","difficulty":1},{"id":"q-v2","prompt":"How many Sanskrit vowels?","options":["5","9","13","7"],"correctIndex":2,"explanation":"9 simple + 4 diphthongs = 13.","difficulty":1},{"id":"q-v3","prompt":"अ = ?","options":["u","a","i","e"],"correctIndex":1,"explanation":"अ = short a.","difficulty":1}]','{}',1),
+('alphabet-vowels', 'स्वराः — The Vowels', 'Learn the 14 vowels of Devanāgarī (including Vedic ॡ)', 0, 'child', '15 min',
+  '{"introduction":"Sanskrit has 14 vowels called स्वराः (svarāḥ, including Vedic ॡ). They are the foundation of all pronunciation.","sections":[{"heading":"Simple Vowels","body":"अ a — आ ā — इ i — ई ī — उ u — ऊ ū — ऋ ṛ — ॠ ṝ — ऌ ḷ — ॡ ḹ","devanagari":"अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ","transliteration":"a ā i ī u ū ṛ ṝ ḷ ḹ","examples":[{"text":"अग्नि","meaning":"fire"},{"text":"इन्द्र","meaning":"Indra"},{"text":"उषा","meaning":"dawn"}]},{"heading":"Diphthongs","body":"ए e — ऐ ai — ओ o — औ au — अं ṃ — अः ḥ","devanagari":"ए ऐ ओ औ अं अः","transliteration":"e ai o au aṃ aḥ"}],"summary":"Practice each sound. Open wide for ā, round lips for u."}',
+  '[{"id":"q-v1","prompt":"Which vowel is इ?","options":["a","ā","i","u"],"correctIndex":2,"explanation":"इ is short i.","difficulty":1},{"id":"q-v2","prompt":"How many Sanskrit vowels?","options":["5","9","14","7"],"correctIndex":2,"explanation":"10 simple (including Vedic ॡ) + 4 diphthongs = 14.","difficulty":1},{"id":"q-v3","prompt":"अ = ?","options":["u","a","i","e"],"correctIndex":1,"explanation":"अ = short a.","difficulty":1}]','{}',1),
 
 ('alphabet-consonants','व्यञ्जनानि — The Consonants','Master all 33 consonants by articulation point',0,'child','20 min',
   '{"introduction":"Consonants are organized by mouth position.","sections":[{"heading":"Kaṇṭhya — Gutturals","body":"क ka ख kha ग ga घ gha ङ ṅa","devanagari":"क ख ग घ ङ","transliteration":"ka kha ga gha ṅa"},{"heading":"Tālavya — Palatals","body":"च ca छ cha ज ja झ jha ञ ña","devanagari":"च छ ज झ ञ"},{"heading":"Mūrdhanya — Retroflex","body":"ट ṭa ठ ṭha ड ḍa ढ ḍha ण ṇa","devanagari":"ट ठ ड ढ ण"},{"heading":"Dantya — Dentals","body":"त ta थ tha द da ध dha न na","devanagari":"त थ द ध न"},{"heading":"Oṣṭhya — Labials","body":"प pa फ pha ब ba भ bha म ma","devanagari":"प फ ब भ म"},{"heading":"Semivowels","body":"य ya र ra ल la व va","devanagari":"य र ल व"},{"heading":"Sibilants","body":"श śa ष ṣa स sa ह ha","devanagari":"श ष स ह"}],"summary":"5×5=25 stops + 4 semivowels + 4 sibilants = 33 consonants."}',
@@ -26,7 +26,7 @@ INSERT INTO lessons (id, title, subtitle, level, track, duration, content, quiz,
   '[{"id":"q-nc1","prompt":"3 in Sanskrit?","options":["एकम्","द्वे","त्रीणि","चत्वारि"],"correctIndex":2,"explanation":"त्रीणि = three.","difficulty":1},{"id":"q-nc2","prompt":"नीलः = ?","options":["red","yellow","blue","green"],"correctIndex":2,"explanation":"नीलः = blue.","difficulty":1}]','{}',4),
 
 -- LEVEL 1: Basic Sentences (Child/Teen)
-('basic-sentences','सरलवाक्यानि — Basic Sentences','subject-Object-Verb structure',1,'teen','20 min',
+('basic-sentences','सरलवाक्यानि — Basic Sentences','Subject-Object-Verb structure',1,'teen','20 min',
   '{"introduction":"Sanskrit is SOV (Subject-Object-Verb).","sections":[{"heading":"Simple SOV","body":"रामः फलं खादति = Rāma eats fruit.\\nरामः (subject), फलम् (object), खादति (verb)","devanagari":"रामः फलं खादति","transliteration":"Rāmaḥ phalaṃ khādati","examples":[{"text":"सीता जलं पिबति","meaning":"Sītā drinks water"},{"text":"बालः पुस्तकं पठति","meaning":"Boy reads book"}]},{"heading":"Adjective Agreement","body":"Adjectives match noun gender/number/case.\\nसुन्दरः बालः (beautiful boy - masc)\\nसुन्दरी बाला (beautiful girl - fem)","devanagari":"सुन्दरः बालः । सुन्दरी बाला","examples":[{"text":"महान् गजः","meaning":"big elephant"},{"text":"महती नदी","meaning":"great river"}]}],"summary":"SOV order + adjective agreement = foundation of Sanskrit."}',
   '[{"id":"q-bs1","prompt":"Sanskrit word order?","options":["SVO","SOV","VSO","OSV"],"correctIndex":1,"explanation":"SOV = Subject-Object-Verb.","difficulty":1},{"id":"q-bs2","prompt":"रामः फलं खादति = ?","options":["Rāma eats fruit","Rāma drinks water","Fruit eats Rāma"],"correctIndex":0,"explanation":"रामः + फलम् + खादति.","difficulty":2},{"id":"q-bs3","prompt":"What is the adjective in सुन्दरः बालः?","options":["सुन्दरः","बालः","both"],"correctIndex":0,"explanation":"सुन्दरः = beautiful (adjective).","difficulty":2}]','{}',5),
 
@@ -44,7 +44,7 @@ INSERT INTO lessons (id, title, subtitle, level, track, duration, content, quiz,
   '[{"id":"q-d1","prompt":"Sanskrit has how many cases?","options":["6","7","8","10"],"correctIndex":2,"explanation":"8 cases + vocative.","difficulty":1},{"id":"q-d2","prompt":"Instrumental singular of राम?","options":["रामेण","रामाय","रामात्","रामस्य"],"correctIndex":0,"explanation":"रामेण = by Rāma.","difficulty":3},{"id":"q-d3","prompt":"Neuter plural nominative ending?","options":["-आः","-अम्","-आनि","-ए"],"correctIndex":2,"explanation":"Neuter = -आनि.","difficulty":2}]','{}',8),
 
 ('verb-conjugation','क्रियापदानि — Verb Conjugation','Present, imperfect, future, perfect tenses',2,'teen','35 min',
-  '{"introduction":"Sanskrit verbs conjugate for person, number, tense, and mood.","sections":[{"heading":"Present Tense (वर्तमान)","body":"भू (to be): अस्मि = I am, असि = you are, अस्ति = he is\\nस्मः = we are, स्थः = you two are, सन्ति = they are","devanagari":"अस्मि असि अस्ति स्मः स्थः सन्ति"},{"heading":"Imperfect (अनध्ययन)","body":"Past tense. Root + अ + endings.\\nअभवम् = I was, अभवः = you were, अभवत् = he was"},{"heading":"Future (भविष्यत्)","body":"Root + स्य + endings.\\nभविष्यामि = I will be, भविष्यसि = you will be, भविष्यति = he will be"},{"heading":"Perfect (परोक्ष)","body":"Reduplicated past.\\nबभूव = he was, बभूविथ = you were, बभूविम = we were"}],"summary":"4 tenses: present, imperfect, future, perfect — each with 9 forms (3×3)."}',
+  '{"introduction":"Sanskrit verbs conjugate for person, number, tense, and mood.","sections":[{"heading":"Present Tense (वर्तमान)","body":"भू (to be): अस्मि = I am, असि = you are, अस्ति = he is\\nस्मः = we are, स्थः = you two are, सन्ति = they are","devanagari":"अस्मि असि अस्ति स्मः स्थः सन्ति"},{"heading":"Imperfect (अनद्यतन / लङ्)","body":"Past tense. Root + अ + endings.\\nअभवम् = I was, अभवः = you were, अभवत् = he was"},{"heading":"Future (भविष्यत्)","body":"Root + स्य + endings.\\nभविष्यामि = I will be, भविष्यसि = you will be, भविष्यति = he will be"},{"heading":"Perfect (परोक्ष)","body":"Reduplicated past.\\nबभूव = he was, बभूविथ = you were, बभूविम = we were"}],"summary":"4 tenses: present, imperfect, future, perfect — each with 9 forms (3×3)."}',
   '[{"id":"q-vc1","prompt":"अस्मि = ?","options":["I am","You are","He is","We are"],"correctIndex":0,"explanation":"अस्मि = I am (1st person singular).","difficulty":2},{"id":"q-vc2","prompt":"Future tense suffix?","options":["-स्य-","-अ-","-तव्य-","-अनीय-"],"correctIndex":0,"explanation":"Future adds -स्य- before endings.","difficulty":3}]','{}',9),
 
 ('sandhi-rules','सन्धिः — Sound Merger Rules','Guṇa, Vṛddhi, Yaṇ, Visarga sandhi',3,'teen','35 min',
@@ -66,15 +66,15 @@ INSERT INTO lessons (id, title, subtitle, level, track, duration, content, quiz,
 
 -- LEVEL 4: Classical Texts (Undergrad)
 ('kalidasa','कालिदासः — The Poet Laureate','Abhijñānaśākuntalam 1.1',4,'undergrad','30 min',
-  '{"introduction":"Kālidāsa, the greatest Sanskrit poet, opens his play with a benedictory verse.","sections":[{"heading":"Verse 1.1","body":"आसीदुदन्तुमूलेषु सचेताः प्रभवः स्वयम् ।\\nविधाता तस्य चेतांसि विधिना विधिना दधे ॥","devanagari":"आसीदुदन्तुमूलेषु सचेताः प्रभवः स्वयम् । विधाता तस्य चेतांसि विधिना विधिना दधे ॥","transliteration":"āsīdudantumūleṣu sacetāḥ prabhavaḥ svayam |","examples":[{"text":"आसीत्","meaning":"was"},{"text":"प्रभवः","meaning":"origins"}]},{"heading":"Metre: Anuṣṭubh","body":"8 syllables per quarter. Pattern: ⏑⏑-- | ⏑⏑--\\nMost common Sanskrit metre."}],"summary":"Kālidāsa''s style = elegant simplicity (prasāda guṇa)."}',
+  '{"introduction":"Kālidāsa, the greatest Sanskrit poet, opens his play with a benedictory verse (Nāndī) invoking Śiva in his eight visible forms (Aṣṭamūrti).","sections":[{"heading":"Verse 1.1 (Nāndī)","body":"या सृष्टिः स्रष्टुराद्या वहति विधिहुतं या हविर्या च होत्री\\nये द्वे कालं विधत्तः श्रुतिविषयगुणा या स्थिता व्याप्य विश्वम् ।\\nयामाहुः सर्वबीजप्रकृतिरिति यया प्राणिनः प्राणवन्तः\\nप्रत्यक्षाभिः प्रपन्नस्तनुभिरवतु वस्ताभिरष्टाभिरीशः ॥","devanagari":"या सृष्टिः स्रष्टुराद्या वहति विधिहुतं या हविर्या च होत्री ये द्वे कालं विधत्तः श्रुतिविषयगुणा या स्थिता व्याप्य विश्वम् । यामाहुः सर्वबीजप्रकृतिरिति यया प्राणिनः प्राणवन्तः प्रत्यक्षाभिः प्रपन्नस्तनुभिरवतु वस्ताभिरष्टाभिरीशः ॥","transliteration":"yā sṛṣṭiḥ sraṣṭur ādyā vahati vidhihutaṃ yā havir yā ca hotrī ye dve kālaṃ vidhattaḥ śrutiviṣayaguṇā yā sthitā vyāpya viśvam |","examples":[{"text":"सृष्टिः","meaning":"creation"},{"text":"विश्वम्","meaning":"universe"}]},{"heading":"Metre: Sragdharā (vs Anuṣṭubh)","body":"Śākuntalam 1.1 is composed in Sragdharā metre (21 syllables per pāda).\\nNote: The most common Sanskrit metre overall is Anuṣṭubh (8 syllables per quarter)."}],"summary":"Kālidāsa''s style = elegant clarity (prasāda guṇa)."}',
   '[{"id":"q-kl1","prompt":"Most common Sanskrit metre?","options":["Triṣṭubh","Anuṣṭubh","Gāyatrī","Jagatī"],"correctIndex":1,"explanation":"Anuṣṭubh = 8 syllables/pāda.","difficulty":2}]','{}',14),
 
-('kalidasas- works', 'कालिदासस्य कृतयः — Kālidāsa''s Works', 'Overview of all Kālidāsa''s major works', 4, 'undergrad', '20 min',
+('kalidasa-works', 'कालिदासस्य कृतयः — Kālidāsa''s Works', 'Overview of all Kālidāsa''s major works', 4, 'undergrad', '20 min',
   '{"introduction":"Kālidāsa wrote 7 major works: 3 plays, 2 epic poems, 2 lyric poems.","sections":[{"heading":"नाटकानि — Plays","body":"1. अभिज्ञानशाकुन्तलम् — The Recognition of Śakuntalā\\n2. विक्रमोर्वशीयम् — Urvaśī Won by Valour\\n3. मालविकाग्निमित्रम् — Mālavikā and Agnimitra"},{"heading":"महाकाव्ये — Epic Poems","body":"1. रघुवंशम् — The Dynasty of Raghu\\n2. कुमारसम्भवम् — The Birth of Kumāra"},{"heading":"खण्डकाव्ये — Lyric Poems","body":"1. मेघदूतम् — The Cloud Messenger\\n2. ऋतुसंहारः — The Gathering of the Seasons"}],"summary":"Kālidāsa is the pinnacle of Classical Sanskrit literature (c. 4-5th CE)."}',
   '[{"id":"q-kl2","prompt":"How many plays did Kālidāsa write?","options":["2","3","5","7"],"correctIndex":1,"explanation":"3 plays: Śākuntalam, Vikramorvaśīyam, Mālavikāgnimitram.","difficulty":2},{"id":"q-kl3","prompt":"रघुवंशम् is a?","options":["Play","Epic poem","Lyric","Grammar"],"correctIndex":1,"explanation":"रघुवंशम् = epic poem (mahākāvya)","difficulty":2}]','{}',15),
 
 ('gita','श्रीमद्भगवद्गीता — The Song Celestial','Analysis of Gītā 2.47',4,'undergrad','25 min',
-  '{"introduction":"The Bhagavad Gītā is the most influential philosophical text of India.","sections":[{"heading":"Gītā 2.47 — Key Verse","body":"मा फलेषु कदाचन ।\\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥","devanagari":"मा फलेषु कदाचन मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि","transliteration":"mā phaleṣu kadācana mā karmaphalaseturbhūḥ","examples":[{"text":"मा","meaning":"not"},{"text":"फलेषु","meaning":"in fruits"}]},{"heading":"Key Concepts","body":"1. निष्कामकर्म — Action without desire\\n2. Right to work, not to fruits\\n3. Don''t be attached to inaction"}],"summary":"Kṛṣṇaś advice: do your duty without attachment to outcomes."}',
+  '{"introduction":"The Bhagavad Gītā is the most influential philosophical text of India.","sections":[{"heading":"Gītā 2.47 — Key Verse","body":"मा फलेषु कदाचन ।\\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥","devanagari":"मा फलेषु कदाचन मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि","transliteration":"mā phaleṣu kadācana mā karmaphalahetur bhūr","examples":[{"text":"मा","meaning":"not"},{"text":"फलेषु","meaning":"in fruits"}]},{"heading":"Key Concepts","body":"1. निष्कामकर्म — Action without desire\\n2. Right to work, not to fruits\\n3. Don''t be attached to inaction"}],"summary":"Kṛṣṇa''s advice: do your duty without attachment to outcomes."}',
   '[{"id":"q-gita1","prompt":"What is निष्कामकर्म?","options":["Action without desire","Desire without action","Renunciation","Meditation"],"correctIndex":0,"explanation":"निष्कामकर्म = action without attachment to results.","difficulty":3}]','{}',16),
 
 ('upanishad','उपनिषदः — The Upaniṣads','Introduction to Vedānta philosophy',4,'undergrad','30 min',
@@ -106,7 +106,7 @@ INSERT INTO lessons (id, title, subtitle, level, track, duration, content, quiz,
   '{"introduction":"Manuscript studies (codicology) covers the physical aspects of manuscripts.","sections":[{"heading":"Writing Materials","body":"1. तालपत्रम् — Palm leaf (most common in South India)\\n2. भूर्जपत्रम् — Birch bark (used in Kashmir, Nepal)\\n3. कागदम् — Paper (later period)\\n4. ताम्रपट्टः — Copper plate inscriptions"},{"heading":"Dating Methods","body":"1. Colophon dates (most reliable)\\n2. Paleographical comparison\\n3. Watermark analysis (paper)\\n4. Carbon-14 dating"},{"heading":"Cataloguing","body":"Essential metadata:\\n- Shelfmark, title, author\\n- Material, size, folios\\n- Script, date, scribe\\n- Incipit/explicit, colophon"}],"summary":"Understanding the physical manuscript is as important as its text."}',
   '[{"id":"q-ms1","prompt":"Palm leaf is called?","options":["भूर्जपत्रम्","तालपत्रम्","कागदम्","ताम्रपट्टः"],"correctIndex":1,"explanation":"तालपत्रम् = palm leaf manuscript.","difficulty":3}]','{}',23),
 
-('lexicography','अभिधानशास्त्रम् — Lexicography','sanskrit dictionaries and word studies',5,'graduate','30 min',
+('lexicography','अभिधानशास्त्रम् — Lexicography', 'Sanskrit dictionaries and word studies',5,'graduate','30 min',
   '{"introduction":"Sanskrit has a rich lexicographical tradition dating to the 4th century BCE.","sections":[{"heading":"Classical Dictionaries (कोशाः)","body":"1. अमरकोशः — Amara Siṃha (c. 5th CE), 10,000+ words in 3 books\\n2. हैमकोशः — Hemacandra (12th CE)\\n3. मेदिनीकोशः — Medinīkara (14th CE)"},{"heading":"Modern Dictionaries","body":"1. Monier-Williams Sanskrit-English Dictionary (1899)\\n2. Apte''s Practical Sanskrit-English Dictionary\\n3. Cologne Digital Sanskrit Lexicon"}],"summary":"The Amarakośa remains the most famous Sanskrit thesaurus with 3 kāṇḍas."}',
   '[{"id":"q-cx1","prompt":"Author of अमरकोशः?","options":["Hemacandra","Amara Siṃha","Medinīkara","Pāṇini"],"correctIndex":1,"explanation":"अमरकोशः = Amara Siṃha (5th CE).","difficulty":3}]','{}',24),
 
@@ -116,7 +116,7 @@ INSERT INTO lessons (id, title, subtitle, level, track, duration, content, quiz,
   '[{"id":"q-ce1","prompt":"lectio difficilior potior means?","options":["Easier is better","Harder reading is preferable","Follow oldest MS","Never emend"],"correctIndex":1,"explanation":"Scribes simplify, so the harder reading is likely original.","difficulty":5}]','{}',25),
 
 ('digital-humanities','डिजिटलमानविकी — Digital Humanities','TEI XML, text encoding, corpus linguistics',6,'phd','45 min',
-  '{"introduction":"Digital humanities uses computational methods for textual scholarship.","sections":[{"heading":"TEI XML Encoding","body":"Text Encoding Initiative = standard for digital scholarly editions.\\n<text><body><l>अग्निमीळे पुरोहितं</l><l>यज्ञस्य देवं रत्वीजम्</l></body></text>"},{"heading":"Computational Analysis","body":"1. Stemmatology algorithms — automated stemma construction\\n2. Authorship attribution — stylometric analysis\\n3. Text re-use detection — intertextuality mapping"},{"heading":"Digital Corpora","body":"1. GRETIL — Göttingen Register of Electronic Texts\\n2. SARIT — Search and Retrieval of Indic Texts\\n3. Sanskrit Library — digital Sanskrit corpus"}],"summary":"Digital tools are transforming how we edit, analyze, and publish Sanskrit texts."}',
+  '{"introduction":"Digital humanities uses computational methods for textual scholarship.","sections":[{"heading":"TEI XML Encoding","body":"Text Encoding Initiative = standard for digital scholarly editions.\\n<text><body><l>अग्निमीळे पुरोहितं</l><l>यज्ञस्य देवं ऋत्विजम्</l></body></text>"},{"heading":"Computational Analysis","body":"1. Stemmatology algorithms — automated stemma construction\\n2. Authorship attribution — stylometric analysis\\n3. Text re-use detection — intertextuality mapping"},{"heading":"Digital Corpora","body":"1. GRETIL — Göttingen Register of Electronic Texts\\n2. SARIT — Search and Retrieval of Indic Texts\\n3. Sanskrit Library — digital Sanskrit corpus"}],"summary":"Digital tools are transforming how we edit, analyze, and publish Sanskrit texts."}',
   '[{"id":"q-dh1","prompt":"TEI stands for?","options":["Text Encoding Initiative","Technical Edition Index","Textual Editing Institute","The Electronic Index"],"correctIndex":0,"explanation":"TEI = Text Encoding Initiative.","difficulty":5}]','{}',26),
 
 ('publication','विद्वत्प्रकाशनम् — Scholarly Publication','Writing and publishing research in Sanskrit studies',6,'phd','30 min',
@@ -140,9 +140,9 @@ INSERT INTO dictionary (word, root, meanings, derivations, pos) VALUES
 ('पिता', NULL,'{"father"}','{"पैतृक", "पितृत्व"}','noun'),
 ('भ्राता', NULL,'{"brother"}','{"भ्रातृक", "भ्रातृत्व"}','noun'),
 ('स्वसा', NULL,'{"sister"}','{"स्वसृक", "स्वसृत्व"}','noun'),
-('पुत्र', NULL,'{"son", "child"}','{"पुत्री", "पौत्र", "पुत्रकामेश्टि"}','noun'),
+('पुत्र', NULL,'{"son", "child"}','{"पुत्री", "पौत्र", "पुत्रकामेष्टि"}','noun'),
 ('दुहिता', NULL,'{"daughter"}','{"दुहितृक"}','noun'),
-('राजन्', NULL,'{"king", "ruler"}','{"राज्ञी", "राज्य", "राजपुत्र", "राणी"}','noun'),
+('राजन्', NULL,'{"king", "ruler"}','{"राज्ञी", "राज्य", "राजपुत्र", "राजर्षि"}','noun'),
 ('ब्राह्मण', NULL,'{"brāhmaṇa", "priest", "learned man"}','{"ब्राह्मणी", "ब्राह्मण्य"}','noun'),
 ('मनुष्य', 'मन्','{"human", "man", "person"}','{"मानव", "मानुष", "मानवता"}','noun'),
 
@@ -153,7 +153,7 @@ INSERT INTO dictionary (word, root, meanings, derivations, pos) VALUES
 ('वायु', NULL,'{"wind", "air", "wind-god"}','{"वायव्य", "वायुमण्डल"}','noun'),
 ('पृथ्वी', NULL,'{"earth", "ground"}','{"पार्थिव", "पार्थ"}','noun'),
 ('आकाश', NULL,'{"sky", "space", "ether"}','{"आकाशीय"}','noun'),
-('अग्नि', 'अञ्च्','{"fire"}','{"आग्नेय", "अग्निकार्य"}','noun'),
+('तेजस्', 'तिज्','{"splendor", "fire", "light", "energy"}','{"तेजस्विन्", "तेजोमय"}','noun'),
 ('समुद्र', NULL,'{"ocean", "sea"}','{"सामुद्र", "सामुद्रिक"}','noun'),
 ('पर्वत', NULL,'{"mountain"}','{"पार्वत", "पार्वती"}','noun'),
 ('नदी', NULL,'{"river"}','{"नादेय", "नदीमुख"}','noun'),
@@ -228,7 +228,7 @@ INSERT INTO dictionary (word, root, meanings, derivations, pos) VALUES
 ('नृत्यति', 'नृत्','{"dances"}','{"नृत्य", "नर्तक"}','verb'),
 ('गायति', 'गै','{"sings"}','{"गान", "गायक", "गीत"}','verb'),
 ('तिष्ठति', 'स्था','{"stands", "stays", "remains"}','{"स्थित", "स्थान", "स्थिर"}','verb'),
-('आसीत', 'आस्','{"sits", "was seated"}','{"आसन", "आसीन"}','verb'),
+('वसति', 'वस्','{"lives", "dwells", "stays"}','{"वास", "निवास", "उषित"}','verb'),
 ('शेते', 'शी','{"lies", "sleeps", "reclines"}','{"शयन", "शय्या"}','verb'),
 ('इच्छति', 'इष्','{"desires", "wishes", "seeks"}','{"इच्छा", "इष्ट"}','verb'),
 ('प्रच्छति', 'प्रच्छ्','{"asks", "inquires"}','{"प्रश्न", "पृष्ट"}','verb'),
@@ -329,7 +329,7 @@ INSERT INTO dictionary (word, root, meanings, derivations, pos) VALUES
 INSERT INTO texts (id, title, author, period, content, language) VALUES
 
 -- Vedic Period (1500-500 BCE)
-('rv-1-1','Ṛgveda 1.1 — Agni Sūkta','Traditional','1500-1200 BCE','अग्निमीळे पुरोहितं यज्ञस्य देवं रत्वीजम् । होतारं रत्नधातमम् ।','Vedic Sanskrit'),
+('rv-1-1','Ṛgveda 1.1 — Agni Sūkta','Traditional','1500-1200 BCE','अग्निमीळे पुरोहितं यज्ञस्य देवं ऋत्विजम् । होतारं रत्नधातमम् ।','Vedic Sanskrit'),
 ('rv-1-89','Ṛgveda 1.89 — Śarma Sūkta','Traditional','1500-1200 BCE','आ नो भद्राः क्रतवो यन्तु विश्वतः । अदब्धासो अपरीतास उद्भिदः । देवा नो यथा सदमिद् वृद्धे असन्नप्रायुवो रक्षितारो दिवे-दिवे ॥','Vedic Sanskrit'),
 ('rv-10-129','Ṛgveda 10.129 — Nāsadīya Sūkta','Traditional','1500-1200 BCE','नासदासीन्नो सदासीत्तदानीं नासीद्रजो नो व्योमा परो यत् । किमावरीवः कुह कस्य शर्मन्नम्भः किमासीद्गहनं गभीरम् ॥','Vedic Sanskrit'),
 ('rv-10-90','Ṛgveda 10.90 — Puruṣa Sūkta','Traditional','1500-1200 BCE','सहस्रशीर्षा पुरुषः सहस्राक्षः सहस्रपात् । स भूमिं विश्वतो वृत्वा अत्यतिष्ठद्दशाङ्गुलम् ॥','Vedic Sanskrit'),
@@ -350,7 +350,7 @@ INSERT INTO texts (id, title, author, period, content, language) VALUES
 ('gita-18-66','Bhagavad Gītā 18.66','Vyāsa','~200 BCE','सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज । अहं त्वा सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः ॥','Classical Sanskrit'),
 
 -- Classical Poetry (500 CE - 1200 CE)
-('kalidasa-1-1','Abhijñānaśākuntalam 1.1','Kālidāsa','~4th CE','आसीदुदन्तुमूलेषु सचेताः प्रभवः स्वयम् । विधाता तस्य चेतांसि विधिना विधिना दधे ॥','Classical Sanskrit'),
+('kalidasa-1-1','Abhijñānaśākuntalam 1.1','Kālidāsa','~4th CE','या सृष्टिः स्रष्टुराद्या वहति विधिहुतं या हविर्या च होत्री ये द्वे कालं विधत्तः श्रुतिविषयगुणा या स्थिता व्याप्य विश्वम् । यामाहुः सर्वबीजप्रकृतिरिति यया प्राणिनः प्राणवन्तः प्रत्यक्षाभिः प्रपन्नस्तनुभिरवतु वस्ताभिरष्टाभिरीशः ॥','Classical Sanskrit'),
 ('kalidasa-1-2','Abhijñānaśākuntalam 1.2','Kālidāsa','~4th CE','वाचं यन्त्रितवाग्भिरादृतगिरः संस्कारशुद्ध्यर्थिनाम् । बालव्याकरणैरिवाभ्युदयते मूकाः पिशाचा अपि ॥','Classical Sanskrit'),
 ('raghuvamsa-1-1','Raghuvaṃśa 1.1','Kālidāsa','~4th CE','वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये । जगतः पितरौ वन्दे पार्वतीपरमेश्वरौ ॥','Classical Sanskrit'),
 ('meghaduta-1-1','Meghadūta 1.1','Kālidāsa','~4th CE','कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः शापेनास्तङ्गमितमहिमा वर्षभोग्येण भर्तुः । यक्षश्चक्रे जनकतनयास्नानपुण्योदकेषु स्निग्धच्छायातरुषु वसतिं रामगिर्याश्रमेषु ॥','Classical Sanskrit'),
@@ -358,19 +358,19 @@ INSERT INTO texts (id, title, author, period, content, language) VALUES
 ('hitopadesha-1-1','Hitopadeśa 1.1','Nārāyaṇa','~9th CE','मित्रलाभः सुहृत्प्राप्तिः सङ्ग्रहः प्रीतिरेव च । एते रसा हि मैत्रस्य प्रीतिं कुर्वन्ति देहिनाम् ॥','Classical Sanskrit'),
 
 -- Medieval & Later (1200 CE - 1800 CE)
-('siddhanta-kaumudi-1','siddhānta Kaumudī 1','Bhaṭṭojī Dīkṣita','~17th CE','अथ शब्दानुशासनम् । शब्दाः कस्यचिद्वाचकाः । ते च व्याकरणेन साधवः प्रयुज्यन्ते ॥','Classical Sanskrit'),
+('siddhanta-kaumudi-1', 'Siddhānta Kaumudī 1','Bhaṭṭojī Dīkṣita','~17th CE','अथ शब्दानुशासनम् । शब्दाः कस्यचिद्वाचकाः । ते च व्याकरणेन साधवः प्रयुज्यन्ते ॥','Classical Sanskrit'),
 
   -- Class 1-5 / Child Level (Primary School)
   ('panchatantra-mitralabha','Mitralābha — Winning Friends','Various','~3rd CE','मित्रलाभः सुहृत्प्राप्तिः सङ्ग्रहः प्रीतिरेव च । एते हि बन्धवः सत्ये धर्मे च परिनिष्ठिताः ॥','Classical Sanskrit'),
   ('panchatantra-kakolukiyam','Kākolūkīyam — Crows and Owls','Various','~3rd CE','काकोलूकीयमाख्यानं शत्रूणां यत्र भेदनम् । तत्र नीतिरिह ज्ञेया राजनीतिर्विशेषतः ॥','Classical Sanskrit'),
   ('panchatantra-hamsakurma','Haṃsa-Kūrma — The Swan and the Tortoise','Various','~3rd CE','हंसः कूर्मश्च मित्रेण वनं प्राप्तौ सुखेन हि । मैत्री बलवती येषां न तेषां दुःखमण्वपि ॥','Classical Sanskrit'),
-  ('subhashita-1','subhāṣita 1 — On Virtue','Various','~5th CE','सत्यं हि परमं धर्मं सत्यात्परतरं न हि । सत्येन सर्वं शुद्ध्येत सत्यं स्वर्गस्य सोपानम् ॥','Classical Sanskrit'),
-  ('subhashita-2','subhāṣita 2 — On Learning','Various','~5th CE','विद्या विवादाय धनं मदाय शक्तिः परेषां परिपीडनाय । खलस्य साधोर्विपरीतमेतद्विद्या दमाय द्रविणं त्यागाय ॥','Classical Sanskrit'),
-  ('subhashita-3','subhāṣita 3 — On Friendship','Various','~5th CE','आपदि मित्रं जानीयात्कार्ये च प्रतिपादने । भये दुःखे च संप्राप्ते भवन्ति हि सहायिनः ॥','Classical Sanskrit'),
-  ('subhashita-4','subhāṣita 4 — On Effort','Various','~5th CE','उद्योगिनं पुरुषसिंहमुपैति लक्ष्मीर्दैवेन देयमिति कापुरुषा वदन्ति । दैवं निहत्य कुरु पौरुषमात्मशक्त्या यत्ने कृते यदि न सिध्यति कोऽत्र दोषः ॥','Classical Sanskrit'),
-  ('subhashita-5','subhāṣita 5 — On Wisdom','Various','~5th CE','क्षमा बलमशक्तानां क्षमा बलं शक्तानाम् । क्षमा शक्तस्य सद्गुणः क्षमा सत्यस्य धारणम् ॥','Classical Sanskrit'),
+  ('subhashita-1','Subhāṣita 1 — On Virtue','Various','~5th CE','सत्यं हि परमं धर्मं सत्यात्परतरं न हि । सत्येन सर्वं शुद्ध्येत सत्यं स्वर्गस्य सोपानम् ॥','Classical Sanskrit'),
+  ('subhashita-2','Subhāṣita 2 — On Learning','Various','~5th CE','विद्या विवादाय धनं मदाय शक्तिः परेषां परिपीडनाय । खलस्य साधोर्विपरीतमेतद्विद्या दमाय द्रविणं त्यागाय ॥','Classical Sanskrit'),
+  ('subhashita-3','Subhāṣita 3 — On Friendship','Various','~5th CE','आपदि मित्रं जानीयात्कार्ये च प्रतिपादने । भये दुःखे च संप्राप्ते भवन्ति हि सहायिनः ॥','Classical Sanskrit'),
+  ('subhashita-4','Subhāṣita 4 — On Effort','Various','~5th CE','उद्योगिनं पुरुषसिंहमुपैति लक्ष्मीर्दैवेन देयमिति कापुरुषा वदन्ति । दैवं निहत्य कुरु पौरुषमात्मशक्त्या यत्ने कृते यदि न सिध्यति कोऽत्र दोषः ॥','Classical Sanskrit'),
+  ('subhashita-5','Subhāṣita 5 — On Wisdom','Various','~5th CE','क्षमा बलमशक्तानां क्षमा बलं शक्तानाम् । क्षमा शक्तस्य सद्गुणः क्षमा सत्यस्य धारणम् ॥','Classical Sanskrit'),
   ('varnamala-1','Varnamālā — Alphabet Practice 1','Various','~1st CE','अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ अं अः । क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल व श ष स ह ॥','Classical Sanskrit'),
-  ('varnamala-2','Varnamālā — Alphabet Practice 2','Various','~1st CE','स्वरा द्वादश विज्ञेया व्यञ्जनानि च त्रिंशत् । अयुक्ता न तु वर्णाः स्युः संयुक्ता धातवः स्मृताः ॥','Classical Sanskrit'),
+  ('varnamala-2','Varnamālā — Alphabet Practice 2','Various','~1st CE','अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ चतुर्दश स्वराः । कादयो मकारान्ताः पञ्चविंशतिः स्पर्शाः यरलवा अन्तःस्थाः शषसहा ऊष्माणश्चेति त्रयस्त्रिंशद् व्यञ्जनानि ॥','Classical Sanskrit'),
 
   -- Class 6-10 / Teen Level (Secondary School)
   ('hitopadesha-2-1','Hitopadeśa 2.1 — Mitrasamprayoga','Nārāyaṇa','~9th CE','सुहृदां हितकर्तॄणां मैत्री नित्यं प्रवर्धते । यथा समुद्रगामिन्यो नद्यः पर्वतनिम्नगाः ॥','Classical Sanskrit'),
@@ -380,7 +380,7 @@ INSERT INTO texts (id, title, author, period, content, language) VALUES
   ('bhartrhari-niti-5','Nītiśataka 5','Bhartṛhari','~5th CE','विद्या नाम नरस्य रूपमधिकं प्रच्छन्नगुप्तं धनम् । विद्या भोगकरी यशस्सुखकरी विद्या गुरूणां गुरुः ॥','Classical Sanskrit'),
   ('bhartrhari-niti-10','Nītiśataka 10','Bhartṛhari','~5th CE','यस्यास्ति वित्तं स नरः कुलीनः स पण्डितः स श्रुतवान् गुणज्ञः । स एव वक्ता स च दर्शनीयः सर्वे गुणाः काञ्चनमाश्रयन्ति ॥','Classical Sanskrit'),
   ('amaru-1','Amaruśataka 1','Amaru','~7th CE','नालं वपुर्गुणविशेषकथासु तस्या वक्तुं चिराद्विरहितस्य ममेदृशी गतिः । स्मर्तुं पुनः सखि भवेत्सुमतेः सहायः संपूर्णकाममनसां हि न किंचिदस्ति ॥','Classical Sanskrit'),
-  ('amaru-5','Amaruśataka 5','Amaru','~7th CE','किं तेन शास्त्रविदुषा किं तेन सुविचक्षणः । यस्य नास्ति रतिप्रीतिः कवित्वं निरसा यथा ॥','Classical Sanskrit'),
+  ('amaru-5','Amaruśataka 5','Amaru','~7th CE','शून्यं वासगृहं विलोक्य शयनादुत्थाय किञ्चिच्छनैर्निद्राव्याजमुपागतस्य सुचिरं निर्वण्य पत्युर्मुखम् । विश्रब्धं परिचुम्ब्य जातपुलकामालोक्य गण्डस्थलीं लज्जानम्रमुखी प्रियेण हसता बाला चिरं चुम्बिता ॥','Classical Sanskrit'),
   ('amaru-10','Amaruśataka 10','Amaru','~7th CE','प्रेम्णा तया सह समागमसिद्धये मे चेतः समुत्सुकमिव प्रतिभाति नित्यम् । सा चापि मामनुपमेयगुणं निजं च धत्ते हृदि प्रणयिनं किमतः परं मे ॥','Classical Sanskrit'),
   ('chanakya-1','Cāṇakya Nīti 1','Cāṇakya','~3rd CE','अहिंसा सत्यमक्रोधस्त्यागः शान्तिरपैशुनम् । दया भूतेष्वलोलुप्त्वं मार्दवं ह्रीरचापलम् ॥','Classical Sanskrit'),
   ('chanakya-5','Cāṇakya Nīti 5','Cāṇakya','~3rd CE','आयुषः क्षण एकोऽपि न लभ्यः स्वर्णकोटिभिः । स चेन्निरर्थकं नीतः किं नु खेदकरं ततः ॥','Classical Sanskrit'),
@@ -411,12 +411,12 @@ INSERT INTO texts (id, title, author, period, content, language) VALUES
   ('brahmasutra-1-1','Brahma Sūtra 1.1','Bādarāyaṇa','~2nd CE','अथातो ब्रह्मजिज्ञासा । जन्माद्यस्य यतः ॥','Classical Sanskrit'),
   ('sankara-bhasya-1','Śāṅkara Bhāṣya 1 (on Brahma Sūtra)','Śaṅkara','~8th CE','सर्वं हि इदं ब्रह्म अव्ययम् नेति नेति ब्राह्मणम् । अत आहुः सर्वं ब्रह्म इत्येतेन सर्वं ब्रह्म इत्युपासीत ॥','Classical Sanskrit'),
   ('ramanuja-bhasya-1','Śrī Bhāṣya 1 (on Brahma Sūtra)','Rāmānuja','~11th CE','ब्रह्मविद्यायाः प्रतिपाद्यं ब्रह्म तद्गुणकथनं च । तस्य च नित्यानन्दैकतानत्वं सर्वशक्तित्वं च ॥','Classical Sanskrit'),
-  ('madhavacarya-1','sarvadarśanasaṅgraha 1','Mādhava','~14th CE','चार्वाकस्य मतं यत्र लोकायतमिति स्मृतम् । तत्र प्रमाणं प्रत्यक्षं भूतचतुष्टयात्मकम् ॥','Classical Sanskrit'),
+  ('madhavacarya-1','Sarvadarśanasaṅgraha 1','Mādhava','~14th CE','चार्वाकस्य मतं यत्र लोकायतमिति स्मृतम् । तत्र प्रमाणं प्रत्यक्षं भूतचतुष्टयात्मकम् ॥','Classical Sanskrit'),
   ('mahabhasya-1-1','Mahābhāṣya 1.1','Patañjali','~2nd BCE','अथ शब्दानुशासनम् । शब्दः कस्यचिद्वाचकः । तस्य व्याकरणेन साधुत्वं भवति ॥','Classical Sanskrit'),
   ('kasika-1-1','Kāśikā Vṛtti 1.1','Vāmana & Jayāditya','~7th CE','वृद्धिरादैच् । वृद्धिसंज्ञा भवन्ति आदैच् प्रत्याहारः । आ इ ए ऐ ओ औ इत्यर्थः ॥','Classical Sanskrit'),
   ('kavyaprakasa-1-1','Kāvyaprakāśa 1.1','Mammaṭa','~11th CE','नियतिकृतनियमरहितां ह्लादैकमयीमनन्यपरतन्त्राम् । नवरसरुचिरां निर्मितिमादधती भारती कवेः जयति ॥','Classical Sanskrit'),
   ('dhavanyaloka-1-1','Dhvanyāloka 1.1','Ānandavardhana','~9th CE','काव्यस्यात्मा ध्वनिः । यत्रार्थः शब्दो वा स्वार्थं व्यञ्जयति न केवलं व्यञ्जकत्वेन व्याप्रियते ॥','Classical Sanskrit'),
-  ('sahityadarpana-1-1','sāhityadarpaṇa 1.1','Viśvanātha','~14th CE','काव्यं यशसेऽर्थकृते व्यवहारविदे शिवेतरक्षतये । सद्यः परनिर्वृतये कान्तासम्मिततयोपदेशयुजे ॥','Classical Sanskrit'),
+  ('sahityadarpana-1-1','Sāhityadarpaṇa 1.1','Viśvanātha','~14th CE','काव्यं यशसेऽर्थकृते व्यवहारविदे शिवेतरक्षतये । सद्यः परनिर्वृतये कान्तासम्मिततयोपदेशयुजे ॥','Classical Sanskrit'),
   ('natya-sastra-1-1','Nāṭyaśāstra 1.1','Bharata','~2nd CE','नाट्यशास्त्रं प्रवक्ष्यामि ब्रह्मणा यदुदाहृतम् । इति पूर्वं महाभागैर्विप्रैरध्यापितं पुरा ॥','Classical Sanskrit'),
 
   -- PhD / Professor Reference Level
@@ -425,10 +425,10 @@ INSERT INTO texts (id, title, author, period, content, language) VALUES
   ('research-article-1','Research Article — Textual Transmission','Various','c. 2005','हस्तलेखानां प्रसारणस्य अध्ययनं काश्मीरदेशे शारदालिप्या विशेषतः महत्त्वपूर्णम् । वैदिकशास्त्रीयग्रन्थानां रक्षणे शारदालिपिः प्रमुखा आसीत् ॥','Classical Sanskrit'),
   ('research-article-2','Research Article — Stemmatic Analysis','Various','c. 2010','योगभाष्यस्य हस्तलेखपरम्परायां फिलोजेनेटिकपद्धतिः प्रयुक्ता । गणकीयस्तेम्मेटिकी पारम्परिकां पाठसमालोचनां पूरयितुं शक्नोति ॥','Classical Sanskrit'),
   ('mw-dict-intro','Monier-Williams Dictionary — Introduction','Monier Monier-Williams','c. 1899','संस्कृतभाषायाः कोशोऽयम् वैदिकशास्त्रीयसाहित्यस्य शब्दान् धारयति । निरुक्तिसहिताः प्रमाणसहिताश्च शब्दा अत्रोपस्थापिताः ॥','Classical Sanskrit'),
-  ('st-petersburg-lex-intro','st. Petersburg Lexicon — Introduction','Otto von Böhtlingk','c. 1855','संस्कृतव्याकरणस्य गहनं शास्त्रं व्युत्पत्तिप्रक्रियाभिः सहितम् । अस्मिन् महाकोशे वैदिकलौकिकशब्दानाम् विशदं विवेचनं कृतम् ॥','Classical Sanskrit'),
-  ('stemmatics-intro','stemmatics — An Introduction','Various','c. 2000','हस्तलेखानाम् वंशवृक्षनिर्माणं स्तेम्मेटिकी इति कथ्यते । अनया पद्धत्या पाठानाम् ऐतिहासिकः क्रमः निर्णीयते ॥','Classical Sanskrit'),
+  ('st-petersburg-lex-intro','St. Petersburg Lexicon — Introduction','Otto von Böhtlingk','c. 1855','संस्कृतव्याकरणस्य गहनं शास्त्रं व्युत्पत्तिप्रक्रियाभिः सहितम् । अस्मिन् महाकोशे वैदिकलौकिकशब्दानाम् विशदं विवेचनं कृतम् ॥','Classical Sanskrit'),
+  ('stemmatics-intro','Stemmatics — An Introduction','Various','c. 2000','हस्तलेखानाम् वंशवृक्षनिर्माणं स्तेम्मेटिकी इति कथ्यते । अनया पद्धत्या पाठानाम् ऐतिहासिकः क्रमः निर्णीयते ॥','Classical Sanskrit'),
   ('paleography-ref-1','Indian Paleography — Reference','A. H. Dani','c. 1963','ब्राह्मीलिपेः विकासः तृतीयशताब्द्याः पूर्वतः मध्यकालपर्यन्तम् । कुषाणगुप्तसिद्धमातृकादयः प्रादेशिकभेदाः सन्ति ॥','Classical Sanskrit'),
-  ('codicology-ref-1','sanskrit Codicology — Reference','Various','c. 2008','हस्तलेखानाम् भौतिकलक्षणानि अत्र वर्णितानि । तालपत्रभूर्जपत्रकागदानाम् निर्माणं लेखनसाधनं च ॥','Classical Sanskrit'),
+  ('codicology-ref-1', 'Sanskrit Codicology — Reference','Various','c. 2008','हस्तलेखानाम् भौतिकलक्षणानि अत्र वर्णितानि । तालपत्रभूर्जपत्रकागदानाम् निर्माणं लेखनसाधनं च ॥','Classical Sanskrit'),
   ('textual-scholarship-1','Textual Scholarship — Methods and Practice','Various','c. 2015','हस्तलेखप्राप्तेः आरभ्य समालोचनसंस्करणपर्यन्तम् सम्पूर्णा प्रक्रिया इहोपदिश्यते । सङ्ग्रहः संशोधनम् उपपादनं च ॥','Classical Sanskrit');
 
 -- ════════════════════════════════════════════════════════════════
@@ -436,9 +436,9 @@ INSERT INTO texts (id, title, author, period, content, language) VALUES
 -- ════════════════════════════════════════════════════════════════
 
 INSERT INTO manuscripts (name, script, period, transcription) VALUES
-('Ṛgveda MS — Devanāgarī (12th CE)', 'Devanagari', '12th CE', 'अग्निमीळे पुरोहितं यज्ञस्य देवं रत्वीजम् । होतारं रत्नधातमम् ॥'),
+('Ṛgveda MS — Devanāgarī (12th CE)', 'Devanagari', '12th CE', 'अग्निमीळे पुरोहितं यज्ञस्य देवं ऋत्विजम् । होतारं रत्नधातमम् ॥'),
 ('Aṣṭādhyāyī MS — Grantha (14th CE)', 'Grantha', '14th CE', 'वृद्धिरादैच् । अदेङ् गुणः ।'),
-('Abhijñānaśākuntalam — Devanāgarī (15th CE)', 'Devanagari', '15th CE', 'आसीदुदन्तुमूलेषु सचेताः प्रभवः स्वयम् । विधाता तस्य चेतांसि विधिना विधिना दधे ॥'),
+('Abhijñānaśākuntalam — Devanāgarī (15th CE)', 'Devanagari', '15th CE', 'या सृष्टिः स्रष्टुराद्या वहति विधिहुतं या हविर्या च होत्री ये द्वे कालं विधत्तः श्रुतिविषयगुणा या स्थिता व्याप्य विश्वम् । यामाहुः सर्वबीजप्रकृतिरिति यया प्राणिनः प्राणवन्तः प्रत्यक्षाभिः प्रपन्नस्तनुभिरवतु वस्ताभिरष्टाभिरीशः ॥'),
 ('Nyāya Sūtra — Grantha (16th CE)', 'Grantha', '16th CE', 'प्रमाणप्रमेयसंशयप्रयोजनदृष्टान्तसिद्धान्तावयवः'),
 ('Bhagavad Gītā — Devanāgarī (17th CE)', 'Devanagari', '17th CE', 'मा फलेषु कदाचन । मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥'),
 ('Yoga Sūtra — Grantha (16th CE)', 'Grantha', '16th CE', 'अथ योगानुशासनम् । योगः चित्तवृत्तिनिरोधः ॥'),
@@ -446,20 +446,20 @@ INSERT INTO manuscripts (name, script, period, transcription) VALUES
 ('Upaniṣad Collection — Grantha (15th CE)', 'Grantha', '15th CE', 'असतो मा सद्गमय । तमसो मा ज्योतिर्गमय । मृत्योर्मा अमृतं गमय ॥'),
 ('Bṛhadāraṇyaka — Devanāgarī (14th CE)', 'Devanagari', '14th CE', 'ब्रह्म वा इदमग्र आसीत्, तदात्मानमेवावेत्, अहं ब्रह्मास्मीति ।'),
 ('Meghadūta — Devanāgarī (16th CE)', 'Devanagari', '16th CE', 'कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः'),
-('siddhānta Kaumudī — Devanāgarī (18th CE)', 'Devanagari', '18th CE', 'अथ शब्दानुशासनम् । शब्दाः कस्यचिद्वाचकाः ।'),
+('Siddhānta Kaumudī — Devanāgarī (18th CE)', 'Devanagari', '18th CE', 'अथ शब्दानुशासनम् । शब्दाः कस्यचिद्वाचकाः ।'),
 ('Palm-leaf MS — Vedic Hymns (Grantha, 13th CE)', 'Grantha', '13th CE', 'आ नो भद्राः क्रतवो यन्तु विश्वतः ।'),
-  ('Kashmiri Birch-bark MS — Rgveda (10th CE)', 'sharada', '10th CE', 'अग्निमीळे पुरोहितं यज्ञस्य देवं रत्वीजम् । होतारं रत्नधातमम् ॥'),
+  ('Kashmiri Birch-bark MS — Rgveda (10th CE)', 'Śāradā', '10th CE', 'अग्निमीळे पुरोहितं यज्ञस्य देवं ऋत्विजम् । होतारं रत्नधातमम् ॥'),
   ('Nyāya MS — Grantha (15th CE)', 'Grantha', '15th CE', 'प्रमाणप्रमेयसंशयप्रयोजनदृष्टान्तसिद्धान्तावयवतर्कनिर्णयः'),
-  ('sāṃkhya MS — Grantha (16th CE)', 'Grantha', '16th CE', 'पुरुषः प्रकृतिश्चेति द्वे नित्ये अव्यये मते सुखदुःखप्रदातारौ बन्धमोक्षकरौ तथा ॥'),
+  ('Sāṃkhya MS — Grantha (16th CE)', 'Grantha', '16th CE', 'पुरुषः प्रकृतिश्चेति द्वे नित्ये अव्यये मते सुखदुःखप्रदातारौ बन्धमोक्षकरौ तथा ॥'),
   ('Bhagavata Purana MS — Devanagari (17th CE)', 'Devanagari', '17th CE', 'जन्माद्यस्य यतोऽन्वयादितरतश्चार्थेष्वभिज्ञः स्वराट् तेने ब्रह्म हृदा य आदिकवये मुह्यन्ति यत्सूरयः ॥'),
   ('Gita Govinda MS — Devanagari (18th CE)', 'Devanagari', '18th CE', 'मेघैर्मेदुरमम्बरं वनभुवः श्यामास्तमालद्रुमैः नक्तं भीरुः किमयम् यमुनातीरे वसति वने ॥'),
-  ('sankara Bhashya MS — Grantha (16th CE)', 'Grantha', '16th CE', 'ब्रह्म सत्यं जगन्मिथ्या जीवो ब्रह्मैव नापरः अनेन वेद्यं सच्छास्त्रम् इत्थं वेदान्तडिण्डिमः ॥'),
+  ('Śaṅkara Bhashya MS — Grantha (16th CE)', 'Grantha', '16th CE', 'ब्रह्म सत्यं जगन्मिथ्या जीवो ब्रह्मैव नापरः अनेन वेद्यं सच्छास्त्रम् इत्थं वेदान्तडिण्डिमः ॥'),
   ('Ramanuja Bhashya MS — Devanagari (17th CE)', 'Devanagari', '17th CE', 'अखिलहेयप्रत्यनीककल्याणैकतानः सर्वज्ञः सर्वशक्तिः परमकारुणिकः परमात्मा ब्रह्मशब्दवाच्यः ॥'),
-  ('sharada MS — Kashmir (14th CE)', 'sharada', '14th CE', 'कालिका शारदा विद्या काश्मीरेषु प्रतिष्ठिता हस्तलेखा प्रसिद्धेयं शारदालिपिलिखिता ॥'),
+  ('Śāradā MS — Kashmir (14th CE)', 'Śāradā', '14th CE', 'कालिका शारदा विद्या काश्मीरेषु प्रतिष्ठिता हस्तलेखा प्रसिद्धेयं शारदालिपिलिखिता ॥'),
   ('Tibetan MS — Sanskrit canon (13th CE)', 'Tibetan', '13th CE', 'बुद्धं शरणं गच्छामि धर्मं शरणं गच्छामि संघं शरणं गच्छामि इत्यादि बौद्धधर्मस्य संस्कृतग्रन्थाः ॥'),
   ('Critical Edition Apparatus — Devanagari (20th CE)', 'Devanagari', '20th CE', 'पाठभेदाः कोष्ठके दर्शिताः अत्र प्रमुखाः हस्तलेखाः आधारत्वेन गृहीताः अ आ इति पाठभेदः ॥'),
   ('Transcript of MS B — Devanagari (19th CE)', 'Devanagari', '19th CE', 'अथ मूलपाठः अत्र हस्तलेखस्य यथादर्शनं प्रतिलिपिः प्रस्तूयते पाठभेदाः कोष्ठके सूचिताः ॥'),
-  ('Kashmiri Birch-bark MS — Mahabharata (11th CE)', 'sharada', '11th CE', 'नारायणं नमस्कृत्य नरं चैव नरोत्तमम् देवीं सरस्वतीं चैव ततो जयमुदीरयेत् ॥'),
+  ('Kashmiri Birch-bark MS — Mahabharata (11th CE)', 'Śāradā', '11th CE', 'नारायणं नमस्कृत्य नरं चैव नरोत्तमम् देवीं सरस्वतीं चैव ततो जयमुदीरयेत् ॥'),
   ('Nepalese MS — Bhujimol script (12th CE)', 'Bhujimol', '12th CE', 'प्रज्ञापारमिताहृदयं सूत्रं भुजिमोललिप्या लिखितम् नेपालदेशे प्राप्तमिदं हस्तलेखं प्राचीनतमम् ॥'),
   ('Jain Kalpasutra MS — Devanagari (16th CE)', 'Devanagari', '16th CE', 'अरिहन्त अरिहन्त अरिहन्त सुगतं भगवन्तं वर्धमानं नमस्कृत्य कल्पसूत्रं प्रवक्ष्यामि ॥'),
   ('Collation Notebook — Devanagari (20th CE)', 'Devanagari', '20th CE', 'अ आ इ ई एते पाठभेदाः सर्वेषु हस्तलेखेषु परीक्षिताः रामः रामम् रामेण इति विभक्तिभेदाः सङ्गृहीताः ॥');
@@ -472,18 +472,18 @@ INSERT INTO books (id, title, title_sanskrit, author, period, category, level_mi
 
 -- Level 0-1 (Child / Primary)
 ('varnamala', 'Varnamala — Alphabet Primer', 'वर्णमाला', NULL, 'Modern', 'children', 0, 1, 'child', 13, 'Complete Devanāgarī alphabet with pronunciation guides and practice exercises', '🔤', 1),
-('child-stories', 'Children''s Stories', 'बालकथाः', 'Traditional', 'Modern', 'children', 0, 1, 'child', 12,'simple Sanskrit stories from Panchatantra and folklore with vocabulary notes', '📚', 2),
+('child-stories', 'Children''s Stories', 'बालकथाः', 'Traditional', 'Modern', 'children', 0, 1, 'child', 12, 'Simple Sanskrit stories from Panchatantra and folklore with vocabulary notes', '📚', 2),
 ('first-lessons', 'First Lessons', 'प्रथमपाठाः', NULL, 'Modern', 'children', 0, 1, 'child', 10, 'Basic vocabulary, colors, numbers, family members, and simple sentences', '🎨', 3),
 
 -- Level 1-2 (Teen / Secondary)
-('sanskrit-entry', 'sanskrit Entry', 'संस्कृतप्रवेशः', NULL, 'Modern', 'teen', 1, 2, 'teen', 15, 'Entry-level grammar covering declensions, present tense, and sentence construction', '📘', 4),
+('sanskrit-entry', 'Sanskrit Entry', 'संस्कृतप्रवेशः', NULL, 'Modern', 'teen', 1, 2, 'teen', 15, 'Entry-level grammar covering declensions, present tense, and sentence construction', '📘', 4),
 ('hitopadesha', 'Hitopadesha', 'हितोपदेशः', 'Nārāyaṇa', '~9th CE', 'classical', 1, 3, 'teen', 4, 'Collection of moral fables in four books: Mitralābha, Suhṛdbheda, Vigraha, Sandhi', '🦊', 5),
 ('nitishataka', 'Nītiśataka', 'नीतिशतकम्', 'Bhartṛhari', '~5th CE', 'poetry', 1, 3, 'teen', 10, 'One hundred verses on worldly wisdom and ethics by Bhartrihari', '📜', 6),
-('subhashitas','subhāṣitas', 'सुभाषितानि', 'Various', 'Various', 'classical', 1, 3, 'teen', 10, 'Collection of wise sayings from various Sanskrit sources', '💬', 7),
+('subhashitas','Subhāṣitas', 'सुभाषितानि', 'Various', 'Various', 'classical', 1, 3, 'teen', 10, 'Collection of wise sayings from various Sanskrit sources', '💬', 7),
 ('chanakya-niti', 'Chanakya Nīti', 'चाणक्यनीतिः', 'Chanakya', '~4th BCE', 'classical', 1, 3, 'teen', 10, 'Political and moral aphorisms attributed to the ancient statesman Chanakya', '👑', 8),
 
 -- Level 2-3 (Undergrad)
-('sanskrit-grammar', 'sanskrit Grammar', 'संस्कृतव्याकरणम्', NULL, 'Modern', 'grammar', 2, 4, 'undergrad', 20, 'Comprehensive grammar covering all cases, tenses, moods, sandhi, compounds, and derivations', '📐', 9),
+('sanskrit-grammar', 'Sanskrit Grammar', 'संस्कृतव्याकरणम्', NULL, 'Modern', 'grammar', 2, 4, 'undergrad', 20, 'Comprehensive grammar covering all cases, tenses, moods, sandhi, compounds, and derivations', '📐', 9),
 ('abhijnana-shakuntala', 'Abhijñānaśākuntalam', 'अभिज्ञानशाकुन्तलम्', 'Kālidāsa', '~4th CE', 'drama', 2, 4, 'undergrad', 7, 'Kālidāsa''s masterpiece — the recognition of Śakuntalā, a 7-act play', '🎭', 10),
 ('raghuvamsha', 'Raghuvaṃśa', 'रघुवंशम्', 'Kālidāsa', '~4th CE', 'poetry', 2, 4, 'undergrad', 19, 'Epic poem tracing the dynasty of Raghu, ancestors of Rāma', '🏛️', 11),
 ('meghaduta', 'Meghadūta', 'मेघदूतम्', 'Kālidāsa', '~4th CE', 'poetry', 2, 4, 'undergrad', 2, 'A yakṣa sends a message through a cloud to his beloved', '☁️', 12),
@@ -495,26 +495,26 @@ INSERT INTO books (id, title, title_sanskrit, author, period, category, level_mi
 ('kumarasambhava', 'Kumārasambhava', 'कुमारसम्भवम्', 'Kālidāsa', '~4th CE', 'poetry', 3, 4, 'undergrad', 8, 'The birth of Kumāra (Skanda), son of Śiva and Pārvatī', '🔥', 16),
 ('kiratarjuniya', 'Kirātārjunīya', 'किरातार्जुनीयम्', 'Bhāravi', '~6th CE', 'poetry', 3, 5, 'graduate', 18, 'Arjuna''s penance and encounter with Śiva as a hunter', '🏔️', 17),
 ('upanishads', 'Principal Upaniṣads', 'प्रमुखोपनिषदः', 'Various', '~700-300 BCE', 'philosophy', 3, 5, 'graduate', 12, 'The 12 principal Upaniṣads — philosophical culmination of the Vedas', '🕉️', 18),
-('kavyaprakasha', 'Kāvyaprakāśa', 'काव्यप्रकाशः', 'Mammaṭa', '~11th CE', 'reference', 3, 6, 'graduate', 10,'standard treatise on Sanskrit poetics and literary criticism', '📝', 19),
+('kavyaprakasha', 'Kāvyaprakāśa', 'काव्यप्रकाशः', 'Mammaṭa', '~11th CE', 'reference', 3, 6, 'graduate', 10, 'Standard treatise on Sanskrit poetics and literary criticism', '📝', 19),
 
 -- Level 4-5 (Graduate)
 ('nyaya-sutra', 'Nyāya Sūtra', 'न्यायसूत्रम्', 'Gautama', '~200 BCE', 'philosophy', 4, 6, 'graduate', 5, 'The foundational text of Nyāya logic — 5 books on epistemology and reasoning', '🧠', 20),
 ('vaisesika-sutra', 'Vaiśeṣika Sūtra', 'वैशेषिकसूत्रम्', 'Kaṇāda', '~200 BCE', 'philosophy', 4, 6, 'graduate', 10, 'Atomic theory and categories of reality in Vaiśeṣika philosophy', '⚛️', 21),
 ('yoga-sutra', 'Yoga Sūtra', 'योगसूत्रम्', 'Patañjali', '~300 BCE', 'philosophy', 4, 6, 'graduate', 4, 'The 195 sūtras of classical yoga in 4 pādas', '🧘', 22),
-('sankhya-karika','sāṃkhya Kārikā', 'साङ्ख्यकारिका', 'Īśvarakṛṣṇa', '~4th CE', 'philosophy', 4, 6, 'graduate', 1, '72 verses summarizing Sāṃkhya philosophy''s 25 tattvas', '🔢', 23),
-('brahma-sutra', 'Brahma Sūtra', 'ब्रह्मसूत्रम्', 'Bādarāyaṇa', '~200 BCE', 'philosophy', 4, 6, 'graduate', 4,'systematic presentation of Vedānta philosophy in 4 adhyāyas', '🌀', 24),
+('sankhya-karika', 'Sāṃkhya Kārikā', 'साङ्ख्यकारिका', 'Īśvarakṛṣṇa', '~4th CE', 'philosophy', 4, 6, 'graduate', 1, '72 verses summarizing Sāṃkhya philosophy''s 25 tattvas', '🔢', 23),
+('brahma-sutra', 'Brahma Sūtra', 'ब्रह्मसूत्रम्', 'Bādarāyaṇa', '~200 BCE', 'philosophy', 4, 6, 'graduate', 4, 'Systematic presentation of Vedānta philosophy in 4 adhyāyas', '🌀', 24),
 ('ashtadhyayi', 'Aṣṭādhyāyī', 'अष्टाध्यायी', 'Pāṇini', '~500 BCE', 'grammar', 4, 6, 'graduate', 8, 'Pāṇini''s grammar of Sanskrit — 3,996 sūtras in 8 adhyāyas', '📏', 25),
 
 -- Level 5-6 (PhD / Reference)
 ('mahabhashya', 'Mahābhāṣya', 'महाभाष्यम्', 'Patañjali', '~150 BCE', 'commentary', 5, 6, 'phd', 8, 'Patañjali''s great commentary on Pāṇini''s Aṣṭādhyāyī', '📚', 26),
 ('dhvanyaloka', 'Dhvanyāloka', 'ध्वन्यालोकः', 'Ānandavardhana', '~9th CE', 'reference', 5, 6, 'phd', 4, 'The theory of suggestion (dhvani) in Sanskrit poetics', '💡', 27),
-('sahityadarpana','sāhityadarpaṇa', 'साहित्यदर्पणः', 'Viśvanātha', '~14th CE', 'reference', 5, 6, 'phd', 10, 'Mirror of composition — comprehensive treatise on poetics and dramaturgy', '🪞', 28),
+('sahityadarpana','Sāhityadarpaṇa', 'साहित्यदर्पणः', 'Viśvanātha', '~14th CE', 'reference', 5, 6, 'phd', 10, 'Mirror of composition — comprehensive treatise on poetics and dramaturgy', '🪞', 28),
 ('natyashastra', 'Nāṭyaśāstra', 'नाट्यशास्त्रम्', 'Bharata', '~200 BCE', 'reference', 5, 6, 'phd', 36, 'The science of dramaturgy — 36 chapters on theater, dance, and music', '🎭', 29),
-('critical-editions', 'Critical Editions', 'समालोचनसंस्करणम्', 'Various', 'Modern', 'reference', 5, 6, 'phd', 5,'scholarly critical editions of major Sanskrit texts with apparatus', '📐', 30),
+('critical-editions', 'Critical Editions', 'समालोचनसंस्करणम्', 'Various', 'Modern', 'reference', 5, 6, 'phd', 5, 'Scholarly critical editions of major Sanskrit texts with apparatus', '📐', 30),
 
 -- Grammar Textbooks (custom per level)
 ('grammar-child', 'Fun Grammar for Children', 'बालव्याकरणम्', NULL, 'Modern', 'grammar', 0, 1, 'child', 10, 'Playful introduction to Sanskrit grammar through rhymes, games, and pictures', '🎮', 31),
-('grammar-teen', 'school Sanskrit Grammar', 'माध्यमिकव्याकरणम्', NULL, 'Modern', 'grammar', 1, 2, 'teen', 15,'systematic school-level grammar with exercises and exam preparation', '📝', 32),
+('grammar-teen', 'School Sanskrit Grammar', 'माध्यमिकव्याकरणम्', NULL, 'Modern', 'grammar', 1, 2, 'teen', 15, 'Systematic school-level grammar with exercises and exam preparation', '📝', 32),
 ('grammar-undergrad', 'Advanced Sanskrit Grammar', 'उच्चव्याकरणम्', NULL, 'Modern', 'grammar', 2, 4, 'undergrad', 20, 'Complete grammar covering all Pāṇinian rules with illustrations from classical texts', '📐', 33),
 ('grammar-graduate', 'Research Grammar', 'शोधव्याकरणम्', NULL, 'Modern', 'grammar', 4, 5, 'graduate', 12, 'Advanced grammatical analysis for textual research and manuscript interpretation', '🔬', 34),
 ('grammar-phd', 'Reference Grammar', 'प्रमाणव्याकरणम्', NULL, 'Modern', 'grammar', 5, 6, 'phd', 8, 'Comprehensive reference grammar with citations from Aṣṭādhyāyī, Mahābhāṣya, and classical commentaries', '📚', 35);
@@ -526,18 +526,18 @@ INSERT INTO books (id, title, title_sanskrit, author, period, category, level_mi
 INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_count, content_preview) VALUES
 
 -- varnamala (13 chapters)
-('ch-varnamala-1', 'varnamala', 1, 'simple Vowels', 'स्वराः प्रथमः', 13, 'अ आ इ ई उ ऊ ऋ ॠ ऌ ए ऐ ओ औ'),
+('ch-varnamala-1', 'varnamala', 1, 'Simple Vowels', 'स्वराः प्रथमः', 14, 'अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ'),
 ('ch-varnamala-2', 'varnamala', 2, 'Consonants: Gutturals', 'कण्ठ्याः', 5, 'क ख ग घ ङ'),
 ('ch-varnamala-3', 'varnamala', 3, 'Consonants: Palatals', 'तालव्याः', 5, 'च छ ज झ ञ'),
 ('ch-varnamala-4', 'varnamala', 4, 'Consonants: Retroflex', 'मूर्धन्याः', 5, 'ट ठ ड ढ ण'),
 ('ch-varnamala-5', 'varnamala', 5, 'Consonants: Dentals', 'दन्त्याः', 5, 'त थ द ध न'),
 ('ch-varnamala-6', 'varnamala', 6, 'Consonants: Labials', 'ओष्ठ्याः', 5, 'प फ ब भ म'),
-('ch-varnamala-7', 'varnamala', 7,'semivowels', 'अन्तःस्थाः', 4, 'य र ल व'),
-('ch-varnamala-8', 'varnamala', 8,'sibilants & Ha', 'ऊष्माणः', 4, 'श ष स ह'),
+('ch-varnamala-7', 'varnamala', 7, 'Semivowels', 'अन्तःस्थाः', 4, 'य र ल व'),
+('ch-varnamala-8', 'varnamala', 8, 'Sibilants & Ha', 'ऊष्माणः', 4, 'श ष स ह'),
 ('ch-varnamala-9', 'varnamala', 9, 'Vowel Signs', 'स्वरचिह्नानि', 12, 'ा ि ी ु ू ृ े ै ो ौ ं ः'),
 ('ch-varnamala-10', 'varnamala', 10, 'Conjunct Consonants', 'संयुक्तव्यञ्जनानि', 0, 'क्ष त्र ज्ञ श्र ह्न ह्म ह्य'),
-('ch-varnamala-11', 'varnamala', 11,'simple Words', 'सरलशब्दाः', 0, 'Two-letter and three-letter words for reading practice'),
-('ch-varnamala-12', 'varnamala', 12, 'Reading Practice', 'पठनाभ्यासः', 0, 'short sentences using all known letters'),
+('ch-varnamala-11', 'varnamala', 11, 'Simple Words', 'सरलशब्दाः', 0, 'Two-letter and three-letter words for reading practice'),
+('ch-varnamala-12', 'varnamala', 12, 'Reading Practice', 'पठनाभ्यासः', 0, 'Short sentences using all known letters'),
 ('ch-varnamala-13', 'varnamala', 13, 'Complete Review', 'सम्पूर्णपुनरावलोकनम्', 0, 'Full alphabet chart and pronunciation review'),
 
 -- first-lessons (10 chapters)
@@ -550,17 +550,17 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-first-7', 'first-lessons', 7, 'Food & Drink', 'भोजनम्', 8, 'अन्नम् दुग्धम् फलम् जलम् पूपः शाकम्'),
 ('ch-first-8', 'first-lessons', 8, 'Actions', 'क्रियाः', 6, 'खादति पिबति पठति धावति हसति नृत्यति'),
 ('ch-first-9', 'first-lessons', 9, 'Opposites', 'विपरीतशब्दाः', 10, 'महत्-क्षुद्रम्, सुन्दरम्-कुरूपम्, उष्णम्-शीतलम्'),
-('ch-first-10', 'first-lessons', 10, 'simple Sentences', 'सरलवाक्यानि', 8, 'रामः फलं खादति । सीता जलं पिबति'),
+('ch-first-10', 'first-lessons', 10, 'Simple Sentences', 'सरलवाक्यानि', 8, 'रामः फलं खादति । सीता जलं पिबति'),
 
 -- hitopadesha (4 books)
 ('ch-hitop-1', 'hitopadesha', 1, 'Mitralābha', 'मित्रलाभः', 30, 'Gaining friends — the story of the deer, crow, turtle, and mouse'),
-('ch-hitop-2', 'hitopadesha', 2,'suhṛdbheda', 'सुहृद्भेदः', 30,'separation of friends'),
+('ch-hitop-2', 'hitopadesha', 2, 'Suhṛdbheda', 'सुहृद्भेदः', 30, 'Separation of friends'),
 ('ch-hitop-3', 'hitopadesha', 3, 'Vigraha', 'विग्रहः', 25, 'War and conflict'),
-('ch-hitop-4', 'hitopadesha', 4, 'sandhi', 'सन्धिः', 25, 'Peace and alliance'),
+('ch-hitop-4', 'hitopadesha', 4, 'Sandhi', 'सन्धिः', 25, 'Peace and alliance'),
 
 -- bhagavad-gita (18 chapters)
 ('ch-gita-1', 'bhagavad-gita', 1, 'Arjuna''s Grief', 'अर्जुनविषादयोगः', 47, 'Arjuna''s despondency on the battlefield'),
-('ch-gita-2', 'bhagavad-gita', 2,'sāṃkhya Yoga', 'साङ्ख्ययोगः', 72, 'Kṛṣṇa''s teaching on the eternal self'),
+('ch-gita-2', 'bhagavad-gita', 2, 'Sāṃkhya Yoga', 'साङ्ख्ययोगः', 72, 'Kṛṣṇa''s teaching on the eternal self'),
 ('ch-gita-3', 'bhagavad-gita', 3, 'Karma Yoga', 'कर्मयोगः', 43, 'Action without attachment'),
 ('ch-gita-4', 'bhagavad-gita', 4, 'Jñāna Yoga', 'ज्ञानयोगः', 42, 'Knowledge and renunciation in action'),
 ('ch-gita-5', 'bhagavad-gita', 5, 'Karma Sannyāsa Yoga', 'कर्मसंन्यासयोगः', 29, 'True renunciation'),
@@ -583,13 +583,13 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-rama-2', 'ramayana', 2, 'Ayodhyā Kāṇḍa', 'अयोध्याकाण्डः', 119, 'Exile of Rāma'),
 ('ch-rama-3', 'ramayana', 3, 'Āraṇya Kāṇḍa', 'अरण्यकाण्डः', 75, 'Life in the forest'),
 ('ch-rama-4', 'ramayana', 4, 'Kiṣkindhā Kāṇḍa', 'किष्किन्धाकाण्डः', 67, 'Alliance with Sugrīva'),
-('ch-rama-5', 'ramayana', 5, 'sundara Kāṇḍa', 'सुन्दरकाण्डः', 68, 'Hanumān''s journey to Laṅkā'),
+('ch-rama-5', 'ramayana', 5, 'Sundara Kāṇḍa', 'सुन्दरकाण्डः', 68, 'Hanumān''s journey to Laṅkā'),
 ('ch-rama-6', 'ramayana', 6, 'Yuddha Kāṇḍa', 'युद्धकाण्डः', 131, 'The great war'),
 ('ch-rama-7', 'ramayana', 7, 'Uttara Kāṇḍa', 'उत्तरकाण्डः', 111, 'Later life of Rāma'),
 
 -- mahabharata (18 parvas)
 ('ch-mb-1', 'mahabharata', 1, 'Ādi Parva', 'आदिपर्व', 225, 'The beginnings and birth of the heroes'),
-('ch-mb-2', 'mahabharata', 2,'sabha Parva', 'सभापर्व', 81, 'The assembly and the dice game'),
+('ch-mb-2', 'mahabharata', 2,'Sabhā Parva', 'सभापर्व', 81, 'The assembly and the dice game'),
 ('ch-mb-3', 'mahabharata', 3, 'Vana Parva', 'वनपर्व', 298, 'Exile in the forest'),
 ('ch-mb-4', 'mahabharata', 4, 'Virāṭa Parva', 'विराटपर्व', 67, 'Life in disguise'),
 ('ch-mb-5', 'mahabharata', 5, 'Udyoga Parva', 'उद्योगपर्व', 197, 'Efforts for peace'),
@@ -597,29 +597,29 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-mb-7', 'mahabharata', 7, 'Droṇa Parva', 'द्रोणपर्व', 201, 'Droṇa''s command'),
 ('ch-mb-8', 'mahabharata', 8, 'Karṇa Parva', 'कर्णपर्व', 69, 'Karṇa''s leadership'),
 ('ch-mb-9', 'mahabharata', 9, 'Śalya Parva', 'शल्यपर्व', 64, 'Śalya''s command'),
-('ch-mb-10', 'mahabharata', 10,'sauptika Parva', 'सौप्तिकपर्व', 18, 'The night attack'),
-('ch-mb-11', 'mahabharata', 11,'strī Parva', 'स्त्रीपर्व', 27, 'The women''s lament'),
+('ch-mb-10', 'mahabharata', 10, 'Sauptika Parva', 'सौप्तिकपर्व', 18, 'The night attack'),
+('ch-mb-11', 'mahabharata', 11, 'Strī Parva', 'स्त्रीपर्व', 27, 'The women''s lament'),
 ('ch-mb-12', 'mahabharata', 12, 'Śānti Parva', 'शान्तिपर्व', 365, 'The book of peace'),
 ('ch-mb-13', 'mahabharata', 13, 'Anuśāsana Parva', 'अनुशासनपर्व', 154, 'The book of instructions'),
 ('ch-mb-14', 'mahabharata', 14, 'Āśvamedhika Parva', 'अश्वमेधिकपर्व', 96, 'The horse sacrifice'),
 ('ch-mb-15', 'mahabharata', 15, 'Āśrama Vāsika Parva', 'आश्रमवासिकपर्व', 40, 'Life at the hermitage'),
 ('ch-mb-16', 'mahabharata', 16, 'Mausala Parva', 'मौसलपर्व', 9, 'The club battle'),
 ('ch-mb-17', 'mahabharata', 17, 'Mahāprasthānika Parva', 'महाप्रस्थानिकपर्व', 3, 'The great journey'),
-('ch-mb-18', 'mahabharata', 18,'svargārohaṇa Parva', 'स्वर्गारोहणपर्व', 5, 'Ascent to heaven'),
+('ch-mb-18', 'mahabharata', 18, 'Svargārohaṇa Parva', 'स्वर्गारोहणपर्व', 5, 'Ascent to heaven'),
 
 -- ashtadhyayi (8 adhyayas)
-('ch-ast-1', 'ashtadhyayi', 1, 'First Chapter', 'प्रथमोऽध्यायः', 300,'samjñā and sandhi rules'),
-('ch-ast-2', 'ashtadhyayi', 2,'second Chapter', 'द्वितीयोऽध्यायः', 300, 'Compound and case rules'),
+('ch-ast-1', 'ashtadhyayi', 1, 'First Chapter', 'प्रथमोऽध्यायः', 300,'Saṃjñā and sandhi rules'),
+('ch-ast-2', 'ashtadhyayi', 2, 'Second Chapter', 'द्वितीयोऽध्यायः', 300, 'Compound and case rules'),
 ('ch-ast-3', 'ashtadhyayi', 3, 'Third Chapter', 'तृतीयोऽध्यायः', 300, 'Verb suffixes (kṛt)'),
 ('ch-ast-4', 'ashtadhyayi', 4, 'Fourth Chapter', 'चतुर्थोऽध्यायः', 300, 'Nominal suffixes (taddhita)'),
 ('ch-ast-5', 'ashtadhyayi', 5, 'Fifth Chapter', 'पञ्चमोऽध्यायः', 300, 'More suffixes'),
-('ch-ast-6', 'ashtadhyayi', 6,'sixth Chapter', 'षष्ठोऽध्यायः', 300, 'Phonetic rules (saṃhitā)'),
-('ch-ast-7', 'ashtadhyayi', 7,'seventh Chapter', 'सप्तमोऽध्यायः', 300, 'Augments and accents'),
-('ch-ast-8', 'ashtadhyayi', 8, 'Eighth Chapter', 'अष्टमोऽध्यायः', 300,'special rules and elevatio'),
+('ch-ast-6', 'ashtadhyayi', 6, 'Sixth Chapter', 'षष्ठोऽध्यायः', 300, 'Phonetic rules (saṃhitā)'),
+('ch-ast-7', 'ashtadhyayi', 7, 'Seventh Chapter', 'सप्तमोऽध्यायः', 300, 'Augments and accents'),
+('ch-ast-8', 'ashtadhyayi', 8, 'Eighth Chapter', 'अष्टमोऽध्यायः', 300, 'Special rules (sandhi, accent, and pluta)'),
 
 -- yoga-sutra (4 padas)
-('ch-ys-1', 'yoga-sutra', 1,'samādhi Pāda', 'समाधिपादः', 51, 'On contemplation and the nature of yoga'),
-('ch-ys-2', 'yoga-sutra', 2,'sādhana Pāda', 'साधनपादः', 55, 'On practice and the 8 limbs'),
+('ch-ys-1', 'yoga-sutra', 1, 'Samādhi Pāda', 'समाधिपादः', 51, 'On contemplation and the nature of yoga'),
+('ch-ys-2', 'yoga-sutra', 2, 'Sādhana Pāda', 'साधनपादः', 55, 'On practice and the 8 limbs'),
 ('ch-ys-3', 'yoga-sutra', 3, 'Vibhūti Pāda', 'विभूतिपादः', 56, 'On supernatural powers'),
 ('ch-ys-4', 'yoga-sutra', 4, 'Kaivalya Pāda', 'कैवल्यपादः', 34, 'On liberation and isolation'),
 
@@ -640,7 +640,7 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-up-1', 'upanishads', 1, 'Īśāvāsya Upaniṣad', 'ईशावास्योपनिषत्', 18, 'The lord envelops everything'),
 ('ch-up-2', 'upanishads', 2, 'Kena Upaniṣad', 'केनोपनिषत्', 34, 'Who impels the mind?'),
 ('ch-up-3', 'upanishads', 3, 'Kaṭha Upaniṣad', 'कठोपनिषत्', 119, 'Death''s secret teaching'),
-('ch-up-4', 'upanishads', 4, 'Praśna Upaniṣad', 'प्रश्नोपनिषत्', 67,'six questions on reality'),
+('ch-up-4', 'upanishads', 4, 'Praśna Upaniṣad', 'प्रश्नोपनिषत्', 67, 'Six questions on reality'),
 ('ch-up-5', 'upanishads', 5, 'Muṇḍaka Upaniṣad', 'मुण्डकोपनिषत्', 64, 'The higher and lower knowledge'),
 ('ch-up-6', 'upanishads', 6, 'Māṇḍūkya Upaniṣad', 'माण्डूक्योपनिषत्', 12, 'The syllable Oṃ'),
 ('ch-up-7', 'upanishads', 7, 'Aitareya Upaniṣad', 'ऐतरेयोपनिषत्', 33, 'The creation of the world'),
@@ -659,11 +659,11 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-gc-6', 'grammar-child', 6, 'Colorful World', 'रङ्गमयः संसारः', 0, 'Colors and adjectives'),
 ('ch-gc-7', 'grammar-child', 7, 'Counting Fun', 'गणनाक्रीडा', 0, 'Numbers 1-20'),
 ('ch-gc-8', 'grammar-child', 8, 'Animal Friends', 'प्राणिमित्राणि', 0, 'Animal names in verse'),
-('ch-gc-9', 'grammar-child', 9, 'Action Words', 'क्रियाशब्दाः', 0, 'simple verbs through play'),
+('ch-gc-9', 'grammar-child', 9, 'Action Words', 'क्रियाशब्दाः', 0, 'Simple verbs through play'),
 ('ch-gc-10', 'grammar-child', 10, 'My First Sentences', 'प्रथमवाक्यानि', 0, 'Build simple SOV sentences'),
 
 -- grammar-teen (15 chapters)
-('ch-gt-1', 'grammar-teen', 1, 'Alphabet Review', 'वर्णसमीक्षा', 0,'script review and conjunct consonants'),
+('ch-gt-1', 'grammar-teen', 1, 'Alphabet Review', 'वर्णसमीक्षा', 0, 'Script review and conjunct consonants'),
 ('ch-gt-2', 'grammar-teen', 2, 'Noun Genders', 'लिङ्गनिर्णयः', 0, 'Masculine, feminine, neuter genders'),
 ('ch-gt-3', 'grammar-teen', 3, 'The 8 Cases', 'विभक्तिपरिचयः', 0, 'Introduction to case system'),
 ('ch-gt-4', 'grammar-teen', 4, 'Masculine Declension', 'पुल्लिङ्गविभक्तयः', 0, 'Rama-type masculine nouns'),
@@ -671,45 +671,45 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-gt-6', 'grammar-teen', 6, 'Feminine Declension', 'स्त्रीलिङ्गविभक्तयः', 0, 'Bala-type feminine nouns'),
 ('ch-gt-7', 'grammar-teen', 7, 'Present Tense', 'वर्तमानकालः', 0, 'Verb conjugation in present tense'),
 ('ch-gt-8', 'grammar-teen', 8, 'Past Tense', 'भूतकालः', 0, 'Imperfect and perfect tenses'),
-('ch-gt-9', 'grammar-teen', 9, 'Future Tense', 'भविष्यत्कालः', 0,'simple and periphrastic future'),
-('ch-gt-10', 'grammar-teen', 10, 'sandhi Basics', 'सन्धिपरिचयः', 0,'simple sound mergers'),
+('ch-gt-9', 'grammar-teen', 9, 'Future Tense', 'भविष्यत्कालः', 0, 'Simple and periphrastic future'),
+('ch-gt-10', 'grammar-teen', 10, 'Sandhi Basics', 'सन्धिपरिचयः', 0, 'Simple sound mergers'),
 ('ch-gt-11', 'grammar-teen', 11, 'Compounds', 'समासपरिचयः', 0, 'Basic compound formation'),
-('ch-gt-12', 'grammar-teen', 12,'sentence Construction', 'वाक्यरचना', 0, 'Complex sentences with conjunctions'),
-('ch-gt-13', 'grammar-teen', 13, 'Reading Practice', 'पठनाभ्यासः', 0,'simple passages for comprehension'),
+('ch-gt-12', 'grammar-teen', 12, 'Sentence Construction', 'वाक्यरचना', 0, 'Complex sentences with conjunctions'),
+('ch-gt-13', 'grammar-teen', 13, 'Reading Practice', 'पठनाभ्यासः', 0, 'Simple passages for comprehension'),
 ('ch-gt-14', 'grammar-teen', 14, 'Composition', 'निबन्धलेखनम्', 0, 'Write short paragraphs'),
 ('ch-gt-15', 'grammar-teen', 15, 'Exam Preparation', 'परीक्षाप्रस्तुतिः', 0, 'Revision and practice tests'),
 
 -- grammar-undergrad (20 chapters)
 ('ch-gu-1', 'grammar-undergrad', 1, 'Phonetics', 'वर्णोच्चारणशास्त्रम्', 0, 'Place and effort of articulation'),
-('ch-gu-2', 'grammar-undergrad', 2, 'sandhi: Complete', 'सम्पूर्णसन्धिः', 0, 'All sandhi types: guṇa, vṛddhi, yaṇ, ayādi, visarga'),
+('ch-gu-2', 'grammar-undergrad', 2, 'Sandhi: Complete', 'सम्पूर्णसन्धिः', 0, 'All sandhi types: guṇa, vṛddhi, yaṇ, ayādi, visarga'),
 ('ch-gu-3', 'grammar-undergrad', 3, 'Declension System', 'विभक्तिप्रक्रिया', 0, 'All declension patterns across genders'),
 ('ch-gu-4', 'grammar-undergrad', 4, 'Pronouns & Numerals', 'सर्वनामसङ्ख्याशब्दाः', 0, 'Full pronoun and numeral declension'),
 ('ch-gu-5', 'grammar-undergrad', 5, 'Verb Classes', 'धातुगणाः', 0, 'All 10 verb classes (gaṇas)'),
 ('ch-gu-6', 'grammar-undergrad', 6, 'Present System', 'लट्-प्रक्रिया', 0, 'Present, imperative, optative moods'),
 ('ch-gu-7', 'grammar-undergrad', 7, 'Perfect System', 'लिट्-प्रक्रिया', 0, 'Perfect tense formation with reduplication'),
 ('ch-gu-8', 'grammar-undergrad', 8, 'Aorist System', 'लुङ्-प्रक्रिया', 0, 'Aorist: simple, reduplicated, sibilant'),
-('ch-gu-9', 'grammar-undergrad', 9, 'Future System', 'भविष्यत्प्रक्रिया', 0,'simple and periphrastic future'),
+('ch-gu-9', 'grammar-undergrad', 9, 'Future System', 'भविष्यत्प्रक्रिया', 0, 'Simple and periphrastic future'),
 ('ch-gu-10', 'grammar-undergrad', 10, 'Passive & Voice', 'कर्मणिप्रयोगः', 0, 'Active, passive, and impersonal constructions'),
 ('ch-gu-11', 'grammar-undergrad', 11, 'Compounds: Complete', 'समासप्रक्रिया', 0, 'All compound types with examples'),
 ('ch-gu-12', 'grammar-undergrad', 12, 'Primary Derivatives', 'कृदन्ताः', 0, 'Kṛt suffixes: tavyat, anīyar, kta, ktavatu'),
-('ch-gu-13', 'grammar-undergrad', 13,'secondary Derivatives', 'तद्धिताः', 0, 'Taddhita suffixes for abstraction and relation'),
+('ch-gu-13', 'grammar-undergrad', 13, 'Secondary Derivatives', 'तद्धिताः', 0, 'Taddhita suffixes for abstraction and relation'),
 ('ch-gu-14', 'grammar-undergrad', 14, 'Indeclinables', 'अव्ययानि', 0, 'Complete list of indeclinables with usage'),
 ('ch-gu-15', 'grammar-undergrad', 15, 'Prefixes', 'उपसर्गाः', 0, '20 verbal prefixes with meaning changes'),
-('ch-gu-16', 'grammar-undergrad', 16,'sentence Analysis', 'वाक्यविश्लेषणम्', 0, 'Parse complex sentences from classical texts'),
+('ch-gu-16', 'grammar-undergrad', 16, 'Sentence Analysis', 'वाक्यविश्लेषणम्', 0, 'Parse complex sentences from classical texts'),
 ('ch-gu-17', 'grammar-undergrad', 17, 'Metre', 'छन्दःशास्त्रम्', 0, 'Common metres: anuṣṭubh, triṣṭubh, jagatī'),
 ('ch-gu-18', 'grammar-undergrad', 18, 'Prose Composition', 'गद्यरचना', 0, 'Write classical-style prose'),
-('ch-gu-19', 'grammar-undergrad', 19, 'Translation Practice', 'अनुवादाभ्यासः', 0, 'sanskrit-English and English-Sanskrit translation'),
+('ch-gu-19', 'grammar-undergrad', 19, 'Translation Practice', 'अनुवादाभ्यासः', 0, 'Sanskrit-English and English-Sanskrit translation'),
 ('ch-gu-20', 'grammar-undergrad', 20, 'Advanced Reading', 'उच्चपठनम्', 0, 'Read Kalidasa and Gita with commentary'),
 
 -- grammar-graduate (12 chapters)
-('ch-gg-1', 'grammar-graduate', 1, 'Pāṇinian System Overview', 'पाणिनीयप्रक्रिया', 0,'structure of the Aṣṭādhyāyī'),
-('ch-gg-2', 'grammar-graduate', 2,'sūtra Analysis', 'सूत्रविश्लेषणम्', 0, 'Read and interpret sūtras'),
+('ch-gg-1', 'grammar-graduate', 1, 'Pāṇinian System Overview', 'पाणिनीयप्रक्रिया', 0, 'Structure of the Aṣṭādhyāyī'),
+('ch-gg-2', 'grammar-graduate', 2, 'Sūtra Analysis', 'सूत्रविश्लेषणम्', 0, 'Read and interpret sūtras'),
 ('ch-gg-3', 'grammar-graduate', 3, 'Phonetic Rules (Saṃhitā)', 'संहिताप्रकरणम्', 0, 'Internal and external sandhi in Pāṇini'),
-('ch-gg-4', 'grammar-graduate', 4, 'Case Semantics', 'कारकप्रकरणम्', 0,'semantic roles and case assignment'),
-('ch-gg-5', 'grammar-graduate', 5, 'Compound Analysis', 'समासार्थनिर्णयः', 0,'semantic analysis of compound types'),
+('ch-gg-4', 'grammar-graduate', 4, 'Case Semantics', 'कारकप्रकरणम्', 0, 'Semantic roles and case assignment'),
+('ch-gg-5', 'grammar-graduate', 5, 'Compound Analysis', 'समासार्थनिर्णयः', 0, 'Semantic analysis of compound types'),
 ('ch-gg-6', 'grammar-graduate', 6, 'Tense & Aspect', 'कालार्थनिर्णयः', 0, 'Temporal semantics in Sanskrit verbs'),
-('ch-gg-7', 'grammar-graduate', 7, 'Derivation (Kṛt)', 'कृदर्थनिर्णयः', 0,'systematic derivation of kṛdantas'),
-('ch-gg-8', 'grammar-graduate', 8, 'Derivation (Taddhita)', 'तद्धितार्थनिर्णयः', 0,'systematic derivation of taddhitas'),
+('ch-gg-7', 'grammar-graduate', 7, 'Derivation (Kṛt)', 'कृदर्थनिर्णयः', 0, 'Systematic derivation of kṛdantas'),
+('ch-gg-8', 'grammar-graduate', 8, 'Derivation (Taddhita)', 'तद्धितार्थनिर्णयः', 0, 'Systematic derivation of taddhitas'),
 ('ch-gg-9', 'grammar-graduate', 9, 'Accent & Pitch', 'उदात्तप्रक्रिया', 0, 'Vedic accent system'),
 ('ch-gg-10', 'grammar-graduate', 10, 'Dialects & Variation', 'भाषाभेदाः', 0, 'Vedic vs Classical Sanskrit grammar'),
 ('ch-gg-11', 'grammar-graduate', 11, 'Manuscript Grammar', 'हस्तलेखव्याकरणम्', 0, 'Grammatical analysis of scribal variants'),
@@ -720,14 +720,14 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-gp-2', 'grammar-phd', 2, 'Mahābhāṣya Studies', 'महाभाष्यम्', 0, 'Reading Patañjali''s arguments'),
 ('ch-gp-3', 'grammar-phd', 3, 'Vārtika Analysis', 'वार्तिकानि', 0, 'Kātyāyana''s critical observations'),
 ('ch-gp-4', 'grammar-phd', 4, 'Kāśikā Commentary', 'काशिकावृत्तिः', 0, 'Interpreting the Kāśikāvṛtti'),
-('ch-gp-5', 'grammar-phd', 5,'siddhānta Kaumudī', 'सिद्धान्तकौमुदी', 0, 'Bhaṭṭojī Dīkṣita''s rearrangement'),
-('ch-gp-6', 'grammar-phd', 6, 'Modern Linguistics', 'आधुनिकभाषाविज्ञानम्', 0, 'sanskrit through modern linguistic theory'),
-('ch-gp-7', 'grammar-phd', 7, 'Computational Linguistics', 'सङ्गणकभाषाविज्ञानम्', 0, 'sanskrit NLP and parsing'),
+('ch-gp-5', 'grammar-phd', 5, 'Siddhānta Kaumudī', 'सिद्धान्तकौमुदी', 0, 'Bhaṭṭojī Dīkṣita''s rearrangement'),
+('ch-gp-6', 'grammar-phd', 6, 'Modern Linguistics', 'आधुनिकभाषाविज्ञानम्', 0, 'Sanskrit through modern linguistic theory'),
+('ch-gp-7', 'grammar-phd', 7, 'Computational Linguistics', 'सङ्गणकभाषाविज्ञानम्', 0, 'Sanskrit NLP and parsing'),
 ('ch-gp-8', 'grammar-phd', 8, 'Critical Grammar', 'समालोचनव्याकरणम्', 0, 'Textual criticism through grammatical analysis'),
 
 -- natyashastra (selected chapters)
 ('ch-ns-1', 'natyashastra', 1, 'Origin of Drama', 'नाट्योत्पत्तिः', 0, 'Brahma creates the Nāṭyaveda'),
-('ch-ns-2', 'natyashastra', 2, 'Theatre Architecture', 'मण्डपविधानम्', 0,'stage construction'),
+('ch-ns-2', 'natyashastra', 2, 'Theatre Architecture', 'मण्डपविधानम्', 0, 'Stage construction'),
 ('ch-ns-3', 'natyashastra', 3, 'Pūrvaraṅga', 'पूर्वरङ्गः', 0, 'Pre-dramatic rituals'),
 ('ch-ns-4', 'natyashastra', 4, 'Tāṇḍava Dance', 'ताण्डवलक्षणम्', 0, 'Śiva''s dance'),
 ('ch-ns-6', 'natyashastra', 6, 'Rasas', 'रससूत्रम्', 0, 'The theory of aesthetic emotion'),
@@ -735,10 +735,10 @@ INSERT INTO chapters (id, book_id, chapter_number, title, title_sanskrit, verse_
 ('ch-ns-14', 'natyashastra', 14, 'Prosody', 'छन्दः', 0, 'Metres in drama'),
 ('ch-ns-15', 'natyashastra', 15, 'Figures of Speech', 'अलङ्काराः', 0, 'Poetic figures'),
 ('ch-ns-18', 'natyashastra', 18, 'Ten Types of Drama', 'दशरूपकम्', 0, 'Classification of plays'),
-('ch-ns-19', 'natyashastra', 19, 'Vṛttis', 'वृत्तयः', 0,'styles of presentation'),
+('ch-ns-19', 'natyashastra', 19, 'Vṛttis', 'वृत्तयः', 0, 'Styles of presentation'),
 ('ch-ns-24', 'natyashastra', 24, 'Female Characters', 'स्त्रीपात्राणि', 0, 'Types of heroines'),
 ('ch-ns-28', 'natyashastra', 28, 'Music', 'सङ्गीतम्', 0, 'Musical scales and instruments'),
-('ch-ns-31', 'natyashastra', 31, 'Makeup & Costume', 'आहार्याभिनयः', 0,'stage appearance'),
+('ch-ns-31', 'natyashastra', 31, 'Makeup & Costume', 'आहार्याभिनयः', 0, 'Stage appearance'),
 ('ch-ns-36', 'natyashastra', 36, 'Descent of Drama', 'नाट्यावतरणम्', 0, 'Drama spreads to earth');
 
 -- ════════════════════════════════════════════════════════════════
@@ -749,7 +749,7 @@ INSERT INTO grammar_books (id, title, title_sanskrit, track, level, description,
 ('grammar-child', 'Fun Grammar for Children', 'बालव्याकरणम्', 'child', 0, 'Playful introduction through rhymes and games',
 '[{"chapter":1,"title":"Vowels","sections":["अ आ इ ई उ ऊ","Pronunciation games","Writing practice"]},{"chapter":2,"title":"Consonants","sections":["5 groups by mouth","Gutturals to Labials","Sing along songs"]},{"chapter":3,"title":"Simple Words","sections":["Family words","Nature words","Animal names"]},{"chapter":4,"title":"Colors & Numbers","sections":["6 colors","Count to 20","Color-by-number"]},{"chapter":5,"title":"Verbs","sections":["Action words","Present tense","Daily routine"]},{"chapter":6,"title":"Sentences","sections":["SOV structure","Subject-Object-Verb","Build your own"]},{"chapter":7,"title":"Questions","sections":["Who? What? Where?","Question words","Ask & answer"]},{"chapter":8,"title":"Opposites","sections":["Big-small","Hot-cold","Happy-sad"]},{"chapter":9,"title":"Story Time","sections":["Simple stories","Comprehension","Retell in Sanskrit"]},{"chapter":10,"title":"Review","sections":["All letters","All words","Certificate"]}]',
 50, 200, 100),
-('grammar-teen', 'school Sanskrit Grammar', 'माध्यमिकव्याकरणम्', 'teen', 1, 'school-level grammar with exam prep',
+('grammar-teen', 'School Sanskrit Grammar', 'माध्यमिकव्याकरणम्', 'teen', 1, 'School-level grammar with exam prep',
 '[{"chapter":1,"title":"Script Review","sections":["Conjunct consonants","Vowel signs","Numerals"]},{"chapter":2,"title":"Nouns","sections":["Genders","8 cases","Masculine paradigm"]},{"chapter":3,"title":"Declensions","sections":["Neuter nouns","Feminine nouns","Consonant stems"]},{"chapter":4,"title":"Present Tense","sections":["10 verb classes","6 persons","Conjugation tables"]},{"chapter":5,"title":"Past Tenses","sections":["Imperfect","Perfect","Aorist"]},{"chapter":6,"title":"Future Tenses","sections":["Simple future","Periphrastic future","Conditional"]},{"chapter":7,"title":"Sandhi","sections":["Guna","Vrddhi","Yan"]},{"chapter":8,"title":"Compounds","sections":["Tatpurusa","Karmadharaya","Dvandva","Bahuvrihi"]},{"chapter":9,"title":"Pronouns","sections":["Personal","Demonstrative","Relative"]},{"chapter":10,"title":"Adjectives","sections":["Declension","Comparison","Agreement"]},{"chapter":11,"title":"Indeclinables","sections":["Prepositions","Conjunctions","Adverbs"]},{"chapter":12,"title":"Sentence Types","sections":["Declarative","Interrogative","Imperative"]},{"chapter":13,"title":"Reading","sections":["Subhashitas","Simple stories","Comprehension questions"]},{"chapter":14,"title":"Writing","sections":["Paragraphs","Letters","Essays"]},{"chapter":15,"title":"Exam Prep","sections":["Sample papers","Key rules","Common errors"]}]',
 150, 500, 300),
 ('grammar-undergrad', 'Advanced Sanskrit Grammar', 'उच्चव्याकरणम्', 'undergrad', 2, 'Complete Pāṇinian grammar',
@@ -759,7 +759,7 @@ INSERT INTO grammar_books (id, title, title_sanskrit, track, level, description,
 '[{"chapter":1,"title":"Pāṇini''s System","sections":["Structure of Astadhyayi","Adhikara","Paribhasa"]},{"chapter":2,"title":"Sutra Interpretation","sections":["Anuvrtti","Vrtti","Bhasyas"]},{"chapter":3,"title":"Phonological Rules","sections":["Samhita","Internal sandhi","External sandhi exceptions"]},{"chapter":4,"title":"Karaka Theory","sections":["Semantic roles","Case assignment","Debates in Mahabhasya"]},{"chapter":5,"title":"Compound Semantics","sections":["Meaning analysis","Scope","Ambiguity"]},{"chapter":6,"title":"Tense & Aspect","sections":["Relative time","Aktionsart","Modal semantics"]},{"chapter":7,"title":"Derivational Morphology","sections":["Krt rules","Taddhita rules","Krtya derivations"]},{"chapter":8,"title":"Vedic Grammar","sections":["Vedic vs Classical","Accent system","Special forms"]},{"chapter":9,"title":"Dialectology","sections":["Regional variation","Historical change","Ms evidence"]},{"chapter":10,"title":"Text Criticism","sections":["Grammatical arguments","Conjectural emendation","Stemmatics"]},{"chapter":11,"title":"Computational Grammar","sections":["Formalization","Parsing algorithms","Sanskrit NLP"]},{"chapter":12,"title":"Research Methods","sections":["Bibliography","Citation","Publication"]}]',
 400, 800, 200),
 ('grammar-phd', 'Reference Grammar', 'प्रमाणव्याकरणम्', 'phd', 5, 'Definitive scholarly reference',
-'[{"chapter":1,"title":"Paribhasa","sections":["Meta-rules","Interpretive principles","Nyayas"]},{"chapter":2,"title":"Mahabhasya","sections":["Patanañjali''s arguments","Debate structure","Dialectical method"]},{"chapter":3,"title":"Varttika","sections":["Kātyāyana''s criticisms","Additions","Corrections"]},{"chapter":4,"title":"Vrtti Tradition","sections":["Kasika","Padamanjari","Nyasa"]},{"chapter":5,"title":"Later Grammarians","sections":["Bhattoji","Nagesa","Bharadvaja"]},{"chapter":6,"title":"Theoretical Linguistics","sections":["Generative grammar","Panini vs Chomsky","Cognitive approaches"]},{"chapter":7,"title":"Computational Panini","sections":["Formalizing Astadhyayi","Machine-readable Sanskrit","Corpus linguistics"]},{"chapter":8,"title":"Critical Edition","sections":["Editing grammatical texts","Ms evidence for rules","Apparatus criticus"]}]',
+'[{"chapter":1,"title":"Paribhasa","sections":["Meta-rules","Interpretive principles","Nyayas"]},{"chapter":2,"title":"Mahabhasya","sections":["Patañjali''s arguments","Debate structure","Dialectical method"]},{"chapter":3,"title":"Varttika","sections":["Kātyāyana''s criticisms","Additions","Corrections"]},{"chapter":4,"title":"Vrtti Tradition","sections":["Kasika","Padamanjari","Nyasa"]},{"chapter":5,"title":"Later Grammarians","sections":["Bhattoji","Nagesa","Bharadvaja"]},{"chapter":6,"title":"Theoretical Linguistics","sections":["Generative grammar","Panini vs Chomsky","Cognitive approaches"]},{"chapter":7,"title":"Computational Panini","sections":["Formalizing Astadhyayi","Machine-readable Sanskrit","Corpus linguistics"]},{"chapter":8,"title":"Critical Edition","sections":["Editing grammatical texts","Ms evidence for rules","Apparatus criticus"]}]',
 500, 1500, 0);
 
 -- ════════════════════════════════════════════════════════════════

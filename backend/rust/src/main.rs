@@ -2,18 +2,9 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpServer, HttpResponse};
 use serde::Serialize;
 
-mod ocr;
-mod grammar;
-mod corpus;
-mod dictionary;
-mod assessment;
-mod viva;
-mod tts;
-
-pub struct AppState {
-    pub corpus: corpus::CorpusStore,
-    pub dictionary: dictionary::DictionaryStore,
-}
+use sanskrit_lab_backend::{
+    assessment, corpus, dictionary, grammar, ocr, tts, viva,
+};
 
 #[derive(Serialize)]
 pub struct HealthResponse {
@@ -27,7 +18,7 @@ async fn health() -> HttpResponse {
     HttpResponse::Ok().json(HealthResponse {
         status: "ok".into(),
         service: "SanskritLab Unified High-Performance Rust Engine".into(),
-        version: "0.2.0".into(),
+        version: sanskrit_lab_backend::engine_version().into(),
         modules: vec![
             "ocr".into(),
             "grammar (sandhi / morphology / vibhakti)".into(),
@@ -42,8 +33,12 @@ async fn health() -> HttpResponse {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let port: u16 = std::env::var("PORT")
+        .ok()
+        .and_then(|p| p.parse().ok())
+        .unwrap_or(8080);
     let bind_addr = format!("127.0.0.1:{}", port);
+    let allowed_origin = std::env::var("ALLOWED_ORIGIN").ok();
 
     println!("============================================================");
     println!(" SanskritLab Unified Rust Backend running on http://{}", bind_addr);
@@ -53,11 +48,21 @@ async fn main() -> std::io::Result<()> {
     let dict_data = web::Data::new(dictionary::DictionaryStore::new());
 
     HttpServer::new(move || {
-        let cors = Cors::default()
-            .allow_any_origin()
-            .allow_any_method()
-            .allow_any_header()
+        let mut cors = Cors::default()
+            .allowed_origin("http://localhost:5173")
+            .allowed_origin("http://127.0.0.1:5173")
+            .allowed_origin("http://localhost:4173")
+            .allowed_origin("http://127.0.0.1:4173")
+            .allowed_methods(vec!["GET", "POST", "OPTIONS"])
+            .allowed_headers(vec![
+                actix_web::http::header::CONTENT_TYPE,
+                actix_web::http::header::AUTHORIZATION,
+            ])
             .max_age(3600);
+
+        if let Some(ref origin) = allowed_origin {
+            cors = cors.allowed_origin(origin);
+        }
 
         App::new()
             .wrap(cors)
@@ -103,6 +108,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/api/tts")
                     .route("/synthesize", web::post().to(tts::synthesize))
+                    .route("/stream", web::get().to(tts::stream))
             )
     })
     .bind(&bind_addr)?

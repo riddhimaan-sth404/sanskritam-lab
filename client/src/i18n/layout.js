@@ -13,7 +13,6 @@ const layoutHi = {
   "Learning": "अध्ययन",
   "Learning Path": "अधिगम पथ",
   
-  "Curriculum Builder": "पाठ्यक्रम निर्माता",
   "Research Suite": "अनुसंधान सुइट",
   "Corpus & Search": "कोष एवं खोज",
   "Manuscript OCR": "पाण्डुलिपि ओसीआर",
@@ -62,7 +61,6 @@ const layoutHi = {
   "Toggle theme": "थीम बदलें",
   "Switch to light mode": "लाइट मोड पर जाएँ",
   "Switch to dark mode": "डार्क मोड पर जाएँ",
-  "Language / भाषा": "भाषा / Language",
   "Tutor": "शिक्षक",
   "School": "विद्यालय",
   "Teacher": "शिक्षक",
@@ -80,7 +78,9 @@ const layoutHi = {
   "Made with ❤️ for Sanskrit": "संस्कृत के लिए ❤️ के साथ बनाया गया",
   "Leave Guest": "अतिथि छोड़ें",
   "Sign Out": "साइन आउट",
-  "View as": "देखें जैसे"
+  "View as": "देखें जैसे",
+  "Account": "खाता",
+  // Pre-submission Hindi translations
 };
 export {
   layoutHi

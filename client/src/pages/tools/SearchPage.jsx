@@ -9,8 +9,7 @@ import {
   Sprout,
   Compass,
   Search,
-  ArrowRight,
-  Filter
+  ArrowRight
 } from "lucide-react";
 import { searchAll } from "../../services/sanskrit";
 import { useLanguage } from "../../context/LanguageContext";
@@ -95,7 +94,7 @@ function SearchPage() {
   const open = (r) => {
     if (r.kind === "dictionary") navigate(`/explore/${encodeURIComponent(r.id || r.title)}`);
     else if (r.kind === "lesson") navigate(`/learning/lesson/${r.id}`);
-    else if (r.kind === "shloka") navigate("/#shlokas");
+    else if (r.kind === "shloka") navigate("/tools/shloka");
     else if (r.kind === "dhatu") navigate("/tools/dhatu");
     else if (r.kind === "concept") navigate("/tools/concepts");
     else if (r.kind === "text") navigate("/tools/bookshelf");

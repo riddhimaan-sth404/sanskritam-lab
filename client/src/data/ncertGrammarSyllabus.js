@@ -16,7 +16,7 @@ const grammarSyllabus = {
       { title: "Dh\u0101tur\u016Bp\u0101\u1E47i (Verb Forms)", titleSanskrit: "\u0927\u093E\u0924\u0941\u0930\u0942\u092A\u093E\u0923\u093F", points: [
         "Five lak\u0101ras: \u0932\u091F\u094D (present), \u0932\u0943\u091F\u094D (future), \u0932\u0919\u094D (past), \u0932\u094B\u091F\u094D (imperative), \u0935\u093F\u0927\u093F\u0932\u093F\u0919\u094D (optative)",
         "Core verbs: \u092A\u0920\u094D, \u0932\u093F\u0916\u094D, \u0917\u092E\u094D, \u092D\u0942, \u0915\u0943, \u0926\u093E, \u0905\u0938\u094D",
-        "Conjugations in all six person/endings (\u092A\u094D\u0930\u0925\u092E/\u092E\u0927\u094D\u092F\u092E/\u0909\u0924\u094D\u0924\u092E)"
+        "Conjugations in all 9 verb endings (3 persons \xD7 3 numbers: \u092A\u094D\u0930\u0925\u092E/\u092E\u0927\u094D\u092F\u092E/\u0909\u0924\u094D\u0924\u092E)"
       ] },
       { title: "K\u0101raka eva\u1E41 Vibhakti", titleSanskrit: "\u0915\u093E\u0930\u0915 \u090F\u0935\u0902 \u0935\u093F\u092D\u0915\u094D\u0924\u093F", points: [
         "\u0909\u092A\u092A\u0926-\u0935\u093F\u092D\u0915\u094D\u0924\u093F: \u0924\u0943\u0924\u0940\u092F\u093E (\u0938\u0939 / \u0938\u093E\u0930\u094D\u0927\u092E\u094D), \u091A\u0924\u0941\u0930\u094D\u0925\u0940 (\u0928\u092E\u0903 / \u0938\u094D\u0935\u093E\u0939\u093E)",
@@ -52,7 +52,7 @@ const grammarSyllabus = {
         "Five lak\u0101ras with \u092A\u0920\u094D, \u0932\u093F\u0916\u094D, \u0917\u092E\u094D, \u092D\u0942, \u0915\u0943 etc.",
         "Personal endings practice through sentences"
       ] },
-      { title: "K\u0101raka eva Vibhakti", titleSanskrit: "\u0915\u093E\u0930\u0915 \u090F\u0935\u0902 \u0935\u093F\u092D\u0915\u094D\u0924\u093F", points: [
+      { title: "K\u0101raka eva\u1E43 Vibhakti", titleSanskrit: "\u0915\u093E\u0930\u0915 \u090F\u0935\u0902 \u0935\u093F\u092D\u0915\u094D\u0924\u093F", points: [
         "\u0909\u092A\u092A\u0926-\u0935\u093F\u092D\u0915\u094D\u0924\u093F rules: \u0924\u0943\u0924\u0940\u092F\u093E with \u0938\u0939, \u091A\u0924\u0941\u0930\u094D\u0925\u0940 with \u0928\u092E\u0903"
       ] },
       { title: "Sandhi", titleSanskrit: "\u0938\u0928\u094D\u0927\u093F \u0915\u093E\u0930\u094D\u092F\u092E\u094D", points: [
@@ -65,9 +65,9 @@ const grammarSyllabus = {
   },
   8: {
     band: "6-8",
-    label: "\u092E\u093E\u0924\u093E-\u092D\u093E\u0937\u093E \u0935\u094D\u092F\u093E\u0915\u0930\u0923\u092E\u094D \u2014 \u0915\u0915\u094D\u0937\u093E \u096E",
+    label: "\u092E\u093E\u0927\u094D\u092F\u092E\u093F\u0915 \u0938\u0902\u0938\u094D\u0915\u0943\u0924-\u0935\u094D\u092F\u093E\u0915\u0930\u0923\u092E\u094D \u2014 \u0915\u0915\u094D\u0937\u093E \u096E",
     topics: [
-      { title: "\u015Aabdr\u016Bp\u0101\u1E47i", titleSanskrit: "\u0936\u092C\u094D\u0926\u0930\u0942\u092A\u093E\u0923\u093F", points: [
+      { title: "\u015Aabdar\u016Bp\u0101\u1E47i", titleSanskrit: "\u0936\u092C\u094D\u0926\u0930\u0942\u092A\u093E\u0923\u093F", points: [
         "\u0930\u093E\u091C\u0928\u094D, \u092D\u0935\u0924\u094D (honorific) \u2014 new declensions",
         "\u0938\u0902\u0916\u094D\u092F\u093E\u090F\u0902: \u0967\u2013\u096A in all genders, complete counting \u0967\u2013\u0967\u0966\u0966"
       ] },
@@ -82,7 +82,7 @@ const grammarSyllabus = {
         "Svara Sandhi: \u0926\u0940\u0930\u094D\u0918, \u0917\u0941\u0923, \u0935\u0943\u0926\u094D\u0927\u093F, \u092F\u0923\u094D"
       ] },
       { title: "Derivatives", titleSanskrit: "\u092A\u094D\u0930\u0924\u094D\u092F\u092F", points: [
-        "\u0915\u094D\u0924\u094D\u0935\u093E, \u0924\u0941\u092E\u0941\u0928\u094D, \u0932\u094D\u092F\u092A\u094D forming compound verbs"
+        "\u0915\u094D\u0924\u094D\u0935\u093E, \u0924\u0941\u092E\u0941\u0928\u094D, \u0932\u094D\u092F\u092A\u094D (indeclinable k\u1E5Bdanta participles)"
       ] }
     ]
   },
@@ -98,8 +98,8 @@ const grammarSyllabus = {
       ] },
       { title: "Sandhi", titleSanskrit: "\u0938\u0928\u094D\u0927\u093F", points: [
         "Svara: \u092F\u0923, \u0905\u092F\u093E\u0926\u093F, \u092A\u0942\u0930\u094D\u0935-\u0930\u0942\u092A",
-        "Vya\xF1jana: \u091C\u0936\u094D\u0924\u094D\u0935, \u0905\u0928\u0941\u0938\u094D\u0935\u093E\u0930, \u092A\u0930\u093F\u0938\u0935\u0930\u094D\u0923",
-        "Visarga: \u0909\u0924\u094D\u0924\u094D\u0935, \u0930\u0941\u091F\u0935, \u0932\u094B\u092A, \u0938\u0915\u094D\u0924\u094D\u0935"
+        "Vya\xF1jana: \u091C\u0936\u094D\u0924\u094D\u0935, \u0905\u0928\u0941\u0938\u094D\u0935\u093E\u0930, \u092A\u0930\u0938\u0935\u0930\u094D\u0923",
+        "Visarga: \u0909\u0924\u094D\u0935, \u0930\u0941\u0924\u094D\u0935, \u0932\u094B\u092A, \u0938\u0924\u094D\u0935"
       ] },
       { title: "\u015Aabda & Dh\u0101tu", titleSanskrit: "\u0936\u092C\u094D\u0926\u0930\u0942\u092A \u090F\u0935\u0902 \u0927\u093E\u0924\u0941\u0930\u0942\u092A", points: [
         "Consonant-ending nouns: \u0906\u0924\u094D\u092E\u0928\u094D, \u0936\u0930\u094D\u092E\u0928\u094D, \u0935\u093E\u091A\u094D",
@@ -109,17 +109,17 @@ const grammarSyllabus = {
         "22 prefixes (\u0909\u092A\u0938\u0930\u094D\u0917) and sentence placement"
       ] },
       { title: "Pratyaya", titleSanskrit: "\u092A\u094D\u0930\u0924\u094D\u092F\u092F", points: [
-        "Krt: \u0915\u094D\u0924, \u0915\u094D\u0924\u0935\u0924\u0941, \u0936\u0924\u0943, \u0936\u093E\u0928\u091A, \u0924\u0935\u094D\u092F\u0924\u094D, \u0905\u0928\u0940\u092F\u0930\u094D",
-        "Taddhita: \u092E\u0924\u0941\u092A\u094D, \u0907\u0928\u094D, \u0920\u0915\u094D, \u0924\u094D\u0935, \u0924\u0928\u094D; Stri: \u091F\u093E\u092A\u094D, \u0919\u0940\u092A\u094D"
+        "K\u1E5Bt: \u0915\u094D\u0924, \u0915\u094D\u0924\u0935\u0924\u0941, \u0936\u0924\u0943, \u0936\u093E\u0928\u091A\u094D, \u0924\u0935\u094D\u092F\u0924\u094D, \u0905\u0928\u0940\u092F\u0930\u094D",
+        "Taddhita: \u092E\u0924\u0941\u092A\u094D, \u0907\u0928\u094D, \u0920\u0915\u094D, \u0924\u094D\u0935, \u0924\u0932\u094D; Str\u012B: \u091F\u093E\u092A\u094D, \u0919\u0940\u092A\u094D"
       ] },
       { title: "Sam\u0101sa", titleSanskrit: "\u0938\u092E\u093E\u0938", points: [
-        "\u0905\u0935\u094D\u092F\u092F\u0940\u092D\u093E\u0935, \u0924\u0924\u094D\u092A\u0941\u0930\u0941\u0937 (\u0935\u093F and \u0928\u091E follow), \u0926\u094D\u0935\u0928\u094D\u0926\u094D\u0935, \u092C\u0939\u0941\u0935\u094D\u0930\u0940\u0939\u093F"
+        "\u0905\u0935\u094D\u092F\u092F\u0940\u092D\u093E\u0935, \u0924\u0924\u094D\u092A\u0941\u0930\u0941\u0937 (\u0935\u093F\u092D\u0915\u094D\u0924\u093F-\u0924\u0924\u094D\u092A\u0941\u0930\u0941\u0937, \u0928\u091E\u094D-\u0924\u0924\u094D\u092A\u0941\u0930\u0941\u0937), \u0926\u094D\u0935\u0928\u094D\u0926\u094D\u0935, \u092C\u0939\u0941\u0935\u094D\u0930\u0940\u0939\u093F"
       ] },
       { title: "K\u0101raka & Vibhakti", titleSanskrit: "\u0915\u093E\u0930\u0915 \u0914\u0930 \u0935\u093F\u092D\u0915\u094D\u0924\u093F", points: [
         "Advanced mapping in long sentences"
       ] },
-      { title: "V\u0101kya", titleSanskrit: "\u0935\u093E\u091A\u094D\u092F \u092A\u0930\u093F\u0935\u0930\u094D\u0924\u0928", points: [
-        "Karta-bh\u0101va \u2192 karma \u2192 bh\u0101va (present only)"
+      { title: "V\u0101cya", titleSanskrit: "\u0935\u093E\u091A\u094D\u092F \u092A\u0930\u093F\u0935\u0930\u094D\u0924\u0928", points: [
+        "Kart\u1E5Bv\u0101cya, Karmav\u0101cya, Bh\u0101vav\u0101cya (present tense)"
       ] },
       { title: "Rachan\u0101", titleSanskrit: "\u0930\u091A\u0928\u093E \u092A\u094D\u0930\u092F\u094B\u0917", points: [
         "Letter frames with \u092E\u091E\u094D\u091C\u0942\u0937\u093E (clue box)",
@@ -132,15 +132,17 @@ const grammarSyllabus = {
     band: "9-10",
     label: "Vy\u0101kara\u1E47av\u012Bthi \u2014 \u0915\u0915\u094D\u0937\u093E \u0967\u0966",
     topics: [
-      { title: "Varn vic\u0101ra", titleSanskrit: "\u0935\u0930\u094D\u0923-\u0935\u093F\u091A\u093E\u0930", points: ["Phonetic classification"] },
+      { title: "Var\u1E47a vic\u0101ra", titleSanskrit: "\u0935\u0930\u094D\u0923-\u0935\u093F\u091A\u093E\u0930", points: ["Phonetic classification"] },
       { title: "Sandhi", titleSanskrit: "\u0938\u0928\u094D\u0927\u093F", points: ["Svara, vya\xF1jana, visarga detail"] },
       { title: "Shabda & dh\u0101tu", titleSanskrit: "\u0936\u092C\u094D\u0926\u0930\u0942\u092A-\u0927\u093E\u0924\u0941\u0930\u0942\u092A", points: ["Consonant stems & verb forms"] },
       { title: "Prefixes", titleSanskrit: "\u0909\u092A\u0938\u0930\u094D\u0917 \u0905\u0935\u094D\u092F\u092F", points: ["22 prefixes + indeclinables"] },
-      { title: "Pratyaya", titleSanskrit: "\u092A\u094D\u0930\u0924\u094D\u092F\u092F", points: ["Krt, taddhita, stri suffixes"] },
-      { title: "Samasa", titleSanskrit: "\u0938\u092E\u093E\u0938", points: ["Compound types & vigraha"] },
+      { title: "Pratyaya", titleSanskrit: "\u092A\u094D\u0930\u0924\u094D\u092F\u092F", points: ["K\u1E5Bt, taddhita, str\u012B suffixes"] },
+      { title: "Sam\u0101sa", titleSanskrit: "\u0938\u092E\u093E\u0938", points: ["Compound types & vigraha"] },
       { title: "K\u0101raka", titleSanskrit: "\u0915\u093E\u0930\u0915", points: ["Case mapping"] },
-      { title: "Vachya", titleSanskrit: "\u0935\u093E\u091A\u094D\u092F", points: ["Voice change (present only)"] },
-      { title: "Rachana", titleSanskrit: "\u0930\u091A\u0928\u093E", points: ["Letter / description / translation"] }
+      { title: "V\u0101cya", titleSanskrit: "\u0935\u093E\u091A\u094D\u092F", points: ["Voice change (present only)"] },
+      { title: "Samaya\u1E25 (Time Telling)", titleSanskrit: "\u0938\u092E\u092F\u0903", points: ["\u0938\u092A\u093E\u0926, \u0938\u093E\u0930\u094D\u0927, \u092A\u093E\u0926\u094B\u0928 in daily routine sentences"] },
+      { title: "A\u015Buddhi-sa\u1E43\u015Bodhana", titleSanskrit: "\u0905\u0936\u0941\u0926\u094D\u0927\u093F-\u0938\u0902\u0936\u094B\u0927\u0928\u092E\u094D", points: ["Error correction in number, gender, lak\u0101ra, and k\u0101raka agreement"] },
+      { title: "Rachan\u0101", titleSanskrit: "\u0930\u091A\u0928\u093E", points: ["Letter / description / translation"] }
     ]
   },
   11: {
@@ -150,12 +152,12 @@ const grammarSyllabus = {
       { title: "Sukshma Vyakaranam", titleSanskrit: "\u0938\u0942\u0915\u094D\u0937\u094D\u092E \u0935\u094D\u092F\u093E\u0915\u0930\u0923\u092E\u094D", points: [
         "Identify \u0915\u0930\u094D\u0924\u093E, \u0915\u094D\u0930\u093F\u092F\u093E, \u0935\u093F\u0936\u0947\u0937\u0923, \u0935\u093F\u0936\u0947\u0937\u094D\u092F in literary passages"
       ] },
-      { title: "Etymology", titleSanskrit: "\u092A\u094D\u0930\u093E\u0915\u0943\u0924-\u092A\u094D\u0930\u0924\u094D\u092F\u092F-\u0935\u093F\u092D\u093E\u0917", points: [
+      { title: "Etymology", titleSanskrit: "\u092A\u094D\u0930\u0915\u0943\u0924\u093F-\u092A\u094D\u0930\u0924\u094D\u092F\u092F-\u0935\u093F\u092D\u093E\u0917\u0903", points: [
         "Break words into their historic root + suffix parts"
       ] },
       { title: "Chandas (Metre)", titleSanskrit: "\u091B\u0928\u094D\u0926\u0903 \u092A\u0930\u093F\u091A\u092F", points: [
         "Anu\u1E63\u1E6Dubh, Indravajr\u0101, Upendravajr\u0101",
-        "Vasantatilak\u0101, M\u0101lin\u012B, M\u0101nd\u0101kr\u0101nt\u0101, \u015Aikhar\u012B\u1E47\u012B"
+        "Vasantatilak\u0101, M\u0101lin\u012B, Mand\u0101kr\u0101nt\u0101, \u015Aikhari\u1E47\u012B"
       ] },
       { title: "Ala\u1E45k\u0101ra", titleSanskrit: "\u0905\u0932\u0919\u094D\u0915\u093E\u0930 \u092A\u0930\u093F\u091A\u092F", points: [
         "Anupr\u0101sa, Yamaka, \u015Ale\u1E63a",

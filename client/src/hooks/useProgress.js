@@ -16,8 +16,10 @@ async function syncToServer(p) {
       user_id: userId,
       current_track: p.currentTrack,
       current_level: p.currentLevel,
+      current_gov_class: p.currentGovClass ?? "class-1-2",
       completed_lessons: p.completedLessons,
       quiz_scores: p.quizScores,
+      skill_progress: p.skills ?? {},
       xp: p.xp,
       streak: p.streak,
       updated_at: (/* @__PURE__ */ new Date()).toISOString()
@@ -37,6 +39,8 @@ async function loadFromServer() {
     quizScores: data.quiz_scores ?? {},
     currentLevel: data.current_level ?? 0,
     currentTrack: data.current_track ?? "child",
+    currentGovClass: data.current_gov_class ?? local.currentGovClass ?? "class-1-2",
+    skills: data.skill_progress && Object.keys(data.skill_progress).length > 0 ? data.skill_progress : local.skills,
     xp: data.xp ?? 0,
     streak: data.streak ?? 0
   };

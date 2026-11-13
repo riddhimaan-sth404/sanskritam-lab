@@ -29,7 +29,7 @@ async function checkSanskrit(text, lookup) {
     });
     fixed = dev;
   }
-  if (!/[।।]/.test(fixed) && !/[.!?]\s*$/.test(fixed)) {
+  if (!/[।॥]/.test(fixed) && !/[.!?]\s*$/.test(fixed)) {
     issues.push({
       rule: "punctuation",
       icon: "punctuation",

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { BookOpen, ChevronUp, ChevronDown, ArrowRight } from "lucide-react";
 import { prepTopics } from "../../data/jeopardySite";
 import { loadPrepTopics } from "../../services/contentDb";
@@ -53,10 +54,10 @@ function JeopardyPrepPage() {
 
       <div className="j-prep-footer">
         <p>{t("Think you're ready? Take the Anytime Test \u2014 30 questions, 10 minutes.")}</p>
-        <a className="btn btn-primary" href="/tools/jeopardy/test" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <Link className="btn btn-primary" to="/tools/jeopardy/test" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <span>{t("Take the Anytime Test")}</span>
           <ArrowRight size={14} />
-        </a>
+        </Link>
       </div>
     </div>;
 }

@@ -2,43 +2,59 @@
 // Resolves auth, schools, classes, teachers, and learning progress completely locally.
 
 const PREFIX = "sanskritlab-local-";
+const memoryFallback = new Map();
 
 function getStorage() {
-  if (typeof window !== "undefined" && window.localStorage) {
-    return window.localStorage;
+  try {
+    if (
+      typeof window !== "undefined" &&
+      window.localStorage &&
+      typeof window.localStorage.getItem === "function" &&
+      typeof window.localStorage.setItem === "function"
+    ) {
+      return window.localStorage;
+    }
+  } catch {
+    // Restricted storage (private mode / sandboxed iframe) — fall back to memoryFallback
   }
   return null;
 }
 
 export function localGet(key, fallback = null) {
+  const fullKey = PREFIX + key;
   try {
     const storage = getStorage();
-    if (!storage) return fallback;
-    const raw = storage.getItem(PREFIX + key);
+    const raw = storage ? storage.getItem(fullKey) : memoryFallback.get(fullKey);
     return raw ? JSON.parse(raw) : fallback;
   } catch (e) {
     console.warn(`[localStore] Failed to read ${key}:`, e);
-    return fallback;
+    const raw = memoryFallback.get(fullKey);
+    return raw ? JSON.parse(raw) : fallback;
   }
 }
 
 export function localSet(key, value) {
+  const fullKey = PREFIX + key;
+  const serialized = JSON.stringify(value);
   try {
     const storage = getStorage();
-    if (!storage) return false;
-    storage.setItem(PREFIX + key, JSON.stringify(value));
-    return true;
+    if (storage) {
+      storage.setItem(fullKey, serialized);
+      return true;
+    }
   } catch (e) {
     console.warn(`[localStore] Failed to write ${key}:`, e);
-    return false;
   }
+  memoryFallback.set(fullKey, serialized);
+  return true;
 }
 
 export function localRemove(key) {
+  const fullKey = PREFIX + key;
+  memoryFallback.delete(fullKey);
   try {
     const storage = getStorage();
-    if (!storage) return;
-    storage.removeItem(PREFIX + key);
+    if (storage) storage.removeItem(fullKey);
   } catch (e) {
     console.warn(`[localStore] Failed to remove ${key}:`, e);
   }
@@ -109,7 +125,10 @@ export const schoolStore = {
       school_type: data.school_type || "Senior Secondary School",
       owner_email: data.owner_email || "",
       school_code: code,
+      short_code: code,
       lab_code,
+      status: "active",
+      is_active: true,
       created_at: new Date().toISOString(),
       settings: { pronunciation_feedback: true, allow_student_recording: true }
     };
@@ -128,25 +147,49 @@ export const schoolStore = {
     return null;
   },
   classes: {
-    list: (schoolId) => localGet(`classes-${schoolId}`, []),
+    list: (schoolId) => localGet(`classes-${schoolId}`, []).filter((c) => c.is_active !== false),
     create: (schoolId, name) => {
-      const list = schoolStore.classes.list(schoolId);
+      const list = localGet(`classes-${schoolId}`, []);
       const newClass = {
         id: generateId("cls"),
         school_id: schoolId,
         name,
+        is_active: true,
         created_at: new Date().toISOString(),
-        sections: [{ id: generateId("sec"), name: "A" }]
+        sections: [{ id: generateId("sec"), name: "A", is_active: true }]
       };
       list.push(newClass);
       localSet(`classes-${schoolId}`, list);
       return newClass;
+    },
+    deactivate: (schoolId, classId) => {
+      const list = localGet(`classes-${schoolId}`, []).filter((c) => c.id !== classId);
+      localSet(`classes-${schoolId}`, list);
+      return true;
+    },
+    createSection: (schoolId, classId, name) => {
+      const list = localGet(`classes-${schoolId}`, []);
+      const cls = list.find((c) => c.id === classId);
+      if (!cls) return null;
+      const newSection = { id: generateId("sec"), class_id: classId, name, is_active: true, created_at: new Date().toISOString() };
+      cls.sections = [...(cls.sections || []), newSection];
+      localSet(`classes-${schoolId}`, list);
+      return newSection;
+    },
+    deactivateSection: (schoolId, classId, sectionId) => {
+      const list = localGet(`classes-${schoolId}`, []);
+      const cls = list.find((c) => c.id === classId);
+      if (cls && Array.isArray(cls.sections)) {
+        cls.sections = cls.sections.filter((s) => s.id !== sectionId);
+        localSet(`classes-${schoolId}`, list);
+      }
+      return true;
     }
   },
   teachers: {
-    list: (schoolId) => localGet(`teachers-${schoolId}`, []),
+    list: (schoolId) => localGet(`teachers-${schoolId}`, []).filter((t) => t.status !== "inactive"),
     create: (schoolId, data) => {
-      const list = schoolStore.teachers.list(schoolId);
+      const list = localGet(`teachers-${schoolId}`, []);
       const newTeacher = {
         id: generateId("tch"),
         school_id: schoolId,
@@ -159,24 +202,50 @@ export const schoolStore = {
       list.push(newTeacher);
       localSet(`teachers-${schoolId}`, list);
       return newTeacher;
+    },
+    deactivate: (schoolId, teacherId) => {
+      const list = localGet(`teachers-${schoolId}`, []).map((t) =>
+        t.id === teacherId ? { ...t, status: "inactive", updated_at: new Date().toISOString() } : t
+      );
+      localSet(`teachers-${schoolId}`, list);
+      return true;
     }
   },
   students: {
-    list: (schoolId) => localGet(`students-${schoolId}`, []),
+    list: (schoolId) => localGet(`students-${schoolId}`, []).filter((s) => s.status !== "inactive" && s.is_active !== false),
     create: (schoolId, data) => {
-      const list = schoolStore.students.list(schoolId);
+      const list = localGet(`students-${schoolId}`, []);
       const newStudent = {
         id: generateId("stu"),
         school_id: schoolId,
         name: data.name || "Shishya",
-        roll_number: data.roll_number || "",
+        roll_no: data.roll_no || data.roll_number || "",
+        roll_number: data.roll_number || data.roll_no || "",
         class_id: data.class_id || null,
+        section_id: data.section_id || null,
+        lab_code: data.lab_code || null,
         status: "active",
+        is_active: true,
         created_at: new Date().toISOString()
       };
       list.push(newStudent);
       localSet(`students-${schoolId}`, list);
       return newStudent;
+    },
+    update: (schoolId, studentId, updates) => {
+      const list = localGet(`students-${schoolId}`, []);
+      const idx = list.findIndex((s) => s.id === studentId);
+      if (idx < 0) return null;
+      list[idx] = { ...list[idx], ...updates, updated_at: new Date().toISOString() };
+      localSet(`students-${schoolId}`, list);
+      return list[idx];
+    },
+    deactivate: (schoolId, studentId) => {
+      const list = localGet(`students-${schoolId}`, []).map((s) =>
+        s.id === studentId ? { ...s, status: "inactive", is_active: false, updated_at: new Date().toISOString() } : s
+      );
+      localSet(`students-${schoolId}`, list);
+      return true;
     }
   }
 };

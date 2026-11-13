@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Link2,
   Binary,
@@ -74,15 +74,37 @@ function GamesPage() {
   const [pickedS, setPickedS] = useState(null);
   const [sScore, setSScore] = useState(0);
   const [sDone, setSDone] = useState(false);
-  const matchRoundDone = matched.size === pairs.length;
+  const numTimerRef = useRef(null);
+  const sandhiTimerRef = useRef(null);
+  useEffect(() => () => {
+    if (numTimerRef.current) clearTimeout(numTimerRef.current);
+    if (sandhiTimerRef.current) clearTimeout(sandhiTimerRef.current);
+  }, []);
+  const getMatchLabel = (p) => lang === "hi" ? p.hi ?? p.en : p.en;
+  const shuffledTiles = useMemo(
+    () => shuffle([...pairs.map((p) => p.sa), ...pairs.map(getMatchLabel)]),
+    [pairs, lang]
+  );
+  const matchRoundDone = pairs.length > 0 && matched.size === pairs.length * 2;
   const q = quiz[qi];
   const sqq = sq[si];
   const speak = (text) => speakWithFallback(text);
-  const resetAll = () => {
+  const startNextWordRound = () => {
     setPairs(startWordRound(wordPairs));
     setPicked(null);
     setMatched(/* @__PURE__ */ new Set());
     setErrors(0);
+  };
+  const resetAll = () => {
+    if (numTimerRef.current) {
+      clearTimeout(numTimerRef.current);
+      numTimerRef.current = null;
+    }
+    if (sandhiTimerRef.current) {
+      clearTimeout(sandhiTimerRef.current);
+      sandhiTimerRef.current = null;
+    }
+    startNextWordRound();
     setQuiz(startNumberQuiz(devNumbers));
     setQi(0);
     setPickedNum(null);
@@ -106,13 +128,17 @@ function GamesPage() {
       return;
     }
     const pairA = pairs.find((p) => p.sa === picked);
-    const pairB = pairs.find((p) => (lang === "hi" ? p.hi : p.en) === key);
+    const pairB = pairs.find((p) => getMatchLabel(p) === key);
     const pairC = pairs.find((p) => p.sa === key);
-    const pairD = pairs.find((p) => (lang === "hi" ? p.hi : p.en) === picked);
-    const isMatch = pairA && (lang === "hi" ? pairA.hi : pairA.en) === key || pairB && pairB.sa === picked || pairC && (lang === "hi" ? pairC.hi : pairC.en) === picked || pairD && pairD.sa === key;
-    if (isMatch) {
+    const pairD = pairs.find((p) => getMatchLabel(p) === picked);
+    const matchedPair =
+      (pairA && getMatchLabel(pairA) === key ? pairA : null) ||
+      (pairB && pairB.sa === picked ? pairB : null) ||
+      (pairC && getMatchLabel(pairC) === picked ? pairC : null) ||
+      (pairD && pairD.sa === key ? pairD : null);
+    if (matchedPair) {
       setMatched((m) => /* @__PURE__ */ new Set([...m, picked, key]));
-      speak(key);
+      speak(matchedPair.sa);
     } else {
       setErrors((e) => e + 1);
     }
@@ -122,7 +148,9 @@ function GamesPage() {
     if (pickedNum !== null) return;
     setPickedNum(opt);
     if (opt === q.n) setScore((s) => s + 1);
-    setTimeout(() => {
+    if (numTimerRef.current) clearTimeout(numTimerRef.current);
+    numTimerRef.current = setTimeout(() => {
+      numTimerRef.current = null;
       if (qi + 1 >= quiz.length) {
         setDone(true);
       } else {
@@ -135,7 +163,9 @@ function GamesPage() {
     if (pickedS !== null) return;
     setPickedS(opt);
     if (opt === sqq.correct) setSScore((s) => s + 1);
-    setTimeout(() => {
+    if (sandhiTimerRef.current) clearTimeout(sandhiTimerRef.current);
+    sandhiTimerRef.current = setTimeout(() => {
+      sandhiTimerRef.current = null;
       if (si + 1 >= sq.length) {
         setSDone(true);
       } else {
@@ -159,135 +189,135 @@ function GamesPage() {
     };
   };
   return <div className="page-container">
-      <div className="page-header">
-        <h2>{t("Learn Through Games")}</h2>
-        <p>{t("Three quick games \u2014 match words, master numbers, chase sandhi.")}</p>
+    <div className="page-header">
+      <h2>{t("Learn Through Games")}</h2>
+      <p>{t("Three quick games \u2014 match words, master numbers, chase sandhi.")}</p>
+    </div>
+
+    <div className="card" style={{ maxWidth: 860, margin: "0 auto", padding: 24 }}>
+      <div style={{ display: "flex", gap: 8, marginBottom: 18, alignItems: "center", flexWrap: "wrap" }}>
+        <button className={`btn btn-sm ${game === "match" ? "btn-primary" : "btn-secondary"}`} onClick={() => setGame("match")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Link2 size={14} /> <span>{t("Word Match")}</span>
+        </button>
+        <button className={`btn btn-sm ${game === "numbers" ? "btn-primary" : "btn-secondary"}`} onClick={() => setGame("numbers")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Binary size={14} /> <span>{t("Number Blitz")}</span>
+        </button>
+        <button className={`btn btn-sm ${game === "sandhi" ? "btn-primary" : "btn-secondary"}`} onClick={() => setGame("sandhi")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Sparkles size={14} /> <span>{t("Sandhi Chase")}</span>
+        </button>
+        <span style={{ flex: 1 }} />
+        <button className="btn btn-sm btn-secondary" onClick={resetAll} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <RotateCcw size={13} /> <span>{t("Restart")}</span>
+        </button>
       </div>
 
-      <div className="card" style={{ maxWidth: 860, margin: "0 auto", padding: 24 }}>
-        <div style={{ display: "flex", gap: 8, marginBottom: 18, alignItems: "center", flexWrap: "wrap" }}>
-          <button className={`btn btn-sm ${game === "match" ? "btn-primary" : "btn-secondary"}`} onClick={() => setGame("match")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <Link2 size={14} /> <span>{t("Word Match")}</span>
-          </button>
-          <button className={`btn btn-sm ${game === "numbers" ? "btn-primary" : "btn-secondary"}`} onClick={() => setGame("numbers")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <Binary size={14} /> <span>{t("Number Blitz")}</span>
-          </button>
-          <button className={`btn btn-sm ${game === "sandhi" ? "btn-primary" : "btn-secondary"}`} onClick={() => setGame("sandhi")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <Sparkles size={14} /> <span>{t("Sandhi Chase")}</span>
-          </button>
-          <span style={{ flex: 1 }} />
-          <button className="btn btn-sm btn-secondary" onClick={resetAll} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <RotateCcw size={13} /> <span>{t("Restart")}</span>
-          </button>
+      {game === "match" && <div>
+        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+          <span className="badge">{t("Matched")}: {matched.size}/{pairs.length * 2}</span>
+          <span className="badge">{t("Mistakes")}: {errors}</span>
         </div>
+        {matchRoundDone ? <div style={{ textAlign: "center", padding: 30 }}>
+          <div style={{ display: "inline-flex", justifyContent: "center", marginBottom: 10 }}>
+            <Trophy size={48} color="#2ecc71" />
+          </div>
+          <p style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px" }}>{t("Round complete!")}</p>
+          <p>{errors === 0 ? t("Perfect \u2014 zero mistakes!") : t("Finished with") + " " + errors + " " + t("mistakes.")}</p>
+          <button className="btn btn-primary" onClick={startNextWordRound}>{t("Next round")}</button>
+        </div> : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
+          {shuffledTiles.map((key) => <button key={key} className="card" style={cardStyle(key)} onClick={() => tapMatch(key)} disabled={matched.has(key)}>
+            {key}
+          </button>)}
+        </div>}
+      </div>}
 
-        {game === "match" && <div>
-            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-              <span className="badge">{t("Matched")}: {matched.size}/{pairs.length * 2}</span>
-              <span className="badge">{t("Mistakes")}: {errors}</span>
-            </div>
-            {matchRoundDone ? <div style={{ textAlign: "center", padding: 30 }}>
-                <div style={{ display: "inline-flex", justifyContent: "center", marginBottom: 10 }}>
-                  <Trophy size={48} color="#2ecc71" />
-                </div>
-                <p style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px" }}>{t("Round complete!")}</p>
-                <p>{errors === 0 ? t("Perfect \u2014 zero mistakes!") : t("Finished with") + " " + errors + " " + t("mistakes.")}</p>
-                <button className="btn btn-primary" onClick={() => setPairs(startWordRound(wordPairs))}>{t("Next round")}</button>
-              </div> : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
-                {shuffle([...pairs.map((p) => p.sa), ...pairs.map((p) => lang === "hi" ? p.hi ?? p.en : p.en)]).map((key) => <button key={key} className="card" style={cardStyle(key)} onClick={() => tapMatch(key)} disabled={matched.has(key)}>
-                    {key}
-                  </button>)}
-              </div>}
-          </div>}
+      {game === "numbers" && <div>
+        {!done && q && <div style={{ textAlign: "center" }}>
+          <p style={{ margin: "0 0 6px", fontSize: 13, opacity: 0.7 }}>{t("Question")} {qi + 1} / {quiz.length} · {t("Score")} {score}</p>
+          <p style={{ fontSize: 56, margin: "10px 0 4px", color: "var(--vt-accent)" }}>
+            {q.promptIsWord ? devNumbers.find((dn) => dn.n === q.n)?.word : toDevanagariNumber(q.n)}
+          </p>
+          <p style={{ fontSize: 14, opacity: 0.6, marginBottom: 18 }}>
+            {q.promptIsWord ? t("What number is this?") : t("Pick the Sanskrit word")}
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: 10, maxWidth: 560, margin: "0 auto" }}>
+            {q.options.map((opt) => {
+              const isPick = pickedNum === opt;
+              const isCorrect = opt === q.n;
+              let style = { margin: 0 };
+              if (pickedNum !== null) {
+                if (isCorrect) style = { ...style, border: "2px solid #2e7d32", background: "rgba(46,125,50,0.08)" };
+                else if (isPick) style = { ...style, border: "2px solid #c62828", background: "rgba(198,40,40,0.08)" };
+                else style = { ...style, opacity: 0.5 };
+              }
+              return <button key={opt} className="card" style={style} onClick={() => tapNumber(opt)} disabled={pickedNum !== null}>
+                {q.promptIsWord ? <strong style={{ fontSize: 30 }}>{toDevanagariNumber(opt)}</strong> : <strong>{devNumbers.find((dn) => dn.n === opt)?.word}</strong>}
+                <span style={{ display: "block", fontSize: 12, opacity: 0.6 }}>{devNumbers.find((dn) => dn.n === opt)?.iast}</span>
+              </button>;
+            })}
+          </div>
+        </div>}
+        {done && <div style={{ textAlign: "center", padding: 30 }}>
+          <div style={{ display: "inline-flex", justifyContent: "center", marginBottom: 10 }}>
+            <Trophy size={48} color="#f1c40f" />
+          </div>
+          <p style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px" }}>{t("Quiz done!")}</p>
+          <p>{score} / {quiz.length}</p>
+          <button className="btn btn-primary" onClick={() => {
+            setQuiz(startNumberQuiz(devNumbers));
+            setQi(0);
+            setPickedNum(null);
+            setScore(0);
+            setDone(false);
+          }} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <RotateCcw size={15} /> <span>{t("Play again")}</span>
+          </button>
+        </div>}
+      </div>}
 
-        {game === "numbers" && <div>
-            {!done && q && <div style={{ textAlign: "center" }}>
-                <p style={{ margin: "0 0 6px", fontSize: 13, opacity: 0.7 }}>{t("Question")} {qi + 1} / {quiz.length} · {t("Score")} {score}</p>
-                <p style={{ fontSize: 56, margin: "10px 0 4px", color: "var(--vt-accent)" }}>
-                  {q.promptIsWord ? devNumbers.find((dn) => dn.n === q.n)?.word : toDevanagariNumber(q.n)}
-                </p>
-                <p style={{ fontSize: 14, opacity: 0.6, marginBottom: 18 }}>
-                  {q.promptIsWord ? t("What number is this?") : t("Pick the Sanskrit word")}
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: 10, maxWidth: 560, margin: "0 auto" }}>
-                  {q.options.map((opt) => {
-    const isPick = pickedNum === opt;
-    const isCorrect = opt === q.n;
-    let style = { margin: 0 };
-    if (pickedNum !== null) {
-      if (isCorrect) style = { ...style, border: "2px solid #2e7d32", background: "rgba(46,125,50,0.08)" };
-      else if (isPick) style = { ...style, border: "2px solid #c62828", background: "rgba(198,40,40,0.08)" };
-      else style = { ...style, opacity: 0.5 };
-    }
-    return <button key={opt} className="card" style={style} onClick={() => tapNumber(opt)} disabled={pickedNum !== null}>
-                        {q.promptIsWord ? <strong style={{ fontSize: 30 }}>{toDevanagariNumber(opt)}</strong> : <strong>{devNumbers.find((dn) => dn.n === opt)?.word}</strong>}
-                        <span style={{ display: "block", fontSize: 12, opacity: 0.6 }}>{devNumbers.find((dn) => dn.n === opt)?.iast}</span>
-                      </button>;
-  })}
-                </div>
-              </div>}
-            {done && <div style={{ textAlign: "center", padding: 30 }}>
-                <div style={{ display: "inline-flex", justifyContent: "center", marginBottom: 10 }}>
-                  <Trophy size={48} color="#f1c40f" />
-                </div>
-                <p style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px" }}>{t("Quiz done!")}</p>
-                <p>{score} / {quiz.length}</p>
-                <button className="btn btn-primary" onClick={() => {
-    setQuiz(startNumberQuiz(devNumbers));
-    setQi(0);
-    setPickedNum(null);
-    setScore(0);
-    setDone(false);
-  }} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                  <RotateCcw size={15} /> <span>{t("Play again")}</span>
-                </button>
-              </div>}
-          </div>}
-
-        {game === "sandhi" && <div>
-            {!sDone && sqq && <div>
-                <p style={{ textAlign: "center", margin: "0 0 6px", fontSize: 13, opacity: 0.7 }}>{t("Question")} {si + 1} / {sq.length} · {t("Score")} {sScore}</p>
-                <div className="challenge-banner">
-                  <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-                    {sqq.a} + {sqq.b} <span style={{ opacity: 0.6 }}>= ?</span>
-                  </p>
-                </div>
-                <p style={{ fontWeight: 600, margin: "0 0 10px" }}>{t("Choose the joined form")}</p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
-                  {sqq.options.map((opt) => {
-    const isPick = pickedS === opt;
-    const isCorrect = opt === sqq.correct;
-    let style = { margin: 0 };
-    if (pickedS !== null) {
-      if (isCorrect) style = { ...style, border: "2px solid #2e7d32", background: "rgba(46,125,50,0.08)" };
-      else if (isPick) style = { ...style, border: "2px solid #c62828", background: "rgba(198,40,40,0.08)" };
-      else style = { ...style, opacity: 0.5 };
-    }
-    return <button key={opt} className="card" style={style} onClick={() => tapSandhi(opt)} disabled={pickedS !== null}>
-                        <strong>{opt}</strong>
-                      </button>;
-  })}
-                </div>
-              </div>}
-            {sDone && <div style={{ textAlign: "center", padding: 30 }}>
-                <div style={{ display: "inline-flex", justifyContent: "center", marginBottom: 10 }}>
-                  <Trophy size={48} color="#2ecc71" />
-                </div>
-                <p style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px" }}>{t("Chase complete!")}</p>
-                <p>{sScore} / {sq.length}</p>
-                <button className="btn btn-primary" onClick={() => {
-    setSq(startSandhiQuiz(sandhiPairs));
-    setSi(0);
-    setPickedS(null);
-    setSScore(0);
-    setSDone(false);
-  }} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                  <RotateCcw size={15} /> <span>{t("Play again")}</span>
-                </button>
-              </div>}
-          </div>}
-      </div>
-    </div>;
+      {game === "sandhi" && <div>
+        {!sDone && sqq && <div>
+          <p style={{ textAlign: "center", margin: "0 0 6px", fontSize: 13, opacity: 0.7 }}>{t("Question")} {si + 1} / {sq.length} · {t("Score")} {sScore}</p>
+          <div className="challenge-banner">
+            <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
+              {sqq.a} + {sqq.b} <span style={{ opacity: 0.6 }}>= ?</span>
+            </p>
+          </div>
+          <p style={{ fontWeight: 600, margin: "0 0 10px" }}>{t("Choose the joined form")}</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
+            {sqq.options.map((opt) => {
+              const isPick = pickedS === opt;
+              const isCorrect = opt === sqq.correct;
+              let style = { margin: 0 };
+              if (pickedS !== null) {
+                if (isCorrect) style = { ...style, border: "2px solid #2e7d32", background: "rgba(46,125,50,0.08)" };
+                else if (isPick) style = { ...style, border: "2px solid #c62828", background: "rgba(198,40,40,0.08)" };
+                else style = { ...style, opacity: 0.5 };
+              }
+              return <button key={opt} className="card" style={style} onClick={() => tapSandhi(opt)} disabled={pickedS !== null}>
+                <strong>{opt}</strong>
+              </button>;
+            })}
+          </div>
+        </div>}
+        {sDone && <div style={{ textAlign: "center", padding: 30 }}>
+          <div style={{ display: "inline-flex", justifyContent: "center", marginBottom: 10 }}>
+            <Trophy size={48} color="#2ecc71" />
+          </div>
+          <p style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px" }}>{t("Chase complete!")}</p>
+          <p>{sScore} / {sq.length}</p>
+          <button className="btn btn-primary" onClick={() => {
+            setSq(startSandhiQuiz(sandhiPairs));
+            setSi(0);
+            setPickedS(null);
+            setSScore(0);
+            setSDone(false);
+          }} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <RotateCcw size={15} /> <span>{t("Play again")}</span>
+          </button>
+        </div>}
+      </div>}
+    </div>
+  </div>;
 }
 export {
   GamesPage as default

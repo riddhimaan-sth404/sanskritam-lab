@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "../../services/supabase";
 import { toIAST } from "../../services/sanskrit";
@@ -44,11 +45,11 @@ function EtymologyTreePage() {
   const [q, setQ] = useState("");
   useEffect(() => {
     let alive = true;
-    supabase.from("dictionary").select("word, root, pos, meanings, meanings_hi").not("root", "is", null).limit(2e3).then(({ data }) => {
+    supabase.from("dictionary").select("word, root, pos, meanings").not("root", "is", null).limit(2e3).then(({ data }) => {
       if (!alive || !data) return;
       setRows(data);
       if (data.length > 0) setSelRoot(data[0].root);
-    });
+    }).catch(() => {});
     return () => {
       alive = false;
     };
@@ -122,9 +123,9 @@ function EtymologyTreePage() {
                 {(hi && Array.isArray(w.meanings_hi) && w.meanings_hi.length ? w.meanings_hi : w.meanings || []).slice(0, 3).join(" \xB7 ")}
               </p>
               <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--vt-muted)", fontStyle: "italic" }}>{toIAST(w.word)}</p>
-              <a href={`#/explore/${encodeURIComponent(w.word)}`} style={{ fontSize: 13, color: "var(--vt-orange)", display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <Link to={`/explore/${encodeURIComponent(w.word)}`} style={{ fontSize: 13, color: "var(--vt-orange)", display: "inline-flex", alignItems: "center", gap: 4 }}>
                 <span>{t("Explore")}</span> <ArrowRight size={12} />
-              </a>
+              </Link>
             </div>)}
         </div>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Volume2,
   X,
@@ -52,6 +52,13 @@ function ExplorePanel({ word, onClose }) {
   const [concepts, setConcepts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [speaking, setSpeaking] = useState(false);
+  const stopTimerRef = useRef(null);
+  const stopSpeakRef = useRef(null);
+
+  useEffect(() => () => {
+    if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+    stopSpeakRef.current?.();
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -82,7 +89,7 @@ function ExplorePanel({ word, onClose }) {
         try {
           const [dictR, relR, textsR, corpusR] = await Promise.all([
             supabase.from("dictionary").select("*").or(`word.eq.${w},iast.ilike.${iast2}`).limit(1).maybeSingle(),
-            supabase.from("dictionary").select("word, meanings, meanings_hi, pos").ilike("word", `%${w}%`).neq("word", w).limit(6),
+            supabase.from("dictionary").select("word, meanings, pos").ilike("word", `%${w}%`).neq("word", w).limit(6),
             supabase.from("texts").select("id, title, content").ilike("content", `%${w}%`).limit(3),
             supabase.from("corpus_texts").select("id, title, content").ilike("content", `%${w}%`).limit(3),
           ]);
@@ -187,8 +194,11 @@ function ExplorePanel({ word, onClose }) {
   const iast = toIAST(word);
 
   const speak = () => {
+    if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+    stopSpeakRef.current?.();
     const stop = speakWithFallback(word, (sp) => setSpeaking(sp));
-    setTimeout(() => stop, 20000);
+    stopSpeakRef.current = stop;
+    stopTimerRef.current = setTimeout(() => stop?.(), 20000);
   };
 
   return (
@@ -259,7 +269,7 @@ function ExplorePanel({ word, onClose }) {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {related.map((r) => (
                   <button key={r.word} className="btn btn-sm btn-outline" onClick={() => exploreWord(r.word)}>
-                    {r.word} <span style={{ color: "var(--vt-text-light)" }}>({lang === "hi" && r.meanings_hi?.length ? r.meanings_hi[0] : r.meanings[0] || ""})</span>
+                    {r.word} <span style={{ color: "var(--vt-text-light)" }}>({lang === "hi" && r.meanings_hi?.length ? r.meanings_hi[0] : r.meanings?.[0] || ""})</span>
                   </button>
                 ))}
               </div>

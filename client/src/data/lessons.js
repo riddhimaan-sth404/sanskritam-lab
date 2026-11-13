@@ -90,7 +90,7 @@ const lessons = [
       summary: "There are 5 groups \xD7 5 = 25, plus 4 semivowels and 4 sibilants = 33 consonants."
     },
     quiz: [
-      { id: "q-c1", prompt: "\u0915 is which type?", options: ["Palatal", "Guttural", "Labial", "Dental"], correctIndex: 1, explanation: "\u0915 is \u0917uttural (ka\u1E47\u1E6Dhya) \u2014 from the throat.", difficulty: 1 },
+      { id: "q-c1", prompt: "\u0915 is which type?", options: ["Palatal", "Guttural", "Labial", "Dental"], correctIndex: 1, explanation: "\u0915 is Guttural (ka\u1E47\u1E6Dhya) \u2014 from the throat.", difficulty: 1 },
       { id: "q-c2", prompt: "Which is the dental series?", options: ["\u0915 \u0916 \u0917 \u0918 \u0919", "\u091A \u091B \u091C \u091D \u091E", "\u0924 \u0925 \u0926 \u0927 \u0928", "\u092A \u092B \u092C \u092D \u092E"], correctIndex: 2, explanation: "\u0924 \u0925 \u0926 \u0927 \u0928 are the dental series \u2014 tongue touches the teeth.", difficulty: 2 }
     ]
   },
@@ -173,7 +173,7 @@ const lessons = [
     title: "\u0935\u093F\u092D\u0915\u094D\u0924\u092F\u0903 \u2014 The 8 Cases",
     subtitle: "Master noun declensions across 3 genders",
     level: 2,
-    track: "undergrad",
+    track: "teen",
     govClassId: "class-7",
     duration: "30 min",
     unlockables: ["skill-declensions"],
@@ -215,7 +215,7 @@ const lessons = [
     title: "\u0938\u0928\u094D\u0927\u093F\u0903 \u2014 Sound Merger Rules",
     subtitle: "The elegant rules of sound combination",
     level: 3,
-    track: "undergrad",
+    track: "teen",
     govClassId: "class-9",
     duration: "35 min",
     unlockables: ["skill-sandhi"],
@@ -238,10 +238,11 @@ const lessons = [
         },
         {
           heading: "Ya\u1E47 Sandhi",
-          body: "\u0907/\u0908 + vowel \u2192 \u092F\u094D + vowel\n\u0909/\u090A + vowel \u2192 \u0935\u094D + vowel\nExample: \u0907\u0924\u093F + \u0906\u0939 = \u0907\u0924\u094D\u092F\u093E\u0939",
+          body: "\u0907/\u0908 + dissimilar vowel \u2192 \u092F\u094D + vowel\n\u0909/\u090A + dissimilar vowel \u2192 \u0935\u094D + vowel\n\u090B + dissimilar vowel \u2192 \u0930\u094D + vowel\nExample: \u0907\u0924\u093F + \u0906\u0939 = \u0907\u0924\u094D\u092F\u093E\u0939",
           devanagari: "\u0907\u0924\u093F + \u0906\u0939 = \u0907\u0924\u094D\u092F\u093E\u0939",
           examples: [
-            { text: "\u0905\u0917\u094D\u0928\u093F + \u0907\u0935", meaning: "\u0905\u0917\u094D\u0928\u093F\u0930\u093F\u0935 (like fire)" }
+            { text: "\u0938\u0941 + \u0906\u0917\u0924\u092E\u094D", meaning: "\u0938\u094D\u0935\u093E\u0917\u0924\u092E\u094D (welcome)" },
+            { text: "\u092A\u094D\u0930\u0924\u093F + \u090F\u0915\u092E\u094D", meaning: "\u092A\u094D\u0930\u0924\u094D\u092F\u0947\u0915\u092E\u094D (each one)" }
           ]
         }
       ],
@@ -301,18 +302,18 @@ const lessons = [
       introduction: "K\u0101lid\u0101sa is the greatest Sanskrit poet. His play Abhij\xF1\u0101na\u015B\u0101kuntalam opens with a benedictory verse (n\u0101nd\u012B).",
       sections: [
         {
-          heading: "Verse 1.1",
-          body: "\u0906\u0938\u0940\u0926\u0941\u0926\u0928\u094D\u0924\u0941\u092E\u0942\u0932\u0947\u0937\u0941 \u0938\u091A\u0947\u0924\u093E\u0903 \u092A\u094D\u0930\u092D\u0935\u0903 \u0938\u094D\u0935\u092F\u092E\u094D \u0964 \u0935\u093F\u0927\u093E\u0924\u093E \u0924\u0938\u094D\u092F \u091A\u0947\u0924\u093E\u0902\u0938\u093F \u0935\u093F\u0927\u093F\u0928\u093E \u0935\u093F\u0927\u093F\u0928\u093E \u0926\u0927\u0947 \u0965",
-          devanagari: "\u0906\u0938\u0940\u0926\u0941\u0926\u0928\u094D\u0924\u0941\u092E\u0942\u0932\u0947\u0937\u0941 \u0938\u091A\u0947\u0924\u093E\u0903 \u092A\u094D\u0930\u092D\u0935\u0903 \u0938\u094D\u0935\u092F\u092E\u094D \u0964 \u0935\u093F\u0927\u093E\u0924\u093E \u0924\u0938\u094D\u092F \u091A\u0947\u0924\u093E\u0902\u0938\u093F \u0935\u093F\u0927\u093F\u0928\u093E \u0935\u093F\u0927\u093F\u0928\u093E \u0926\u0927\u0947 \u0965",
-          transliteration: "\u0101s\u012Bdudantum\u016Ble\u1E63u sacet\u0101\u1E25 prabhava\u1E25 svayam | vidh\u0101t\u0101 tasya cet\u0101\u1E43si vidhin\u0101 vidhin\u0101 dadhe ||",
+          heading: "Verse 1.1 (A\u1E63\u1E6Dam\u016Brti N\u0101nd\u012B)",
+          body: "\u092F\u093E \u0938\u0943\u0937\u094D\u091F\u093F\u0903 \u0938\u094D\u0930\u0937\u094D\u091F\u0941\u0930\u093E\u0926\u094D\u092F\u093E \u0935\u0939\u0924\u093F \u0935\u093F\u0927\u093F\u0939\u0941\u0924\u0902 \u092F\u093E \u0939\u0935\u093F\u0930\u094D\u092F\u093E \u091A \u0939\u094B\u0924\u094D\u0930\u0940 \u0964\n\u092F\u0947 \u0926\u094D\u0935\u0947 \u0915\u093E\u0932\u0902 \u0935\u093F\u0927\u0924\u094D\u0924\u0903 \u0936\u094D\u0930\u0941\u0924\u093F\u0935\u093F\u0937\u092F\u0917\u0941\u0923\u093E \u092F\u093E \u0938\u094D\u0925\u093F\u0924\u093E \u0935\u094D\u092F\u093E\u092A\u094D\u092F \u0935\u093F\u0936\u094D\u0935\u092E\u094D \u0965\n\u092F\u093E\u092E\u093E\u0939\u0941\u0903 \u0938\u0930\u094D\u0935\u092C\u0940\u091C\u092A\u094D\u0930\u0915\u0943\u0924\u093F\u0930\u093F\u0924\u093F \u092F\u092F\u093E \u092A\u094D\u0930\u093E\u0923\u093F\u0928\u0903 \u092A\u094D\u0930\u093E\u0923\u0935\u0928\u094D\u0924\u0903 \u0964\n\u092A\u094D\u0930\u0924\u094D\u092F\u0915\u094D\u0937\u093E\u092D\u093F\u0903 \u092A\u094D\u0930\u092A\u0928\u094D\u0928\u0938\u094D\u0924\u0928\u0941\u092D\u093F\u0930\u0935\u0924\u0941 \u0935\u0938\u094D\u0924\u093E\u092D\u093F\u0930\u0937\u094D\u091F\u093E\u092D\u093F\u0930\u0940\u0936\u0903 \u0965",
+          devanagari: "\u092F\u093E \u0938\u0943\u0937\u094D\u091F\u093F\u0903 \u0938\u094D\u0930\u0937\u094D\u091F\u0941\u0930\u093E\u0926\u094D\u092F\u093E \u0935\u0939\u0924\u093F \u0935\u093F\u0927\u093F\u0939\u0941\u0924\u0902 \u092F\u093E \u0939\u0935\u093F\u0930\u094D\u092F\u093E \u091A \u0939\u094B\u0924\u094D\u0930\u0940 \u0964",
+          transliteration: "y\u0101 s\u1E5B\u1E63\u1E6Di\u1E25 sra\u1E63\u1E6Dur \u0101dy\u0101 vahati vidhihuta\u1E43 y\u0101 havir y\u0101 ca hotr\u012B | ye dve k\u0101la\u1E43 vidhatta\u1E25 \u015Brutivi\u1E63ayagu\u1E47\u0101 y\u0101 sthit\u0101 vy\u0101pya vi\u015Bvam ||",
           examples: [
-            { text: "\u0906\u0938\u0940\u0924\u094D (\u0101s\u012Bt)", meaning: "was" },
-            { text: "\u092A\u094D\u0930\u092D\u0935\u0903 (prabhava\u1E25)", meaning: "origins" }
+            { text: "\u0938\u094D\u0930\u0937\u094D\u091F\u0941\u0903 (sra\u1E63\u1E6Du\u1E25)", meaning: "of the Creator (Genitive of sra\u1E63\u1E6D\u1E5B)" },
+            { text: "\u0905\u0937\u094D\u091F\u093E\u092D\u093F\u0903 \u0924\u0928\u0941\u092D\u093F\u0903 (a\u1E63\u1E6D\u0101bhi\u1E25 tanubhi\u1E25)", meaning: "with the eight visible forms (\u015Aiva's A\u1E63\u1E6Dam\u016Brti)" }
           ]
         },
         {
-          heading: "Metre: Anu\u1E63\u1E6Dubh",
-          body: "8 syllables per quarter-verse (p\u0101da). Pattern: \u23D1\u23D1\u2212\u2212 \u23D1\u23D1\u2212\u2212 \u23D1\u23D1\u2212\u2212 \u23D1\u23D1\u2212\xD7\nThis is the most common Sanskrit metre."
+          heading: "Metre: Sragdhar\u0101 (\u0938\u094D\u0930\u0917\u094D\u0927\u0930\u093E)",
+          body: "21 syllables per quarter-verse (p\u0101da). Pattern (ma-ra-bha-na-ya-ya-ya): \u2212\u2212\u2212 \u2212\u23D1\u2212 \u2212\u23D1\u23D1 \u23D1\u23D1\u23D1 \u23D1\u2212\u2212 \u23D1\u2212\u2212 \u23D1\u2212\u2212\nContrast with Anu\u1E63\u1E6Dubh (8 syllables/p\u0101da), the most common Classical metre."
         }
       ],
       summary: "K\u0101lid\u0101sa's style is marked by elegant simplicity (pras\u0101da gu\u1E47a). Every word carries precise meaning."
@@ -405,7 +406,7 @@ const lessons = [
         },
         {
           heading: "Common Paleographical Challenges",
-          body: "1. Confusion of \u0938\u092E (sa) and \u0935 (va) and \u092C (ba)\n2. Lack of word division in older MSS\n3. Abbreviations (like \u0907\u0924\u093F = \u0907\u0924\u093F)"
+          body: "1. Confusion of \u0938 (sa) and \u0935 (va) and \u092C (ba)\n2. Lack of word division in older MSS\n3. Abbreviations (like \u0907\u0924\u093F = \u0907\u0924\u093F)"
         }
       ],
       summary: "Reading manuscripts requires practice identifying letter shapes across centuries of scribal tradition."
@@ -547,7 +548,7 @@ const lessons = [
         },
         {
           heading: "\u0932\u0919\u094D \u2014 Imperfect Tense (Anadyatana)",
-          body: 'Past tense for actions completed "today but before now". Prefix \u0905- added.\n\u0905\u092A\u0920\u092E\u094D, \u0905\u092A\u0920\u0903, \u0905\u092A\u0920\u0924\u094D, \u0905\u092A\u0920\u093E\u0935, \u0905\u092A\u0920\u0924\u092E\u094D, \u0905\u092A\u0920\u0924\u093E\u092E\u094D, \u0905\u092A\u0920\u093E\u092E, \u0905\u092A\u0920\u0924, \u0905\u092A\u0920\u0928\u094D',
+          body: 'Past tense for actions not occurring today (\u0905\u0928\u0926\u094D\u092F\u0924\u0928 \u092D\u0942\u0924\u0915\u093E\u0932, P\u0101\u1E47ini 3.2.111). Augment prefix \u0905- added.\n\u0905\u092A\u0920\u092E\u094D, \u0905\u092A\u0920\u0903, \u0905\u092A\u0920\u0924\u094D, \u0905\u092A\u0920\u093E\u0935, \u0905\u092A\u0920\u0924\u092E\u094D, \u0905\u092A\u0920\u0924\u093E\u092E\u094D, \u0905\u092A\u0920\u093E\u092E, \u0905\u092A\u0920\u0924, \u0905\u092A\u0920\u0928\u094D',
           devanagari: "\u0905\u092A\u0920\u092E\u094D  \u0905\u092A\u0920\u0903  \u0905\u092A\u0920\u0924\u094D  \u0905\u092A\u0920\u093E\u0935  \u0905\u092A\u0920\u0924\u092E\u094D  \u0905\u092A\u0920\u0924\u093E\u092E\u094D  \u0905\u092A\u0920\u093E\u092E  \u0905\u092A\u0920\u0924  \u0905\u092A\u0920\u0928\u094D"
         },
         {
@@ -577,7 +578,7 @@ const lessons = [
     title: "\u0915\u0943\u0926\u0928\u094D\u0924\u093E\u0903 \u2014 Primary Derivatives",
     subtitle: "Forming nouns from roots with k\u1E5Bt suffixes",
     level: 3,
-    track: "undergrad",
+    track: "teen",
     govClassId: "class-10",
     duration: "30 min",
     unlockables: ["skill-grammar"],
@@ -604,7 +605,7 @@ const lessons = [
         },
         {
           heading: "\u0924\u0935\u094D\u092F\u0924\u094D & \u0905\u0928\u0940\u092F\u0930\u094D \u2014 Gerundives (Obligatory Participles)",
-          body: 'Expressing "should be" or "must be" done.\n\u0915\u0943 + \u0924\u0935\u094D\u092F\u0924\u094D \u2192 \u0915\u0930\u094D\u0924\u0935\u094D\u092F\u092E\u094D (should be done)\n\u092A\u0920\u094D + \u0905\u0928\u0940\u092F\u0930\u094D \u2192 \u092A\u0920\u0928\u0940\u092F\u092E\u094D (should be read)\n\u092A\u0936\u094D + \u0905\u0928\u0940\u092F\u0930\u094D \u2192 \u0926\u0930\u094D\u0936\u0928\u0940\u092F\u092E\u094D (worth seeing)',
+          body: 'Expressing "should be" or "must be" done.\n\u0915\u0943 + \u0924\u0935\u094D\u092F\u0924\u094D \u2192 \u0915\u0930\u094D\u0924\u0935\u094D\u092F\u092E\u094D (should be done)\n\u092A\u0920\u094D + \u0905\u0928\u0940\u092F\u0930\u094D \u2192 \u092A\u0920\u0928\u0940\u092F\u092E\u094D (should be read)\n\u0926\u0943\u0936\u094D + \u0905\u0928\u0940\u092F\u0930\u094D \u2192 \u0926\u0930\u094D\u0936\u0928\u0940\u092F\u092E\u094D (worth seeing)',
           devanagari: "\u0915\u0930\u094D\u0924\u0935\u094D\u092F\u092E\u094D  \u092A\u0920\u0928\u0940\u092F\u092E\u094D  \u0926\u0930\u094D\u0936\u0928\u0940\u092F\u092E\u094D"
         }
       ],
@@ -620,7 +621,7 @@ const lessons = [
     title: "\u0924\u0926\u094D\u0927\u093F\u0924\u093E\u0903 \u2014 Secondary Derivatives",
     subtitle: "Forming nouns from nouns with taddhita suffixes",
     level: 3,
-    track: "undergrad",
+    track: "teen",
     govClassId: "class-10",
     duration: "25 min",
     unlockables: ["skill-grammar"],
@@ -793,7 +794,7 @@ const lessons = [
         },
         {
           heading: "Mah\u0101v\u0101kyas \u2014 The Great Sayings",
-          body: '\u0905\u0939\u0902 \u092C\u094D\u0930\u0939\u094D\u092E\u093E\u0938\u094D\u092E\u093F (Aitareya) \u2014 "I am Brahman"\n\u0924\u0924\u094D\u0924\u094D\u0935\u092E\u0938\u093F (Ch\u0101ndogya) \u2014 "That you are"\n\u092A\u094D\u0930\u091C\u094D\u091E\u093E\u0928\u0902 \u092C\u094D\u0930\u0939\u094D\u092E (Aitareya) \u2014 "Consciousness is Brahman"\n\u0906\u0924\u094D\u092E\u093E \u092C\u094D\u0930\u0939\u094D\u092E (B\u1E5Bhad\u0101ra\u1E47yaka) \u2014 "The Self is Brahman"',
+          body: '\u0905\u0939\u0902 \u092C\u094D\u0930\u0939\u094D\u092E\u093E\u0938\u094D\u092E\u093F (B\u1E5Bhad\u0101ra\u1E47yaka 1.4.10) \u2014 "I am Brahman"\n\u0924\u0924\u094D\u0924\u094D\u0935\u092E\u0938\u093F (Ch\u0101ndogya) \u2014 "That you are"\n\u092A\u094D\u0930\u091C\u094D\u091E\u093E\u0928\u0902 \u092C\u094D\u0930\u0939\u094D\u092E (Aitareya) \u2014 "Consciousness is Brahman"\n\u0906\u0924\u094D\u092E\u093E \u092C\u094D\u0930\u0939\u094D\u092E (B\u1E5Bhad\u0101ra\u1E47yaka / M\u0101\u1E47\u1E0D\u016Bkya) \u2014 "The Self is Brahman"',
           devanagari: "\u0905\u0939\u0902 \u092C\u094D\u0930\u0939\u094D\u092E\u093E\u0938\u094D\u092E\u093F  \u0924\u0924\u094D\u0924\u094D\u0935\u092E\u0938\u093F  \u092A\u094D\u0930\u091C\u094D\u091E\u093E\u0928\u0902 \u092C\u094D\u0930\u0939\u094D\u092E  \u0906\u0924\u094D\u092E\u093E \u092C\u094D\u0930\u0939\u094D\u092E",
           transliteration: "aha\u1E43 brahm\u0101smi  tat tvam asi  praj\xF1\u0101na\u1E43 brahma  \u0101tm\u0101 brahma"
         },
@@ -982,7 +983,7 @@ const lessons = [
     title: "\u0905\u0935\u094D\u092F\u092F\u0940\u092D\u093E\u0935\u0903 \u2014 Indeclinable Compounds",
     subtitle: "Adverbial compounds with a prior indeclinable",
     level: 3,
-    track: "undergrad",
+    track: "teen",
     govClassId: "class-9",
     duration: "20 min",
     unlockables: ["skill-compounds"],
@@ -1004,8 +1005,8 @@ const lessons = [
           devanagari: "\u092F\u0925\u093E\u0928\u094D\u092F\u093E\u092F\u092E\u094D  \u092A\u094D\u0930\u0924\u093F\u0926\u093F\u0928\u092E\u094D  \u0909\u092A\u0917\u094D\u0930\u093E\u092E\u092E\u094D  \u0905\u0928\u0941\u0915\u0942\u0932\u092E\u094D  \u0938\u0939\u092A\u0930\u093F\u0935\u093E\u0930\u092E\u094D"
         },
         {
-          heading: "Nip\u0101tas as First Members",
-          body: "Many Avyay\u012Bbh\u0101va compounds use nip\u0101tas (particles):\n\u0938\u093E\u0915\u092E\u094D (together): \u0938\u093E\u0915\u092E\u0927\u094D\u0935\u0930\u094D\u092F\u0941\u092D\u093F\u0903 (together with the priests)\n\u0935\u093F\u0928\u093E (without): \u0935\u093F\u0928\u093E\u092A\u0930\u093E\u0927\u092E\u094D (without offense)\n\u0928\u093F\u0930\u094D (without): \u0928\u0940\u0930\u094B\u0917\u0903 (without disease)"
+          heading: "Upasargas & Avyayas as First Members",
+          body: "Avyay\u012Bbh\u0101va compounds remain indeclinable neuter singulars ending in -\u092E\u094D:\n\u0928\u093F\u0930\u094D (absence of): \u0928\u093F\u0930\u094D\u092E\u0915\u094D\u0937\u093F\u0915\u092E\u094D (without flies), \u0928\u093F\u0930\u094D\u0935\u093F\u0918\u094D\u0928\u092E\u094D (without obstacles)\n\u0905\u0924\u093F (excess / passing of): \u0905\u0924\u093F\u0939\u093F\u092E\u092E\u094D (beyond winter / passing of snow)\n\u0938\u0939 \u2192 \u0938- (with): \u0938\u091A\u0915\u094D\u0930\u092E\u094D (simultaneously with the wheel)"
         }
       ],
       summary: "Avyay\u012Bbh\u0101va compounds are easy to recognize: the first member is an indeclinable, and the compound acts as an adverb."
@@ -1059,7 +1060,7 @@ const lessons = [
     title: "\u0935\u093F\u092D\u0915\u094D\u0924\u094D\u092F\u092D\u094D\u092F\u093E\u0938\u0903 \u2014 Declension Practice",
     subtitle: "Full paradigms and common patterns across all genders",
     level: 2,
-    track: "undergrad",
+    track: "teen",
     govClassId: "class-7",
     duration: "30 min",
     unlockables: ["skill-declensions"],
@@ -1113,7 +1114,7 @@ const lessonHi = {
   "critical-edition": { subtitleHi: "\u0938\u0902\u0938\u093E\u0927\u0928 \u0938\u0939\u093F\u0924 \u092A\u0942\u0930\u094D\u0923 \u0938\u092E\u093E\u0932\u094B\u091A\u0928\u093E\u0924\u094D\u092E\u0915 \u0938\u0902\u0938\u094D\u0915\u0930\u0923 \u0915\u093E \u0928\u093F\u0930\u094D\u092E\u093E\u0923", durationHi: "\u096C\u0966 \u092E\u093F\u0928\u091F" },
   "numbers-colors": { subtitleHi: "\u0938\u0902\u0938\u094D\u0915\u0943\u0924 \u092E\u0947\u0902 1-10 \u0917\u093F\u0928\u0924\u0940 \u0914\u0930 \u092E\u0942\u0932 \u0930\u0902\u0917\u094B\u0902 \u0915\u0947 \u0928\u093E\u092E", durationHi: "\u0967\u0966 \u092E\u093F\u0928\u091F" },
   "everyday-vocab": { subtitleHi: "\u0905\u092D\u093F\u0935\u093E\u0926\u0928, \u092D\u094B\u091C\u0928, \u0926\u093F\u0936\u093E\u090F\u0901 \u0914\u0930 \u0938\u092E\u092F \u0915\u0947 \u0936\u092C\u094D\u0926", durationHi: "\u0967\u096B \u092E\u093F\u0928\u091F" },
-  "verb-conjugation": { subtitleHi: "\u0935\u0930\u094D\u0924\u092E\u093E\u0928, \u0905\u0928\u094D\u092F\u0924\u094D (\u0905\u092A\u0942\u0930\u094D\u0923), \u092D\u0935\u093F\u0937\u094D\u092F\u0924\u094D \u0914\u0930 \u092A\u0930\u094B\u0915\u094D\u0937 (\u092A\u0942\u0930\u094D\u0923) \u0915\u093E\u0932", durationHi: "\u0969\u096B \u092E\u093F\u0928\u091F" },
+  "verb-conjugation": { subtitleHi: "\u0935\u0930\u094D\u0924\u092E\u093E\u0928, \u0905\u0928\u0926\u094D\u092F\u0924\u0928 \u092D\u0942\u0924 (\u0932\u0919\u094D), \u092D\u0935\u093F\u0937\u094D\u092F\u0924\u094D \u0914\u0930 \u092A\u0930\u094B\u0915\u094D\u0937 \u0915\u093E\u0932", durationHi: "\u0969\u096B \u092E\u093F\u0928\u091F" },
   "krdanta": { subtitleHi: "\u0915\u0943\u0924 \u092A\u094D\u0930\u0924\u094D\u092F\u092F\u094B\u0902 \u0938\u0947 \u0927\u093E\u0924\u0941 \u0938\u0947 \u0938\u0902\u091C\u094D\u091E\u093E-\u0928\u093F\u0930\u094D\u092E\u093E\u0923", durationHi: "\u0969\u0966 \u092E\u093F\u0928\u091F" },
   "taddhita": { subtitleHi: "\u0924\u0926\u094D\u0927\u093F\u0924 \u092A\u094D\u0930\u0924\u094D\u092F\u092F\u094B\u0902 \u0938\u0947 \u0938\u0902\u091C\u094D\u091E\u093E \u0938\u0947 \u0938\u0902\u091C\u094D\u091E\u093E-\u0928\u093F\u0930\u094D\u092E\u093E\u0923", durationHi: "\u0968\u096B \u092E\u093F\u0928\u091F" },
   "kalidasa-works": { subtitleHi: "\u0915\u093E\u0932\u093F\u0926\u093E\u0938 \u0915\u0940 \u0938\u092D\u0940 \u0938\u093E\u0924 \u092A\u094D\u0930\u093E\u092E\u093E\u0923\u093F\u0915 \u0915\u0943\u0924\u093F\u092F\u094B\u0902 \u0915\u093E \u092A\u0930\u093F\u091A\u092F", durationHi: "\u0968\u0966 \u092E\u093F\u0928\u091F" },

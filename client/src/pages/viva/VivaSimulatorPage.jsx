@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { Volume2, Mic, Square, Keyboard, ArrowRight, Sparkles, Star, CheckCircle2 } from "lucide-react";
 import { startListening, stopListening, isSpeechSupported, onSpeechResult, speakWithFallback } from "../../services/speech";
 import { useKeyboard } from "../../context/KeyboardContext";
@@ -7,10 +8,12 @@ import { VIVA_QUESTIONS } from "../../data/viva";
 import { loadVivaQuestions } from "../../services/contentDb";
 function evaluateResponse(transcript, question, t) {
   const lower = transcript.toLowerCase();
-  const matched = question.keyPoints.filter((kp) => lower.includes(kp.toLowerCase()));
-  const missed = question.keyPoints.filter((kp) => !lower.includes(kp.toLowerCase()));
-  const score = Math.round(matched.length / question.keyPoints.length * 100);
-  const pronunciationScore = Math.min(100, 60 + Math.round(transcript.length / question.question.length * 40));
+  const keyPoints = question.keyPoints || [];
+  const matched = keyPoints.filter((kp) => lower.includes(kp.toLowerCase()));
+  const missed = keyPoints.filter((kp) => !lower.includes(kp.toLowerCase()));
+  const score = keyPoints.length > 0 ? Math.round(matched.length / keyPoints.length * 100) : 0;
+  const qLen = question.question?.length || 1;
+  const pronunciationScore = Math.min(100, 60 + Math.round(transcript.length / qLen * 40));
   let feedback = "";
   if (score >= 80) feedback = t("Excellent! Comprehensive understanding demonstrated.");
   else if (score >= 60) feedback = t("Good response. Consider covering more key points.");
@@ -45,9 +48,6 @@ function VivaSimulatorPage() {
   useEffect(() => {
     const unsub = onSpeechResult((result) => {
       setTextResponse((prev) => prev + result.transcript + " ");
-      if (textRef.current) {
-        textRef.current.value = textRef.current.value + result.transcript + " ";
-      }
     });
     return unsub;
   }, []);
@@ -63,140 +63,140 @@ function VivaSimulatorPage() {
   }, [isListening, speechSupported]);
   const submitResponse = useCallback(() => {
     const content = textResponse;
-    if (!content.trim()) return;
+    if (!content.trim() || !questions[currentQ]) return;
     const result = evaluateResponse(content, questions[currentQ], t);
     setEvaluation(result);
     setHistory((prev) => [...prev, { q: questions[currentQ].question, score: result.score }]);
-  }, [textResponse, currentQ, questions]);
+  }, [textResponse, currentQ, questions, t]);
   const nextQuestion = useCallback(() => {
     if (currentQ < questions.length - 1) {
       setCurrentQ((c) => c + 1);
       setTextResponse("");
       setEvaluation(null);
-      if (textRef.current) textRef.current.value = "";
     }
   }, [currentQ, questions]);
   const speakQuestion = useCallback(() => {
-    speakWithFallback(questions[currentQ].question);
+    if (questions[currentQ]) {
+      speakWithFallback(questions[currentQ].question);
+    }
   }, [currentQ, questions]);
   const totalScore = history.length > 0 ? Math.round(history.reduce((s, h) => s + h.score, 0) / history.length) : 0;
   if (!started) {
     return <div className="page-container">
-        <div className="page-header">
-          <h2>{t("AI Oral Exam (Viva) Simulator")}</h2>
-          <p>{t("Real speech recognition + AI evaluation for Sanskrit oral exams")}</p>
-        </div>
-        <div className="card viva-start-card">
-          <h3>{t("Ready for your Viva?")}</h3>
-          <p>{t("The AI examiner will ask questions on Sanskrit grammar, philosophy, and texts. Respond via text or speech.")}</p>
-          <div className="viva-start-features">
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Mic size={14} /> {t("Speech recognition")}</span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Sparkles size={14} /> {t("Auto-evaluation")}</span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={14} /> {t("Scoring & history")}</span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Volume2 size={14} /> {t("Text-to-speech questions")}</span>
-          </div>
-          <button className="btn btn-primary" onClick={() => setStarted(true)}>{t("Start Viva Session")}</button>
-        </div>
-        <div className="viva-lab-promo">
-          <span>{t("Want guided skill practice first?")}</span>
-          <a className="btn btn-secondary btn-sm" href="/viva/lab">{t("Open Language Lab")}</a>
-        </div>
-      </div>;
-  }
-  return <div className="page-container">
       <div className="page-header">
-        <h2>{t("Viva Simulator")}</h2>
-        <div className="viva-progress">
-          <span>{t("Question")} {currentQ + 1} {t("of")} {questions.length}</span>
-          <div className="viva-progress-bar">
-            <div style={{ width: `${(currentQ + 1) / questions.length * 100}%` }} />
-          </div>
-        </div>
+        <h2>{t("AI Oral Exam (Viva) Simulator")}</h2>
+        <p>{t("Real speech recognition + AI evaluation for Sanskrit oral exams")}</p>
       </div>
-
-      {history.length > 0 && <div className="viva-score-bar">
-          {t("Average Score:")} <strong>{totalScore}%</strong> · {t("Questions answered:")} {history.length}
-        </div>}
-
-      <div className="viva-question-card">
-        <div className="viva-question">{lang === "hi" && questions[currentQ].questionHi ? questions[currentQ].questionHi : questions[currentQ].question}</div>
-        <div className="viva-difficulty" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <span>{t("Difficulty:")}</span>
-          {Array.from({ length: questions[currentQ].difficulty }).map((_, i) => <Star key={i} size={13} fill="#ff9800" color="#ff9800" />)}
+      <div className="card viva-start-card">
+        <h3>{t("Ready for your Viva?")}</h3>
+        <p>{t("The AI examiner will ask questions on Sanskrit grammar, philosophy, and texts. Respond via text or speech.")}</p>
+        <div className="viva-start-features">
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Mic size={14} /> {t("Speech recognition")}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Sparkles size={14} /> {t("Auto-evaluation")}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={14} /> {t("Scoring & history")}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Volume2 size={14} /> {t("Text-to-speech questions")}</span>
         </div>
-        <button className="btn btn-sm btn-outline" onClick={speakQuestion} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <Volume2 size={14} /> <span>{t("Hear Question")}</span>
-        </button>
+        <button className="btn btn-primary" onClick={() => setStarted(true)}>{t("Start Viva Session")}</button>
       </div>
-
-      <div className="card">
-        <div className="viva-input-area">
-          <textarea
-    ref={textRef}
-    defaultValue={textResponse}
-    onChange={(e) => setTextResponse(e.target.value)}
-    placeholder={t("Type your response here, or use speech recognition...")}
-    className="viva-textarea"
-  />
-          {interimText && <div className="viva-interim">{interimText}</div>}
-        </div>
-
-        <div className="viva-actions">
-          <button
-    className="btn btn-secondary"
-    onClick={() => toggleKeyboard(textRef)}
-    title={t("Devanagari Keyboard")}
-    style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-  >
-            <Keyboard size={15} /> <span>देव</span>
-          </button>
-          {speechSupported && <button
-    className={`btn ${isListening ? "btn-danger" : "btn-secondary"}`}
-    onClick={toggleRecording}
-    style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-  >
-              {isListening ? <><Square size={14} /> <span>{t("Stop Recording")}</span></> : <><Mic size={14} /> <span>{t("Start Speaking")}</span></>}
-            </button>}
-          {!speechSupported && <div className="viva-unavail">{t("Speech recognition unavailable in this browser. Use Chrome.")}</div>}
-          <button className="btn btn-primary" onClick={submitResponse} disabled={!textResponse.trim()}>
-            {t("Submit Response")}
-          </button>
-          {currentQ < questions.length - 1 && <button className="btn btn-secondary" onClick={nextQuestion} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-              <span>{t("Skip")}</span> <ArrowRight size={14} />
-            </button>}
-        </div>
-
-        {evaluation && <div className={`viva-evaluation ${evaluation.score >= 60 ? "good" : "needs-work"}`}>
-            <div className="viva-eval-header">
-              <span>{t("Score:")} <strong>{evaluation.score}%</strong></span>
-              {speechSupported && <span>{t("Pronunciation:")} <strong>{evaluation.pronunciationScore}%</strong></span>}
-            </div>
-            <div className="viva-eval-score-bar">
-              <div className="viva-eval-fill" style={{ width: `${evaluation.score}%` }} />
-            </div>
-            <p>{evaluation.feedback}</p>
-            {evaluation.missedPoints.length > 0 && <details>
-                <summary>{t("View key points to cover")}</summary>
-                <ul>{evaluation.missedPoints.map((p) => <li key={p}>{p}</li>)}</ul>
-              </details>}
-          </div>}
-
-        {currentQ === questions.length - 1 && evaluation && <div className="viva-session-end">
-            <h3>{t("Session Complete!")}</h3>
-            <p>{t("Final average:")} {totalScore}% {t("across")} {history.length} {t("questions")}</p>
-            <button className="btn btn-primary" onClick={() => {
-    setCurrentQ(0);
-    setTextResponse("");
-    setEvaluation(null);
-    setStarted(false);
-    setHistory([]);
-    if (textRef.current) textRef.current.value = "";
-  }}>
-              {t("Finish Session")}
-            </button>
-          </div>}
+      <div className="viva-lab-promo">
+        <span>{t("Want guided skill practice first?")}</span>
+        <Link className="btn btn-secondary btn-sm" to="/viva/lab">{t("Open Language Lab")}</Link>
       </div>
     </div>;
+  }
+  return <div className="page-container">
+    <div className="page-header">
+      <h2>{t("Viva Simulator")}</h2>
+      <div className="viva-progress">
+        <span>{t("Question")} {currentQ + 1} {t("of")} {questions.length}</span>
+        <div className="viva-progress-bar">
+          <div style={{ width: `${(currentQ + 1) / questions.length * 100}%` }} />
+        </div>
+      </div>
+    </div>
+
+    {history.length > 0 && <div className="viva-score-bar">
+      {t("Average Score:")} <strong>{totalScore}%</strong> · {t("Questions answered:")} {history.length}
+    </div>}
+
+    <div className="viva-question-card">
+      <div className="viva-question">{lang === "hi" && questions[currentQ].questionHi ? questions[currentQ].questionHi : questions[currentQ].question}</div>
+      <div className="viva-difficulty" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <span>{t("Difficulty:")}</span>
+        {Array.from({ length: questions[currentQ].difficulty }).map((_, i) => <Star key={i} size={13} fill="#ff9800" color="#ff9800" />)}
+      </div>
+      <button className="btn btn-sm btn-outline" onClick={speakQuestion} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <Volume2 size={14} /> <span>{t("Hear Question")}</span>
+      </button>
+    </div>
+
+    <div className="card">
+      <div className="viva-input-area">
+        <textarea
+          ref={textRef}
+          value={textResponse}
+          onChange={(e) => setTextResponse(e.target.value)}
+          placeholder={t("Type your response here, or use speech recognition...")}
+          className="viva-textarea"
+        />
+        {interimText && <div className="viva-interim">{interimText}</div>}
+      </div>
+
+      <div className="viva-actions">
+        <button
+          className="btn btn-secondary"
+          onClick={() => toggleKeyboard(textRef)}
+          title={t("Devanagari Keyboard")}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+        >
+          <Keyboard size={15} /> <span>देव</span>
+        </button>
+        {speechSupported && <button
+          className={`btn ${isListening ? "btn-danger" : "btn-secondary"}`}
+          onClick={toggleRecording}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+        >
+          {isListening ? <><Square size={14} /> <span>{t("Stop Recording")}</span></> : <><Mic size={14} /> <span>{t("Start Speaking")}</span></>}
+        </button>}
+        {!speechSupported && <div className="viva-unavail">{t("Speech recognition unavailable in this browser. Use Chrome.")}</div>}
+        <button className="btn btn-primary" onClick={submitResponse} disabled={!textResponse.trim()}>
+          {t("Submit Response")}
+        </button>
+        {currentQ < questions.length - 1 && <button className="btn btn-secondary" onClick={nextQuestion} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+          <span>{t("Skip")}</span> <ArrowRight size={14} />
+        </button>}
+      </div>
+
+      {evaluation && <div className={`viva-evaluation ${evaluation.score >= 60 ? "good" : "needs-work"}`}>
+        <div className="viva-eval-header">
+          <span>{t("Score:")} <strong>{evaluation.score}%</strong></span>
+          {speechSupported && <span>{t("Pronunciation:")} <strong>{evaluation.pronunciationScore}%</strong></span>}
+        </div>
+        <div className="viva-eval-score-bar">
+          <div className="viva-eval-fill" style={{ width: `${evaluation.score}%` }} />
+        </div>
+        <p>{evaluation.feedback}</p>
+        {evaluation.missedPoints.length > 0 && <details>
+          <summary>{t("View key points to cover")}</summary>
+          <ul>{evaluation.missedPoints.map((p) => <li key={p}>{p}</li>)}</ul>
+        </details>}
+      </div>}
+
+      {currentQ === questions.length - 1 && evaluation && <div className="viva-session-end">
+        <h3>{t("Session Complete!")}</h3>
+        <p>{t("Final average:")} {totalScore}% {t("across")} {history.length} {t("questions")}</p>
+        <button className="btn btn-primary" onClick={() => {
+          setCurrentQ(0);
+          setTextResponse("");
+          setEvaluation(null);
+          setStarted(false);
+          setHistory([]);
+        }}>
+          {t("Finish Session")}
+        </button>
+      </div>}
+    </div>
+  </div>;
 }
 export {
   VivaSimulatorPage as default

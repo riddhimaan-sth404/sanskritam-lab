@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Volume2, Sprout, Link2, Search, X, BookOpen, Layers, ChevronRight, ChevronLeft, ArrowRight, Sparkles } from "lucide-react";
-import { supabase } from "../../services/supabase";
+import { Volume2, Sprout, Search, X, BookOpen, Layers, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
 import { toIAST, toDevanagari } from "../../services/sanskrit";
 import { speakWithFallback } from "../../services/speech";
 import { useLanguage } from "../../context/LanguageContext";
@@ -325,7 +324,7 @@ function DictionaryPage() {
             📚 {allWordsCount ? allWordsCount.toLocaleString() : "59,995"} {lang === "hi" ? "कुल शब्दाः" : "Total Words"}
           </span>
           <span className="chip" style={{ padding: "5px 12px", background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--vt-border)", fontWeight: 600 }}>
-            🔤 44 {lang === "hi" ? "वर्णाः" : "Starting Varnas"}
+            🔤 {ALL_VARNAS.length} {lang === "hi" ? "वर्णाः" : "Starting Varnas"}
           </span>
           <span className="chip" style={{ padding: "5px 12px", background: "rgba(46, 125, 50, 0.1)", color: "var(--vt-green)", borderRadius: 8, border: "1px solid rgba(46, 125, 50, 0.2)", fontWeight: 600 }}>
             ⚡ {lang === "hi" ? "पूर्णतः ऑफलाइन उपलब्धम्" : "100% Offline Available"}
@@ -707,16 +706,21 @@ function DictionaryPage() {
 
                 {/* Meanings */}
                 <div style={{ flex: 1 }}>
-                  <ul style={{ margin: 0, paddingLeft: 18, color: "var(--vt-text)", lineHeight: 1.5, fontSize: 14 }}>
-                    {(lang === "hi" && e.meanings_hi && e.meanings_hi.length ? e.meanings_hi : e.meanings || []).slice(0, 4).map((m, i) => (
-                      <li key={i}>{m}</li>
-                    ))}
-                    {(lang === "hi" ? e.meanings_hi?.length || 0 : e.meanings?.length || 0) === 0 && e.raw_def ? (
-                      <li style={{ color: "var(--vt-text-light)" }}>{e.raw_def.slice(0, 180)}</li>
-                    ) : (lang === "hi" ? e.meanings_hi?.length || 0 : e.meanings?.length || 0) === 0 ? (
-                      <li style={{ color: "var(--vt-text-lighter)" }}>—</li>
-                    ) : null}
-                  </ul>
+                  {(() => {
+                    const meaningsList = lang === "hi" && e.meanings_hi?.length ? e.meanings_hi : (e.meanings || []);
+                    return (
+                      <ul style={{ margin: 0, paddingLeft: 18, color: "var(--vt-text)", lineHeight: 1.5, fontSize: 14 }}>
+                        {meaningsList.slice(0, 4).map((m, i) => (
+                          <li key={i}>{m}</li>
+                        ))}
+                        {meaningsList.length === 0 && e.raw_def ? (
+                          <li style={{ color: "var(--vt-text-light)" }}>{e.raw_def.slice(0, 180)}</li>
+                        ) : meaningsList.length === 0 ? (
+                          <li style={{ color: "var(--vt-text-lighter)" }}>—</li>
+                        ) : null}
+                      </ul>
+                    );
+                  })()}
                 </div>
 
                 {/* Footer Info: Root & Derivations */}
@@ -760,6 +764,8 @@ function DictionaryPage() {
             onClick={() => {
               setQ("");
               setSelectedVarna("ALL");
+              setPage(1);
+              setSearchParams({});
             }}
             className="btn btn-outline"
             style={{ borderRadius: 20 }}

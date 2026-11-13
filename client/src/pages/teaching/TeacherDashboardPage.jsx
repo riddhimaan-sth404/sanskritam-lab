@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   GraduationCap,
@@ -6,7 +6,8 @@ import {
   FlaskConical,
   FileText,
   MessageSquare,
-  BookOpen
+  BookOpen,
+  Check
 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useRole } from "../../context/RoleContext";
@@ -21,6 +22,47 @@ function TeacherDashboardPage() {
   const activeStudents = school ? school.classes.flatMap((c) => (c.sections || []).flatMap((sec) => sec.students || [])).filter((st) => st.is_active) : [];
   const classes = school ? school.classes.filter((c) => c.is_active) : [];
   const [liveStats, setLiveStats] = useState(null);
+  const [lessonTitle, setLessonTitle] = useState("");
+  const [lessonContent, setLessonContent] = useState("");
+  const [lessonNotice, setLessonNotice] = useState("");
+  const [savedLessons, setSavedLessons] = useState(() => {
+    try {
+      const raw = localStorage.getItem("sanskritlab_teacher_lessons");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+  const noticeTimerRef = useRef(null);
+  useEffect(() => () => {
+    if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+  }, []);
+  const saveLessonPlan = (assigned) => {
+    const title = lessonTitle.trim();
+    if (!title) {
+      setLessonNotice(t("Enter a lesson title first."));
+      return;
+    }
+    const next = [
+      {
+        id: `tp-${Date.now()}`,
+        title,
+        content: lessonContent.trim(),
+        assigned: Boolean(assigned),
+        createdAt: new Date().toISOString()
+      },
+      ...savedLessons
+    ];
+    setSavedLessons(next);
+    try {
+      localStorage.setItem("sanskritlab_teacher_lessons", JSON.stringify(next));
+    } catch {}
+    setLessonTitle("");
+    setLessonContent("");
+    setLessonNotice(assigned ? t("Lesson assigned to class!") : t("Lesson saved!"));
+    if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+    noticeTimerRef.current = setTimeout(() => setLessonNotice(""), 3000);
+  };
   useEffect(() => {
     let live2 = true;
     const user2 = getAuthState().user;
@@ -221,15 +263,32 @@ function TeacherDashboardPage() {
       <div className="card" style={{ marginTop: 24 }}>
         <h3 style={{ marginBottom: 16 }}>{t("Create Lesson Plan")}</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <input placeholder={t("Lesson title...")} />
+          <input
+    value={lessonTitle}
+    onChange={(e) => setLessonTitle(e.target.value)}
+    placeholder={t("Lesson title...")}
+  />
           <textarea
+    value={lessonContent}
+    onChange={(e) => setLessonContent(e.target.value)}
     placeholder={t("Lesson content, objectives, and exercises...")}
     style={{ minHeight: 120, resize: "vertical", background: "rgba(255,255,255,0.03)", color: "var(--vt-text)", border: "1px solid var(--vt-border)", borderRadius: 6, padding: 12 }}
   />
-          <div style={{ display: "flex", gap: 12 }}>
-            <button className="btn btn-primary">{t("Save Lesson")}</button>
-            <button className="btn btn-secondary">{t("Assign to Class")}</button>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+            <button className="btn btn-primary" onClick={() => saveLessonPlan(false)}>{t("Save Lesson")}</button>
+            <button className="btn btn-secondary" onClick={() => saveLessonPlan(true)}>{t("Assign to Class")}</button>
+            {lessonNotice && <span style={{ fontSize: 13, color: "var(--vt-green)", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <Check size={14} /> <span>{lessonNotice}</span>
+              </span>}
           </div>
+          {savedLessons.length > 0 && <div className="text-list" style={{ marginTop: 8 }}>
+              {savedLessons.slice(0, 5).map((item) => <div className="text-item" key={item.id}>
+                  <div>
+                    <div className="text-title">{item.title} {item.assigned && <span style={{ fontSize: 11, color: "var(--vt-orange)", marginLeft: 6 }}>{t("Assigned")}</span>}</div>
+                    {item.content && <div className="text-meta">{item.content}</div>}
+                  </div>
+                </div>)}
+            </div>}
         </div>
       </div>
     </div>;

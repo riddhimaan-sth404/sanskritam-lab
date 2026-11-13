@@ -81,7 +81,13 @@ pub async fn start_session() -> HttpResponse {
     ];
 
     HttpResponse::Ok().json(VivaSessionResponse {
-        session_id: format!("viva_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()),
+        session_id: format!(
+            "viva_{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis()
+        ),
         status: "ready".into(),
         questions,
     })
@@ -89,22 +95,91 @@ pub async fn start_session() -> HttpResponse {
 
 pub async fn evaluate_response(body: web::Json<EvaluateVivaRequest>) -> HttpResponse {
     let text = body.response_text.trim();
-    let score = if text.len() > 20 { 85 } else if !text.is_empty() { 60 } else { 0 };
+    if text.is_empty() {
+        return HttpResponse::Ok().json(EvaluateVivaResponse {
+            score: 0,
+            max_score: 100,
+            feedback: "No response provided. Please speak or type your explanation with Sanskrit examples.".into(),
+            feedback_hi: "कोई उत्तर प्राप्त नहीं हुआ। कृपया संस्कृत उदाहरणों सहित अपना उत्तर दें।".into(),
+            matched_points: vec![],
+            pronunciation_tips: vec!["Begin with the relevant Pāṇinian rule or definition and give one clear example.".into()],
+        });
+    }
+
+    let lower = text.to_lowercase();
+    let keywords: &[(&str, &str)] = match body.question_id.as_str() {
+        "viva-2" => &[
+            ("pratyak", "Mentioned Pratyakṣa (Perception)"),
+            ("प्रत्यक्ष", "Mentioned Pratyakṣa (प्रत्यक्ष)"),
+            ("anuman", "Mentioned Anumāna (Inference)"),
+            ("अनुमान", "Mentioned Anumāna (अनुमान)"),
+            ("upaman", "Mentioned Upamāna (Comparison)"),
+            ("उपमान", "Mentioned Upamāna (उपमान)"),
+            ("sabd", "Mentioned Śabda (Testimony)"),
+            ("śabd", "Mentioned Śabda (Testimony)"),
+            ("शब्द", "Mentioned Śabda (शब्द)"),
+        ],
+        _ => &[
+            ("savar", "Identified Savarṇa Dīrgha"),
+            ("सवर्ण", "Identified सवर्णदीर्घ"),
+            ("guna", "Identified Guṇa Sandhi"),
+            ("guṇa", "Identified Guṇa Sandhi"),
+            ("गुण", "Identified गुण सन्धि"),
+            ("agni", "Cited example (agni + iva / similar)"),
+            ("अग्नि", "Cited उदाहरण (अग्नि / देव)"),
+            ("deva", "Cited Guṇa example (deva + indra)"),
+            ("देव", "Cited उदाहरण (देव + इन्द्र)"),
+            ("आद्गुण", "Referenced Pāṇini 6.1.87 (आद्गुणः)"),
+        ],
+    };
+
+    let matched_points: Vec<String> = keywords
+        .iter()
+        .filter(|(pat, _)| lower.contains(pat) || text.contains(pat))
+        .map(|(_, label)| (*label).to_string())
+        .collect();
+
+    let word_count = text.split_whitespace().count();
+    let base_score: u32 = if !matched_points.is_empty() {
+        (55 + (matched_points.len() as u32 * 15)).min(95)
+    } else if word_count >= 5 {
+        50
+    } else {
+        30
+    };
+
+    let (feedback, feedback_hi) = if base_score >= 80 {
+        (
+            "Strong conceptual clarity and accurate grammatical terminology. Keep refining compound analysis.".into(),
+            "सटीक व्याकरणिक शब्दावली और स्पष्ट अवधारणा। समास और सूत्र-उदाहरण का अभ्यास जारी रखें।".into(),
+        )
+    } else if base_score >= 55 {
+        (
+            "Good start. Try to explicitly state the Pāṇinian sūtra and give at least two contrasting examples.".into(),
+            "अच्छा प्रयास। कृपया संबंधित पाणिनि सूत्र और दो स्पष्ट उदाहरण अवश्य जोड़ें।".into(),
+        )
+    } else {
+        (
+            "Response needs key Sanskrit terms and grammatical rules for this topic.".into(),
+            "उत्तर में इस विषय के मुख्य संस्कृत शब्द और व्याकरण नियम शामिल करें।".into(),
+        )
+    };
 
     HttpResponse::Ok().json(EvaluateVivaResponse {
-        score,
+        score: base_score,
         max_score: 100,
-        feedback: "Clear pronunciation and correct grammatical terminology. Keep practicing compound analysis.".into(),
-        feedback_hi: "सुस्पष्ट उच्चारण और सही व्याकरणिक शब्दावली। समास विग्रह का और अभ्यास करें।".into(),
-        matched_points: vec!["Identified primary rule correctly".into()],
+        feedback,
+        feedback_hi,
+        matched_points,
         pronunciation_tips: vec!["Ensure distinct aspiration on mahāprāṇa consonants (ख, घ, छ, झ, थ, ध, फ, भ)".into()],
     })
 }
 
 pub async fn evaluate_analytics(body: web::Json<AnalyticsRequest>) -> HttpResponse {
     let mut recommendations = Vec::new();
+    let norm_score = if body.score > 1.0 { body.score / 100.0 } else { body.score }.clamp(0.0, 1.0);
 
-    if body.score < 0.7 {
+    if norm_score < 0.7 {
         recommendations.push("Review basic Sandhi rules and practice 10 drill exercises.".into());
         recommendations.push("Revise the Subanta declension paradigms for 'राम' and 'फल'.".into());
     } else {
@@ -114,7 +189,7 @@ pub async fn evaluate_analytics(body: web::Json<AnalyticsRequest>) -> HttpRespon
 
     HttpResponse::Ok().json(AnalyticsResponse {
         recommendations,
-        next_module: if body.score < 0.7 { "sandhi-practice".into() } else { "classical-reading".into() },
-        mastery_level: if body.score >= 0.85 { "Advanced" } else if body.score >= 0.6 { "Intermediate" } else { "Beginner" }.into(),
+        next_module: if norm_score < 0.7 { "sandhi-practice".into() } else { "classical-reading".into() },
+        mastery_level: if norm_score >= 0.85 { "Advanced" } else if norm_score >= 0.6 { "Intermediate" } else { "Beginner" }.into(),
     })
 }

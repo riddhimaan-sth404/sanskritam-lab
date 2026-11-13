@@ -4,12 +4,17 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://placeholder-ur
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "placeholder-anon-key";
 const TUTOR_API_BASE = `${supabaseUrl}/functions/v1/tutor-g`;
 async function fetchJson(url, init) {
+  if (url.startsWith("/api/") && !BACKEND_URL && isHttps) {
+    throw new Error("Rust backend not configured on HTTPS. Using offline fallbacks.");
+  }
+  const isFormData = typeof FormData !== "undefined" && init?.body instanceof FormData;
+  const headers = {
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    ...(init?.headers ?? {})
+  };
   const res = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers ?? {}
-    },
-    ...init
+    ...init,
+    headers
   });
   if (!res.ok) {
     const detail = await res.text().catch(() => "");

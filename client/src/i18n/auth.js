@@ -41,7 +41,11 @@ const authHi = {
   "e.g. Chennai": "\u091C\u0948\u0938\u0947 \u091A\u0947\u0928\u094D\u0928\u0908",
   "e.g. Sarada Vidyalaya": "\u091C\u0948\u0938\u0947 \u0938\u093E\u0930\u0926\u093E \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F",
   "e.g. Tamil Nadu": "\u091C\u0948\u0938\u0947 \u0924\u092E\u093F\u0932\u0928\u093E\u0921\u0941",
-  "will be registered to your account automatically.": "\u0938\u094D\u0935\u091A\u093E\u0932\u093F\u0924 \u0930\u0942\u092A \u0938\u0947 \u0906\u092A\u0915\u0947 \u0916\u093E\u0924\u0947 \u092E\u0947\u0902 \u092A\u0902\u091C\u0940\u0915\u0943\u0924 \u0939\u094B \u091C\u093E\u090F\u0917\u093E\u0964"
+  "will be registered to your account automatically.": "\u0938\u094D\u0935\u091A\u093E\u0932\u093F\u0924 \u0930\u0942\u092A \u0938\u0947 \u0906\u092A\u0915\u0947 \u0916\u093E\u0924\u0947 \u092E\u0947\u0902 \u092A\u0902\u091C\u0940\u0915\u0943\u0924 \u0939\u094B \u091C\u093E\u090F\u0917\u093E\u0964",
+  // Pre-submission Hindi translations
+  "Sign in with this username — it is created by you, along with your password above.": "इस उपयोगकर्ता नाम से साइन इन करें — यह आपके द्वारा ऊपर दिए गए पासवर्ड के साथ बनाया गया है।",
+  "No school found — check the spelling or the school code.": "कोई विद्यालय नहीं मिला — वर्तनी या विद्यालय कोड जांचें।",
+  "Teacher accounts can be linked now or later — the dashboard always shows your real school data, never demo numbers.": "शिक्षक खातों को अभी या बाद में जोड़ा जा सकता है — डैशबोर्ड हमेशा आपके वास्तविक विद्यालय का डेटा दिखाता है, कभी डेमो संख्याएँ नहीं।"
 };
 export {
   authHi

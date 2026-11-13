@@ -1,23 +1,24 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import {
   Tag,
-  Share2,
   Download,
-  Copy,
-  Plus,
   GitBranch,
   BookOpen,
-  Sparkles,
-  CheckCircle2,
   FileCode,
   Layers,
   ArrowRight,
-  Info,
-  HelpCircle
+  Save,
+  CheckCircle2
 } from "lucide-react";
-import { supabase } from "../../services/supabase";
 import { useLanguage } from "../../context/LanguageContext";
-import { toIAST } from "../../services/sanskrit";
+
+const escapeXml = (str) =>
+  String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 
 // Classical Corpus texts with pre-tokenized grammatical data for critical edition analysis
 const CORPUS_TEXTS = [
@@ -201,17 +202,58 @@ export default function AnnotationPage() {
   const [customCommentary, setCustomCommentary] = useState(CORPUS_TEXTS[0].commentary);
   const [customTranslation, setCustomTranslation] = useState(CORPUS_TEXTS[0].translation);
   const [notice, setNotice] = useState("");
+  const noticeTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+    };
+  }, []);
 
   const currentText = useMemo(() => {
     return CORPUS_TEXTS.find((c) => c.id === selectedTextId) || CORPUS_TEXTS[0];
   }, [selectedTextId]);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`sanskritlab_annotations_${currentText.id}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed.tokens) && parsed.tokens.length > 0) {
+          setTokens(parsed.tokens);
+          setSelectedTokenId(parsed.tokens[0]?.id || null);
+          setCustomCommentary(parsed.commentary ?? currentText.commentary);
+          setCustomTranslation(parsed.translation ?? currentText.translation);
+          return;
+        }
+      }
+    } catch {
+      // ignore invalid storage
+    }
     setTokens(currentText.tokens);
     setSelectedTokenId(currentText.tokens[0]?.id || null);
     setCustomCommentary(currentText.commentary);
     setCustomTranslation(currentText.translation);
   }, [currentText]);
+
+  const handleSaveEdition = () => {
+    try {
+      localStorage.setItem(
+        `sanskritlab_annotations_${currentText.id}`,
+        JSON.stringify({
+          tokens,
+          commentary: customCommentary,
+          translation: customTranslation,
+          updatedAt: new Date().toISOString()
+        })
+      );
+      setNotice(t("Critical edition saved!"));
+      if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+      noticeTimerRef.current = setTimeout(() => setNotice(""), 2500);
+    } catch {
+      setNotice(t("Unable to save edition locally."));
+    }
+  };
 
   const activeToken = useMemo(() => {
     return tokens.find((t) => t.id === selectedTokenId) || tokens[0];
@@ -231,7 +273,7 @@ export default function AnnotationPage() {
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>${currentText.title}</title>
+        <title>${escapeXml(currentText.title)}</title>
         <respStmt>
           <resp>Interlinear &amp; Kāraka Treebank Annotation</resp>
           <name>SanskritLab Critical Edition Studio</name>
@@ -241,25 +283,25 @@ export default function AnnotationPage() {
         <p>SanskritLab Open Sanskrit Treebank</p>
       </publicationStmt>
       <sourceDesc>
-        <p>${currentText.source}</p>
+        <p>${escapeXml(currentText.source)}</p>
       </sourceDesc>
     </fileDesc>
   </teiHeader>
   <text>
     <body>
       <entry>
-        <form>${currentText.content}</form>
+        <form>${escapeXml(currentText.content)}</form>
         <interlinear>
           ${tokens
-            .map(
-              (tok) =>
-                `<w lemma="${tok.lemma}" type="${tok.type}" pos="${tok.vibhakti || tok.lakara}" karaka="${tok.karaka}" gloss="${tok.gloss}">${tok.surface}</w>`
-            )
+            .map((tok) => {
+              const pos = tok.vibhakti && tok.vibhakti !== "-" ? tok.vibhakti : (tok.lakara || tok.type);
+              return `<w lemma="${escapeXml(tok.lemma)}" type="${escapeXml(tok.type)}" pos="${escapeXml(pos)}" karaka="${escapeXml(tok.karaka)}" gloss="${escapeXml(tok.gloss)}">${escapeXml(tok.surface)}</w>`;
+            })
             .join("\n          ")}
         </interlinear>
-        <anvaya>${currentText.anvaya}</anvaya>
-        <translation xml:lang="en">${customTranslation}</translation>
-        <commentary xml:lang="sa">${customCommentary}</commentary>
+        <anvaya>${escapeXml(currentText.anvaya)}</anvaya>
+        <translation xml:lang="en">${escapeXml(customTranslation)}</translation>
+        <commentary xml:lang="sa">${escapeXml(customCommentary)}</commentary>
       </entry>
     </body>
   </text>
@@ -316,7 +358,21 @@ export default function AnnotationPage() {
             </select>
           </div>
 
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+            {notice && (
+              <span style={{ fontSize: 13, color: "var(--vt-green)", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <CheckCircle2 size={14} />
+                <span>{notice}</span>
+              </span>
+            )}
+            <button
+              className="btn btn-primary"
+              onClick={handleSaveEdition}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13 }}
+            >
+              <Save size={14} />
+              <span>{t("Save Edition")}</span>
+            </button>
             <button
               className="btn btn-secondary"
               onClick={exportTEIXML}

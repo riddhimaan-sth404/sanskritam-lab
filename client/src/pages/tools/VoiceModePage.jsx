@@ -81,6 +81,7 @@ function VoiceModePage() {
   const [lang, setLang] = useState("hi-IN");
   const [muted, setMuted] = useState(false);
   const [busy, setBusy] = useState(false);
+  const fallbackInputRef = useRef(null);
   const [lastHeard, setLastHeard] = useState("");
   const [entries, setEntries] = useState([]);
   const [suggestions, setSuggestionsState] = useState([]);
@@ -242,6 +243,7 @@ function VoiceModePage() {
         {interim && <p style={{ color: "var(--vt-muted)", fontStyle: "italic" }}>“{interim}”</p>}
         {!supported && <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}>
             <input
+    ref={fallbackInputRef}
     style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid var(--vt-border)", width: 260 }}
     placeholder={t("Type a word (e.g. \u091C\u0932)\u2026")}
     onKeyDown={(e) => {
@@ -252,8 +254,10 @@ function VoiceModePage() {
     }}
   />
             <button className="btn btn-primary" onClick={() => {
-    const inp = document.querySelector("input[placeholder]");
-    if (inp?.value.trim()) processPhrase(inp.value);
+    if (fallbackInputRef.current?.value.trim()) {
+      processPhrase(fallbackInputRef.current.value);
+      fallbackInputRef.current.value = "";
+    }
   }}>{t("Look up")}</button>
           </div>}
 

@@ -14,33 +14,61 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 const letters = [
-  { dev: "\u0905", trans: "a", sound: "u" },
-  { dev: "\u0906", trans: "\u0101", sound: "a" },
-  { dev: "\u0907", trans: "i", sound: "i" },
-  { dev: "\u0908", trans: "\u012B", sound: "ee" },
-  { dev: "\u0909", trans: "u", sound: "u" },
-  { dev: "\u090A", trans: "\u016B", sound: "oo" },
-  { dev: "\u090F", trans: "e", sound: "a" },
-  { dev: "\u0913", trans: "o", sound: "o" },
-  { dev: "\u0915", trans: "ka", sound: "u" },
-  { dev: "\u0916", trans: "kha", sound: "u" },
-  { dev: "\u0917", trans: "ga", sound: "u" },
-  { dev: "\u0918", trans: "gha", sound: "u" },
-  { dev: "\u0919", trans: "\u1E45a", sound: "u" },
-  { dev: "\u091A", trans: "ca", sound: "u" },
-  { dev: "\u091C", trans: "ja", sound: "u" },
-  { dev: "\u0924", trans: "ta", sound: "u" },
-  { dev: "\u0926", trans: "da", sound: "u" },
-  { dev: "\u0928", trans: "na", sound: "u" },
-  { dev: "\u092A", trans: "pa", sound: "u" },
-  { dev: "\u092C", trans: "ba", sound: "u" },
-  { dev: "\u092E", trans: "ma", sound: "u" },
-  { dev: "\u092F", trans: "ya", sound: "u" },
-  { dev: "\u0930", trans: "ra", sound: "u" },
-  { dev: "\u0932", trans: "la", sound: "u" },
-  { dev: "\u0935", trans: "va", sound: "u" },
-  { dev: "\u0938", trans: "sa", sound: "u" },
-  { dev: "\u0939", trans: "ha", sound: "u" }
+  // 13 Vowels (Svara) + Anusvara & Visarga
+  { dev: "\u0905", trans: "a", sound: "u", example: "up (short a)" },
+  { dev: "\u0906", trans: "\u0101", sound: "a", example: "father (long \u0101)" },
+  { dev: "\u0907", trans: "i", sound: "i", example: "sit (short i)" },
+  { dev: "\u0908", trans: "\u012B", sound: "ee", example: "see (long \u012B)" },
+  { dev: "\u0909", trans: "u", sound: "u", example: "put (short u)" },
+  { dev: "\u090A", trans: "\u016B", sound: "oo", example: "moon (long \u016B)" },
+  { dev: "\u090B", trans: "\u1E5B", sound: "\u1E5B", example: "krishna / crisp r (vocalic \u1E5B)" },
+  { dev: "\u0960", trans: "\u1E5D", sound: "\u1E5D", example: "long vocalic \u1E5D" },
+  { dev: "\u090C", trans: "\u1E37", sound: "\u1E37", example: "syllabic l (kl\u1E5Bpta)" },
+  { dev: "\u090F", trans: "e", sound: "ey", example: "they (long e)" },
+  { dev: "\u0910", trans: "ai", sound: "ai", example: "aisle (diphthong ai)" },
+  { dev: "\u0913", trans: "o", sound: "o", example: "go (long o)" },
+  { dev: "\u0914", trans: "au", sound: "ou", example: "out (diphthong au)" },
+  { dev: "\u0905\u0902", trans: "a\u1E43", sound: "m", example: "hum (anusv\u0101ra)" },
+  { dev: "\u0905\u0903", trans: "a\u1E25", sound: "\u1E25", example: "soft final breath ha (visarga)" },
+  // Velar / Guttural (Ka-varga)
+  { dev: "\u0915", trans: "ka", sound: "k", example: "skip (unaspirated k)" },
+  { dev: "\u0916", trans: "kha", sound: "kh", example: "blockhead (aspirated kh)" },
+  { dev: "\u0917", trans: "ga", sound: "g", example: "go (unaspirated g)" },
+  { dev: "\u0918", trans: "gha", sound: "gh", example: "ghost / dig hard (aspirated gh)" },
+  { dev: "\u0919", trans: "\u1E45a", sound: "ng", example: "sing (velar nasal \u1E45)" },
+  // Palatal (Ca-varga)
+  { dev: "\u091A", trans: "ca", sound: "ch", example: "chop (unaspirated ch)" },
+  { dev: "\u091B", trans: "cha", sound: "chh", example: "catch him (aspirated chh)" },
+  { dev: "\u091C", trans: "ja", sound: "j", example: "jar (unaspirated j)" },
+  { dev: "\u091D", trans: "jha", sound: "jh", example: "hedgehog (aspirated jh)" },
+  { dev: "\u091E", trans: "\xF1a", sound: "ny", example: "canyon (palatal nasal \xF1)" },
+  // Retroflex / Cerebral (\u1E6Ca-varga)
+  { dev: "\u091F", trans: "\u1E6Da", sound: "\u1E6D", example: "stop with curled tongue (retroflex \u1E6D)" },
+  { dev: "\u0920", trans: "\u1E6Dha", sound: "\u1E6Dh", example: "anthill with curled tongue (retroflex \u1E6Dh)" },
+  { dev: "\u0921", trans: "\u1E0Da", sound: "\u1E0D", example: "drum with curled tongue (retroflex \u1E0D)" },
+  { dev: "\u0922", trans: "\u1E0Dha", sound: "\u1E0Dh", example: "redhead with curled tongue (retroflex \u1E0Dh)" },
+  { dev: "\u0923", trans: "\u1E47a", sound: "\u1E47", example: "under with curled tongue (retroflex \u1E47)" },
+  // Dental (Ta-varga)
+  { dev: "\u0924", trans: "ta", sound: "t", example: "soft t against teeth (dental t)" },
+  { dev: "\u0925", trans: "tha", sound: "th", example: "at home — soft th on teeth (dental th)" },
+  { dev: "\u0926", trans: "da", sound: "d", example: "day with tongue on teeth (dental d)" },
+  { dev: "\u0927", trans: "dha", sound: "dh", example: "adhere with tongue on teeth (dental dh)" },
+  { dev: "\u0928", trans: "na", sound: "n", example: "name (dental n)" },
+  // Labial (Pa-varga)
+  { dev: "\u092A", trans: "pa", sound: "p", example: "spin (unaspirated p)" },
+  { dev: "\u092B", trans: "pha", sound: "ph", example: "uphill (aspirated ph)" },
+  { dev: "\u092C", trans: "ba", sound: "b", example: "boy (unaspirated b)" },
+  { dev: "\u092D", trans: "bha", sound: "bh", example: "abhor (aspirated bh)" },
+  { dev: "\u092E", trans: "ma", sound: "m", example: "mother (labial m)" },
+  // Semivowels (Antahstha) & Sibilants / Aspirate (\u016A\u1E63ma)
+  { dev: "\u092F", trans: "ya", sound: "y", example: "yes (palatal semivowel y)" },
+  { dev: "\u0930", trans: "ra", sound: "r", example: "run (tapped retroflex r)" },
+  { dev: "\u0932", trans: "la", sound: "l", example: "love (dental l)" },
+  { dev: "\u0935", trans: "va", sound: "v", example: "vine / water (labiodental v)" },
+  { dev: "\u0936", trans: "\u015Ba", sound: "sh", example: "ship (palatal \u015B)" },
+  { dev: "\u0937", trans: "\u1E63a", sound: "\u1E63", example: "sh with curled tongue (retroflex \u1E63)" },
+  { dev: "\u0938", trans: "sa", sound: "s", example: "sun (dental s)" },
+  { dev: "\u0939", trans: "ha", sound: "h", example: "house (voiced aspirate h)" }
 ];
 const pictureWords = [
   { word: "\u0905\u0917\u094D\u0928\u093F", meaning: "fire", icon: "flame", color: "#ff5722" },
@@ -118,7 +146,7 @@ function ChildModePage() {
             {t("Say: ")}<strong>{cl.trans}</strong>
           </div>
           <div style={{ fontSize: 14, color: "var(--vt-text-light)", marginBottom: 20 }}>
-            {t("Like the ")}<strong>{cl.sound}</strong>{t(" in ")}"{cl.sound === "u" ? "up" : cl.sound === "a" ? "father" : cl.sound === "i" ? "sit" : cl.sound === "ee" ? "see" : cl.sound === "oo" ? "moon" : cl.sound === "o" ? "go" : "up"}"
+            {t("Like the ")}<strong>{cl.sound}</strong>{t(" in ")}"{cl.example}"
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="btn btn-secondary" onClick={() => setCurrentLetter((p) => (p - 1 + letters.length) % letters.length)}>

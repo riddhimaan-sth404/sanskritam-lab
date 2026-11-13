@@ -21,7 +21,7 @@ const DICT: Record<string, { meaning: string; iast: string; pos: string; info?: 
   "गुरु": { meaning: "teacher", iast: "guru", pos: "noun", info: "masculine u-stem" },
   "गुरुः": { meaning: "teacher (nominative singular)", iast: "guruḥ", pos: "noun", info: "masculine u-stem, nominative singular" },
   "गुरवे": { meaning: "to/for the teacher", iast: "gurave", pos: "noun", info: "masculine u-stem, dative singular" },
-  "मित्र": { meaning: "friend", iast: "mitra", pos: "noun", info: "masculine a-stem" },
+  "मित्र": { meaning: "friend", iast: "mitra", pos: "noun", info: "neuter a-stem (stem)" },
   "मित्रम्": { meaning: "friend (nom/acc singular)", iast: "mitram", pos: "noun", info: "neuter a-stem" },
   "जल": { meaning: "water", iast: "jala", pos: "noun", info: "neuter a-stem" },
   "जलम्": { meaning: "water (nom/acc singular)", iast: "jalam", pos: "noun" },
@@ -158,9 +158,9 @@ const SANDHI_RULES: { name: string; description: string; example: string }[] = [
   { name: "a + u → o", description: "अ + उ = ओ", example: "राम + उक्त → रामोक्त" },
   { name: "a + e → ai", description: "अ + ए = ऐ", example: "राम + एक → रामैक" },
   { name: "a + o → au", description: "अ + ओ = औ", example: "राम + ओजस् → रामौजस्" },
-  { name: "visarga → s", description: "visarga before a hard consonant becomes s", example: "रामः + च → रामश्च" },
-  { name: "visarga → r", description: "visarga before a vowel becomes r", example: "रामः + आगच्छति → राम आगच्छति" },
-  { name: "visarga drops", description: "visarga drops before a soft consonant", example: "गुरुः + याति → गुरुर्याति" },
+  { name: "visarga → ś/ṣ/s", description: "visarga becomes sibilant before unvoiced stops (c/ch → ś, ṭ/ṭh → ṣ, t/th → s)", example: "रामः + च → रामश्च | नमः + ते → नमस्ते" },
+  { name: "visarga → r", description: "visarga after vowels other than a/ā becomes r before vowels/soft consonants", example: "मुनिः + इति → मुनिरिति | गुरुः + याति → गुरुर्याति" },
+  { name: "visarga lopa", description: "visarga drops after aḥ before vowels (except a) and after āḥ before vowels/soft consonants", example: "रामः + आगच्छति → राम आगच्छति | बालाः + हसन्ति → बाला हसन्ति" },
 ];
 
 const EXERCISES: { question: string; options: string[]; answer: number; explanation: string }[] = [
@@ -181,9 +181,9 @@ const GREETINGS: { pattern: RegExp; response: string }[] = [
 
 
 const AI_API_KEY = Deno.env.get("AI_API_KEY") || Deno.env.get("OPENAI_API_KEY") || "";
-const AI_BASE_URL = (Deno.env.get("AI_BASE_URL") || "https://api.openai.com/v1").replace(/\/$/, "");
-const AI_MODEL = Deno.env.get("AI_MODEL") || "google/gemma-4-26b-a4b-it:free";
-const AI_TIMEOUT_MS = parseInt(Deno.env.get("AI_TIMEOUT_MS") || "60000");
+const AI_BASE_URL = (Deno.env.get("AI_BASE_URL") || (AI_API_KEY.startsWith("sk-or-") ? "https://openrouter.ai/api/v1" : "https://api.openai.com/v1")).replace(/\/$/, "");
+const AI_MODEL = Deno.env.get("AI_MODEL") || (AI_BASE_URL.includes("openrouter.ai") ? "google/gemma-4-26b-a4b-it:free" : "gpt-4o-mini");
+const AI_TIMEOUT_MS = parseInt(Deno.env.get("AI_TIMEOUT_MS") || "30000");
 
 const CORS_HEADERS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST,OPTIONS", "Access-Control-Allow-Headers": "Authorization,Content-Type,apikey" };
 
@@ -238,6 +238,67 @@ function offlineLookup(text: string): { t: string; unknown: number } {
   return { t: parts.join(" | "), unknown: tokens.length - found };
 }
 
+function buildOfflineTutorReply(last: string, diff: string) {
+  const trimmed = last.trim();
+  const greeting = GREETINGS.find((g) => g.pattern.test(trimmed));
+  if (greeting) {
+    return {
+      reply: greeting.response,
+      citations: [],
+      difficulty: diff,
+      suggested_exercise: EXERCISES[0],
+      mode: "tutor",
+      provider: "offline-dict"
+    };
+  }
+  if (/sandhi|सन्धि/i.test(trimmed)) {
+    const summary = SANDHI_RULES.slice(0, 4).map((r) => `${r.name}: ${r.example}`).join("; ");
+    return {
+      reply: `Offline Sandhi reference — ${summary}`,
+      citations: [],
+      difficulty: diff,
+      suggested_exercise: EXERCISES[6],
+      mode: "tutor",
+      provider: "offline-dict"
+    };
+  }
+  if (/quiz|exercise|practice|अभ्यास/i.test(trimmed)) {
+    const ex = EXERCISES[Math.floor(Math.random() * EXERCISES.length)];
+    return {
+      reply: `Practice question: ${ex.question}`,
+      citations: [],
+      difficulty: diff,
+      suggested_exercise: ex,
+      mode: "tutor",
+      provider: "offline-dict"
+    };
+  }
+  for (const [pp, info] of Object.entries(POSTPOSITIONS)) {
+    if (trimmed.includes(pp)) {
+      return {
+        reply: `${pp} (postposition / avyaya) means "${info.meaning}".`,
+        citations: [],
+        difficulty: diff,
+        suggested_exercise: null,
+        mode: "tutor",
+        provider: "offline-dict"
+      };
+    }
+  }
+  const lookup = offlineLookup(last);
+  const reply = lookup.unknown === 0
+    ? `Offline lookup: ${lookup.t}`
+    : `Offline dictionary lookup: ${lookup.t}`;
+  return {
+    reply,
+    citations: [],
+    difficulty: diff,
+    suggested_exercise: null,
+    mode: "tutor",
+    provider: "offline-dict"
+  };
+}
+
 Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
   const path = url.pathname.replace(/^\/[^\/]+\/?/, "");
@@ -245,24 +306,22 @@ Deno.serve(async (req: Request) => {
 
   try {
     if (method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS });
-    if (!AI_API_KEY) return err("AI service not configured: set AI_API_KEY secret", 503);
 
     if ((path === "tutor/chat" || path === "chat") && method === "POST") {
-      const body = await parseBody(req);
+      const body = await parseBody<{ language?: string; difficulty?: string; messages?: { role: string; content: string }[]; message?: string }>(req);
       const lang = body.language || "sa";
       const diff = body.difficulty || "beginner";
       const system = `You are a ${lang} language tutor. Answer concisely for a ${diff} learner. Return valid JSON only: {"reply":"...","difficulty":"...","suggested_exercise":null}`;
       const history: { role: string; content: string }[] = Array.isArray(body.messages) && body.messages.length ? body.messages.slice(-8) : (body.message ? [{ role: "user", content: body.message }] : []);
       if (!history.length) return err("message required", 400);
       const last = history[history.length - 1]?.content || "";
+      if (!AI_API_KEY) {
+        return json(buildOfflineTutorReply(last, diff));
+      }
       const user = `Conversation so far:\n${history.map((m) => m.role + ": " + m.content).join("\n")}`;
       const ai = await callAI(system, user, 0.7);
       if (ai.error) {
-        const lookup = offlineLookup(last);
-        const reply = lookup.unknown === 0
-          ? `Offline lookup: ${lookup.t}`
-          : `AI services are offline right now. ${lookup.unknown} word${lookup.unknown === 1 ? "" : "s"} found in the offline dictionary: ${lookup.t}`;
-        return json({ reply, citations: [], difficulty: diff, suggested_exercise: null, mode: "tutor", provider: "offline-dict" });
+        return json(buildOfflineTutorReply(last, diff));
       }
       const txt = ai.content;
       try { const j = JSON.parse(txt.replace(/```json\s*|```\s*/g, "").trim()); return json({ reply: j.reply || txt, citations: [], difficulty: j.difficulty || diff, suggested_exercise: j.suggested_exercise || null, mode: "tutor" }); }
@@ -270,12 +329,16 @@ Deno.serve(async (req: Request) => {
     }
 
     if ((path === "tutor/translate" || path === "translate") && method === "POST") {
-      const body = await parseBody(req);
+      const body = await parseBody<{ source?: string; target?: string; text?: string }>(req);
       const src = body.source || url.searchParams.get("source") || "sa";
       const tgt = body.target || url.searchParams.get("target") || "en";
       const prompt = `Translate this ${src} text to ${tgt}. Return ONLY valid JSON: {"translated_text":"...","word_count":N}`;
       const dt = body.text || url.searchParams.get("text") || "";
       if (!dt) return err("text required", 400);
+      if (!AI_API_KEY) {
+        const fallback = offlineLookup(dt);
+        return json({ translated_text: fallback.t, word_count: dt.split(/\s+/).filter(Boolean).length, source: src, target: tgt, provider: "offline-dict", offline: true });
+      }
       const ai = await callAI(prompt, dt, 0.3);
       if (ai.error) {
         const fallback = offlineLookup(dt);

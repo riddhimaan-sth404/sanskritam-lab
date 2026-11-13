@@ -32,7 +32,7 @@ function RoleProvider({ children }) {
   }, []);
 
   const isInstitution = user?.accountType === "institution";
-  const canSwitch = isInstitution;
+  const canSwitch = true;
 
   useEffect(() => {
     let stored = null;
@@ -41,14 +41,12 @@ function RoleProvider({ children }) {
     } catch {
       // Storage access blocked or unavailable
     }
-    if (isInstitution) {
-      setRoleState(stored && ["institution", "teacher", "student"].includes(stored) ? stored : "institution");
-    } else if (user?.accountType === "teacher" || user?.accountType === "student") {
-      setRoleState(user.accountType);
+    if (stored && ["institution", "teacher", "student", "learner"].includes(stored)) {
+      setRoleState(stored);
     } else {
       setRoleState("learner");
     }
-  }, [user?.id, isInstitution]);
+  }, []);
 
   const loadSchool = useCallback(async (u) => {
     if (!u) {

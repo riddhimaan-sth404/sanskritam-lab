@@ -194,6 +194,7 @@ function buildScene(container, settings) {
     root,
     pageRoot,
     grid,
+    onSelect: null,
     raf: 0
   };
   const animate = () => {
@@ -202,6 +203,28 @@ function buildScene(container, settings) {
     ref.renderer.render(ref.scene, ref.camera);
   };
   animate();
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  let downPos = null;
+  const onPointerDown = (e) => {
+    downPos = { x: e.clientX, y: e.clientY };
+  };
+  const onPointerUp = (e) => {
+    if (!downPos || !ref.onSelect) return;
+    const dx = e.clientX - downPos.x;
+    const dy = e.clientY - downPos.y;
+    downPos = null;
+    if (dx * dx + dy * dy > 36) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, ref.camera);
+    const hits = raycaster.intersectObjects(ref.pageRoot.children, true);
+    const hitMesh = hits.find((h) => h.object?.userData?.index !== void 0);
+    if (hitMesh) ref.onSelect(hitMesh.object.userData.index);
+  };
+  renderer.domElement.addEventListener("pointerdown", onPointerDown);
+  renderer.domElement.addEventListener("pointerup", onPointerUp);
   const onResize = () => {
     const nw = container.clientWidth || 800;
     const nh = container.clientHeight || 600;
@@ -212,6 +235,8 @@ function buildScene(container, settings) {
   window.addEventListener("resize", onResize);
   ref.dispose = () => {
     window.removeEventListener("resize", onResize);
+    renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+    renderer.domElement.removeEventListener("pointerup", onPointerUp);
     cancelAnimationFrame(ref.raf);
     ref.controls.dispose();
     ref.renderer.dispose();
@@ -220,6 +245,7 @@ function buildScene(container, settings) {
   return ref;
 }
 function rebuildPages(ref, pages, settings, selected, onSelect) {
+  ref.onSelect = onSelect;
   ref.pageRoot.clear();
   ref.root.rotation.set(0.12, 0, 0);
   if (ref.grid) ref.grid.visible = settings.showGrid;
@@ -375,7 +401,8 @@ function Pdf3DViewer({ open, onClose }) {
   }, [phase]);
   useEffect(() => {
     if (!sceneRef.current || phase !== "ready") return;
-    rebuildPages(sceneRef.current, pages, settings, selected, () => {
+    rebuildPages(sceneRef.current, pages, settings, selected, (i) => {
+      setSelected((cur) => cur === i ? null : i);
     });
     sceneRef.current.scene.background = new THREE.Color(settings.bg);
   }, [phase, pages, settings, selected]);

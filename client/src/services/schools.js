@@ -1,5 +1,5 @@
 import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase";
-import { schoolStore } from "./localStore";
+import { schoolStore, userStore } from "./localStore";
 
 // Hybrid Schools API: Supabase-first for cross-PC syncing with seamless local fallback
 
@@ -38,6 +38,15 @@ const schoolsApi = {
       if (params.owner_email) {
         list = list.filter((s) => s.owner_email?.toLowerCase() === params.owner_email.toLowerCase());
       }
+      if (params.q) {
+        const needle = params.q.toLowerCase().trim();
+        list = list.filter((s) =>
+          s.name?.toLowerCase().includes(needle) ||
+          s.city?.toLowerCase().includes(needle) ||
+          s.short_code?.toLowerCase().includes(needle) ||
+          s.school_code?.toLowerCase().includes(needle)
+        );
+      }
       return { data: list };
     }
   },
@@ -56,7 +65,14 @@ const schoolsApi = {
       const res = await remoteApi(`/${id}`);
       return res.data;
     } catch {
-      return schoolStore.get(id);
+      const base = schoolStore.get(id);
+      if (!base) return null;
+      return {
+        ...base,
+        classes: schoolStore.classes.list(id),
+        teachers: schoolStore.teachers.list(id),
+        students: schoolStore.students.list(id)
+      };
     }
   },
 
@@ -126,9 +142,7 @@ const schoolsApi = {
     } catch {
       // fallback
     }
-    const list = schoolStore.classes.list(schoolId).filter((c) => c.id !== classId);
-    localStorage.setItem(`sanskritlab-local-classes-${schoolId}`, JSON.stringify(list));
-    return true;
+    return schoolStore.classes.deactivate(schoolId, classId);
   },
 
   createSection: async (schoolId, classId, name) => {
@@ -138,7 +152,7 @@ const schoolsApi = {
     } catch {
       // fallback
     }
-    return schoolStore.classes.list(schoolId);
+    return schoolStore.classes.createSection(schoolId, classId, name);
   },
 
   deactivateSection: async (schoolId, classId, sectionId) => {
@@ -147,7 +161,7 @@ const schoolsApi = {
     } catch {
       // fallback
     }
-    return true;
+    return schoolStore.classes.deactivateSection(schoolId, classId, sectionId);
   },
 
   listStudents: async (schoolId, params = {}) => {
@@ -176,7 +190,7 @@ const schoolsApi = {
     } catch {
       // fallback
     }
-    return schoolStore.students.list(schoolId).find((s) => s.id === studentId) || null;
+    return schoolStore.students.update(schoolId, studentId, body);
   },
 
   deactivateStudent: async (schoolId, studentId) => {
@@ -185,7 +199,7 @@ const schoolsApi = {
     } catch {
       // fallback
     }
-    return true;
+    return schoolStore.students.deactivate(schoolId, studentId);
   },
 
   listTeachers: async (schoolId) => {
@@ -213,7 +227,7 @@ const schoolsApi = {
     } catch {
       // fallback
     }
-    return true;
+    return schoolStore.teachers.deactivate(schoolId, teacherId);
   },
 
   joinLab: async (schoolCode, labCode) => {
@@ -221,11 +235,25 @@ const schoolsApi = {
       const res = await remoteApi("/join-lab", { method: "POST", body: { school_code: schoolCode, lab_code: labCode } });
       return res.data;
     } catch {
+      const sCode = (schoolCode || "").trim().toUpperCase();
+      const lCode = (labCode || "").trim().toUpperCase();
       const school = schoolStore.list().find(
-        (s) => s.school_code === schoolCode || s.lab_code === labCode
+        (s) => (s.short_code || s.school_code || "").toUpperCase() === sCode
       );
       if (!school) throw new Error("Invalid school or lab code");
-      return school;
+      const student = schoolStore.students.list(school.id).find(
+        (st) => (st.lab_code || "").toUpperCase() === lCode
+      );
+      if (!student && school.lab_code?.toUpperCase() !== lCode) {
+        throw new Error("Invalid school or lab code");
+      }
+      return {
+        student_id: student?.id || "guest-lab",
+        name: student?.name || "Student",
+        school_id: school.id,
+        school_name: school.name,
+        lab_code: lCode
+      };
     }
   },
 
@@ -234,10 +262,16 @@ const schoolsApi = {
       const res = await remoteApi("/resolve-login", { method: "POST", body: { login } });
       return res.data;
     } catch {
+      const needle = (login || "").trim().toLowerCase();
+      const u = userStore.list().find((usr) => usr.username?.toLowerCase() === needle);
+      if (u?.email) return { email: u.email };
       const school = schoolStore.list().find(
-        (s) => s.school_code === login || s.name.toLowerCase() === login.toLowerCase()
+        (s) =>
+          (s.short_code || s.school_code || "").toLowerCase() === needle ||
+          s.name?.toLowerCase() === needle
       );
-      return school || null;
+      if (school?.owner_email) return { email: school.owner_email };
+      return null;
     }
   },
 

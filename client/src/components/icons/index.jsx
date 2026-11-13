@@ -51,7 +51,106 @@ import {
   Shield,
   Crown,
   TreePine,
+  RotateCw,
+  Scale,
+  Heart,
+  Droplets,
+  Fish,
+  Globe,
+  Smile,
+  Target,
+  Circle,
+  Layers,
 } from "lucide-react";
+
+const LotusIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <path d="M12 3c2 3.2 2.8 6.4 0 11-2.8-4.6-2-7.8 0-11z" />
+    <path d="M12 14c-3.5-1.2-6.2-4-6.5-8 2.8.8 5 3 6.5 8z" />
+    <path d="M12 14c3.5-1.2 6.2-4 6.5-8-2.8.8-5 3-6.5 8z" />
+    <path d="M4 15c2.5-.5 5.2.5 8 3 2.8-2.5 5.5-3.5 8-3-1.5 3.5-4.5 5-8 5s-6.5-1.5-8-5z" />
+  </svg>
+);
+
+const MeditationIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <circle cx="12" cy="5.5" r="2.2" />
+    <path d="M12 9.5v5" />
+    <path d="M7.5 13.5c1.5-2 3-3 4.5-3s3 1 4.5 3" />
+    <path d="M5 18.5c2-1.5 4.5-2 7-2s5 .5 7 2" />
+    <path d="M7 18.5c1.5 1.2 3.2 1.5 5 1.5s3.5-.3 5-1.5" />
+  </svg>
+);
+
+const NamasteIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <path d="M12 4v11" />
+    <path d="M12 4c-1.5 2.5-3.5 6.5-3.5 11l3.5 3" />
+    <path d="M12 4c1.5 2.5 3.5 6.5 3.5 11L12 18" />
+    <path d="M6 20l2.5-5" />
+    <path d="M18 20l-2.5-5" />
+  </svg>
+);
+
+const PeaceIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <line x1="12" y1="3" x2="12" y2="21" />
+    <line x1="12" y1="12" x2="6" y2="18" />
+    <line x1="12" y1="12" x2="18" y2="18" />
+  </svg>
+);
+
+const MusicNoteIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <path d="M9 18V5l10-2v13" />
+    <circle cx="6.5" cy="18" r="2.5" />
+    <circle cx="16.5" cy="16" r="2.5" />
+  </svg>
+);
+
+const CloudWeatherIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <path d="M17.5 19H7a4.5 4.5 0 0 1-.4-9A5.5 5.5 0 0 1 17.3 9a3.5 3.5 0 0 1 .2 10z" />
+  </svg>
+);
+
+const GiftBoxIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 12 8 12 8s2.5-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+  </svg>
+);
+
+const BirdIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <path d="M16 7h.01" />
+    <path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20" />
+    <path d="m20 7 2 .5-2 .5" />
+    <path d="M10 18v3" />
+    <path d="M14 17.75V21" />
+    <path d="M7 18a6 6 0 0 0 3.84-10.61" />
+  </svg>
+);
+
+const NumbersIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <line x1="4" y1="9" x2="20" y2="9" />
+    <line x1="4" y1="15" x2="20" y2="15" />
+    <line x1="10" y1="3" x2="8" y2="21" />
+    <line x1="16" y1="3" x2="14" y2="21" />
+  </svg>
+);
+
+const PunctuationIcon = ({ size = 20, className = "", ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    <line x1="8" y1="5" x2="8" y2="19" />
+    <line x1="13" y1="5" x2="13" y2="19" />
+    <circle cx="17.5" cy="17.5" r="1.2" fill="currentColor" stroke="none" />
+  </svg>
+);
 
 const OmIcon = ({ size = 20, className = "", ...props }) => (
   <svg
@@ -179,6 +278,7 @@ const DynamicIcon = ({ name, size = 18, className = "" }) => {
     case "transliterate":
     case "letters":
     case "script":
+    case "languages":
     case "\u{1F524}":
       return <Languages size={size} className={className} />;
     case "vocab":
@@ -194,6 +294,7 @@ const DynamicIcon = ({ name, size = 18, className = "" }) => {
     case "speaker":
     case "sound":
     case "pronounce":
+    case "volume":
     case "\u{1F50A}":
     case "\u{1F4E2}":
       return <Volume2 size={size} className={className} />;
@@ -280,6 +381,7 @@ const DynamicIcon = ({ name, size = 18, className = "" }) => {
       return <School size={size} className={className} />;
     case "teacher":
     case "guru":
+    case "graduation-cap":
     case "\u{1F468}\u200D\u{1F3EB}":
     case "\u{1F469}\u200D\u{1F3EB}":
       return <GraduationCap size={size} className={className} />;
@@ -375,6 +477,7 @@ const DynamicIcon = ({ name, size = 18, className = "" }) => {
     case "\u{1F331}":
       return <Sprout size={size} className={className} />;
     case "feather":
+    case "feathers":
     case "pen":
     case "\u270D\uFE0F":
       return <Feather size={size} className={className} />;
@@ -440,6 +543,53 @@ const DynamicIcon = ({ name, size = 18, className = "" }) => {
     case "forest":
     case "\u{1F333}":
       return <TreePine size={size} className={className} />;
+    case "blocks":
+    case "layers":
+      return <Layers size={size} className={className} />;
+    case "rotate":
+      return <RotateCw size={size} className={className} />;
+    case "scale":
+    case "balance":
+      return <Scale size={size} className={className} />;
+    case "heart":
+      return <Heart size={size} className={className} />;
+    case "water":
+      return <Droplets size={size} className={className} />;
+    case "fish":
+      return <Fish size={size} className={className} />;
+    case "globe":
+    case "world":
+      return <Globe size={size} className={className} />;
+    case "smile":
+    case "children":
+      return <Smile size={size} className={className} />;
+    case "target":
+    case "goal":
+      return <Target size={size} className={className} />;
+    case "circle":
+      return <Circle size={size} className={className} />;
+    case "lotus":
+    case "flower":
+      return <LotusIcon size={size} className={className} />;
+    case "meditation":
+      return <MeditationIcon size={size} className={className} />;
+    case "praying":
+    case "bow":
+      return <NamasteIcon size={size} className={className} />;
+    case "peace":
+      return <PeaceIcon size={size} className={className} />;
+    case "music":
+      return <MusicNoteIcon size={size} className={className} />;
+    case "cloud":
+      return <CloudWeatherIcon size={size} className={className} />;
+    case "gift":
+      return <GiftBoxIcon size={size} className={className} />;
+    case "bird":
+      return <BirdIcon size={size} className={className} />;
+    case "numbers":
+      return <NumbersIcon size={size} className={className} />;
+    case "punctuation":
+      return <PunctuationIcon size={size} className={className} />;
     default:
       return <Sparkles size={size} className={className} />;
   }

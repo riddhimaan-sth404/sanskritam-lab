@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import {
   UploadCloud,
-  Check,
   History,
   Sparkles,
   Sliders,
@@ -9,18 +8,23 @@ import {
   Copy,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
   BookOpen,
   FileCode,
   CheckCircle2,
-  AlertTriangle,
-  Layers,
-  ChevronRight
+  AlertTriangle
 } from "lucide-react";
 import { createWorker } from "tesseract.js";
 import { useLanguage } from "../../context/LanguageContext";
 import { syncOcrFromDb, saveOcrToDb } from "../../services/userDb";
-import { toIAST, toDevanagari } from "../../services/sanskrit";
+import { toIAST } from "../../services/sanskrit";
+
+const escapeXml = (str) =>
+  String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 
 // Realistic Classical Manuscript Presets for instant scholarly testing
 const MANUSCRIPT_PRESETS = [
@@ -184,6 +188,13 @@ export default function OCRPage() {
 
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
+  const copyTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   // Sync recent entries
   useEffect(() => {
@@ -211,7 +222,14 @@ export default function OCRPage() {
     if (uploadedImageSrc) {
       const img = new Image();
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, w, h);
+        ctx.fillStyle = "#12141a";
+        ctx.fillRect(0, 0, w, h);
+        const scale = Math.min(w / (img.width || w), h / (img.height || h));
+        const dw = Math.round((img.width || w) * scale);
+        const dh = Math.round((img.height || h) * scale);
+        const dx = Math.round((w - dw) / 2);
+        const dy = Math.round((h - dh) / 2);
+        ctx.drawImage(img, dx, dy, dw, dh);
         applyActiveFilter(ctx, w, h);
       };
       img.src = uploadedImageSrc;
@@ -276,6 +294,9 @@ export default function OCRPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadedFileName(file.name);
+    setRecognizedTokens([]);
+    setSelectedWordIndex(null);
+    setStatus(t("Manuscript loaded — click Run OCR Analysis to extract text."));
     const reader = new FileReader();
     reader.onload = (ev) => {
       setUploadedImageSrc(ev.target.result);
@@ -316,14 +337,27 @@ export default function OCRPage() {
           status: w.confidence >= 80 ? "verified" : "suggested"
         }));
         setRecognizedTokens(mapped);
+      } else if (!uploadedImageSrc) {
+        setRecognizedTokens(activePreset.words);
       }
 
-      const fullText = data.text?.trim() || activePreset.transcription;
-      setStatus(t("Recognition complete!"));
-      saveOcrToDb(uploadedFileName || activePreset.title, targetScript, fullText);
+      const fullText = data.text?.trim() || (uploadedImageSrc ? "" : activePreset.transcription);
+      if (uploadedImageSrc && !fullText) {
+        setStatus(t("No Devanagari tokens detected cleanly — adjust filter contrast or sensitivity and retry."));
+      } else {
+        setStatus(t("Recognition complete!"));
+        await saveOcrToDb(uploadedFileName || activePreset.title, targetScript, fullText);
+        const rows = await syncOcrFromDb();
+        if (rows) setRecentTranscriptions(rows);
+      }
     } catch (err) {
-      console.warn("Falling back to classical manuscript pipeline:", err);
-      setStatus(t("Processed via SanskritLab Classical Engine"));
+      console.warn("OCR engine error:", err);
+      if (uploadedImageSrc) {
+        setStatus(t("OCR engine unavailable offline for custom scans — please check network or try a sample manuscript."));
+      } else {
+        setRecognizedTokens(activePreset.words);
+        setStatus(t("Processed via SanskritLab Classical Engine"));
+      }
     } finally {
       await worker?.terminate().catch(() => void 0);
       setBusy(false);
@@ -336,6 +370,7 @@ export default function OCRPage() {
     setActivePreset(preset);
     setRecognizedTokens(preset.words);
     setSelectedWordIndex(null);
+    setStatus("");
   };
 
   const fullTranscription = useMemo(() => {
@@ -345,19 +380,24 @@ export default function OCRPage() {
   }, [recognizedTokens, targetScript]);
 
   const copyTranscription = () => {
-    navigator.clipboard.writeText(fullTranscription);
+    navigator.clipboard?.writeText(fullTranscription).catch(() => void 0);
     setCopyFeedback(true);
-    setTimeout(() => setCopyFeedback(false), 2000);
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setCopyFeedback(false), 2000);
   };
 
   // Generate TEI-XML representation
   const exportTEIXML = () => {
+    const docTitle = uploadedImageSrc && uploadedFileName ? uploadedFileName : activePreset.title;
+    const docId = uploadedImageSrc && uploadedFileName
+      ? uploadedFileName.replace(/[^a-zA-Z0-9_-]+/g, "_")
+      : activePreset.id;
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>${activePreset.title}</title>
+        <title>${escapeXml(docTitle)}</title>
         <respStmt>
           <resp>OCR Digitization &amp; Token Alignment</resp>
           <name>SanskritLab Neural OCR</name>
@@ -370,10 +410,10 @@ export default function OCRPage() {
         <msDesc>
           <msIdentifier>
             <repository>SanskritLab Digital Archives</repository>
-            <idno>${activePreset.id}</idno>
+            <idno>${escapeXml(docId)}</idno>
           </msIdentifier>
           <physDesc>
-            <p>${activePreset.substrate} · ${activePreset.period}</p>
+            <p>${escapeXml(uploadedImageSrc ? "Uploaded Scan" : `${activePreset.substrate} · ${activePreset.period}`)}</p>
           </physDesc>
         </msDesc>
       </sourceDesc>
@@ -383,8 +423,8 @@ export default function OCRPage() {
     <surface ulx="0" uly="0" lrx="960" lry="260">
       ${recognizedTokens
         .map(
-          (t, i) =>
-            `<zone xml:id="w${i}" ulx="${t.box.x}" uly="${t.box.y}" lrx="${t.box.x + t.box.w}" lry="${t.box.y + t.box.h}"/>`
+          (tok, i) =>
+            `<zone xml:id="w${i}" ulx="${tok.box.x}" uly="${tok.box.y}" lrx="${tok.box.x + tok.box.w}" lry="${tok.box.y + tok.box.h}"/>`
         )
         .join("\n      ")}
     </surface>
@@ -392,7 +432,7 @@ export default function OCRPage() {
   <text>
     <body>
       <p>
-        ${recognizedTokens.map((t, i) => `<w facs="#w${i}">${t.text}</w>`).join(" ")}
+        ${recognizedTokens.map((tok, i) => `<w facs="#w${i}">${escapeXml(tok.text)}</w>`).join(" ")}
       </p>
     </body>
   </text>
@@ -402,7 +442,7 @@ export default function OCRPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${activePreset.id}-tei.xml`;
+    a.download = `${docId}-tei.xml`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -574,8 +614,8 @@ export default function OCRPage() {
                       border: isSelected
                         ? "2px solid #ff9800"
                         : token.conf >= 0.9
-                        ? "1.5px solid rgba(46, 204, 113, 0.7)"
-                        : "1.5px dashed rgba(241, 196, 15, 0.9)",
+                          ? "1.5px solid rgba(46, 204, 113, 0.7)"
+                          : "1.5px dashed rgba(241, 196, 15, 0.9)",
                       background: isSelected
                         ? "rgba(255, 152, 0, 0.25)"
                         : "rgba(0, 0, 0, 0.05)",
@@ -677,8 +717,8 @@ export default function OCRPage() {
                       background: isSelected
                         ? "rgba(230, 81, 0, 0.15)"
                         : isHighConf
-                        ? "rgba(46, 204, 113, 0.08)"
-                        : "rgba(241, 196, 15, 0.12)",
+                          ? "rgba(46, 204, 113, 0.08)"
+                          : "rgba(241, 196, 15, 0.12)",
                       display: "flex",
                       alignItems: "center",
                       gap: 6

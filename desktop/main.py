@@ -79,6 +79,50 @@ class GrammarMapViewer(QWidget):
         self.setLayout(layout)
 
 
+FALLBACK_TEXTS = [
+    {
+        "id": "rv-1-1",
+        "title": "Ṛgveda 1.1",
+        "author": "Madhucchandas",
+        "period": "1500-1200 BCE",
+        "language": "Vedic Sanskrit",
+        "content": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजम् । होतारं रत्नधातमम् ॥ १ ॥",
+        "translation_en": "I praise Agni, the chosen priest, the divine minister of the sacrifice.",
+        "translation_hi": "मैं यज्ञ के पुरोहित, प्रकाशमान देव अग्नि की स्तुति करता हूँ।",
+    },
+    {
+        "id": "panini-1-1",
+        "title": "Aṣṭādhyāyī 1.1",
+        "author": "Pāṇini",
+        "period": "~500 BCE",
+        "language": "Grammar (Vyākaraṇa)",
+        "content": "वृद्धिरादैच् (१.१.१) । अदेङ् गुणः (१.१.२) ।",
+        "translation_en": "The terms ā, ai, au are called Vṛddhi; a, e, o are called Guṇa.",
+        "translation_hi": "आ, ऐ, औ की वृद्धि संज्ञा और अ, ए, ओ की गुण संज्ञा होती है।",
+    },
+    {
+        "id": "bg-2-47",
+        "title": "Bhagavad Gītā 2.47",
+        "author": "Vyāsa",
+        "period": "~500-200 BCE",
+        "language": "Classical Sanskrit",
+        "content": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ।",
+        "translation_en": "You have a right to action alone, never to its fruits.",
+        "translation_hi": "कर्म करने में ही तुम्हारा अधिकार है, उसके फलों में कभी नहीं।",
+    },
+    {
+        "id": "shakuntala-1",
+        "title": "Abhijñānaśākuntalam 1.1",
+        "author": "Kālidāsa",
+        "period": "~4th-5th CE",
+        "language": "Classical Sanskrit Drama",
+        "content": "या सृष्टिः स्रष्टुराद्या वहति विधिहुतं या हविर्या च होत्री...",
+        "translation_en": "May Lord Śiva, manifested in eight cosmic forms, protect you.",
+        "translation_hi": "अष्टमूर्ति भगवान शिव आपकी रक्षा करें।",
+    },
+]
+
+
 class CorpusBrowser(QWidget):
     def __init__(self):
         super().__init__()
@@ -88,6 +132,7 @@ class CorpusBrowser(QWidget):
         search_row = QHBoxLayout()
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText("Search corpus (e.g. अग्नि, कर्म, वृद्धि)...")
+        self.search_input.returnPressed.connect(self.do_search)
         search_btn = QPushButton("Search")
         search_btn.clicked.connect(self.do_search)
         search_row.addWidget(self.search_input)
@@ -104,23 +149,20 @@ class CorpusBrowser(QWidget):
         self.setLayout(layout)
 
         self.loaded_texts = []
+        self.displayed_items = []
         self.load_initial_texts()
 
     def load_initial_texts(self):
         data = api_get("/api/corpus/texts")
         if data and isinstance(data, list):
             self.loaded_texts = data
-            self.results.clear()
-            for t in data:
-                self.results.addItem(f"{t.get('title', '')} — {t.get('period', '')}")
         else:
-            self.results.clear()
-            self.results.addItems([
-                "Ṛgveda 1.1 — 1500-1200 BCE",
-                "Aṣṭādhyāyī 1.1 — ~500 BCE",
-                "Bhagavad Gītā 2.47 — ~200 BCE",
-                "Abhijñānaśākuntalam 1.1 — ~4th CE",
-            ])
+            self.loaded_texts = list(FALLBACK_TEXTS)
+
+        self.displayed_items = list(self.loaded_texts)
+        self.results.clear()
+        for t in self.displayed_items:
+            self.results.addItem(f"{t.get('title', '')} — {t.get('period', '')}")
 
     def do_search(self):
         q = self.search_input.text().strip()
@@ -129,26 +171,48 @@ class CorpusBrowser(QWidget):
             return
         data = api_get(f"/api/corpus/search?q={urllib.parse.quote(q)}")
         if data and isinstance(data, list):
+            self.displayed_items = data
             self.results.clear()
             for res in data:
                 self.results.addItem(f"[{res.get('category', '')}] {res.get('title', '')} — {res.get('snippet', '')}")
+            if not data:
+                self.annotation_area.setText(f"No results found for '{q}'.")
         else:
-            self.annotation_area.setText(f"No results from backend for '{q}' or backend offline.")
+            q_low = q.lower()
+            matches = [
+                t for t in (self.loaded_texts or FALLBACK_TEXTS)
+                if q_low in t.get("title", "").lower()
+                or q_low in t.get("content", "").lower()
+                or q_low in t.get("translation_en", "").lower()
+                or q in t.get("translation_hi", "")
+            ]
+            self.displayed_items = matches
+            self.results.clear()
+            for t in matches:
+                self.results.addItem(f"{t.get('title', '')} — {t.get('period', '')}")
+            if not matches:
+                self.annotation_area.setText(f"No local results for '{q}' (backend offline).")
 
     def on_select_item(self, item):
         idx = self.results.currentRow()
-        if 0 <= idx < len(self.loaded_texts):
-            text = self.loaded_texts[idx]
-            details = (
-                f"Title: {text.get('title', '')}\n"
-                f"Author: {text.get('author', '')}\n"
-                f"Period: {text.get('period', '')}\n"
-                f"Language: {text.get('language', '')}\n\n"
-                f"Content:\n{text.get('content', '')}\n\n"
-                f"Translation (English):\n{text.get('translation_en', '')}\n\n"
-                f"Translation (Hindi):\n{text.get('translation_hi', '')}"
-            )
-            self.annotation_area.setText(details)
+        if not (0 <= idx < len(self.displayed_items)):
+            return
+        entry = self.displayed_items[idx]
+        text_id = entry.get("id")
+        full_text = next((t for t in self.loaded_texts if t.get("id") == text_id), None)
+        if not full_text and text_id:
+            full_text = api_get(f"/api/corpus/texts/{urllib.parse.quote(text_id)}")
+        text = full_text or entry
+        details = (
+            f"Title: {text.get('title', '')}\n"
+            f"Author: {text.get('author', '')}\n"
+            f"Period: {text.get('period', '')}\n"
+            f"Language: {text.get('language', '')}\n\n"
+            f"Content:\n{text.get('content', text.get('snippet', ''))}\n\n"
+            f"Translation (English):\n{text.get('translation_en', '')}\n\n"
+            f"Translation (Hindi):\n{text.get('translation_hi', '')}"
+        )
+        self.annotation_area.setText(details)
 
 
 class TeacherDashboard(QWidget):
@@ -191,7 +255,7 @@ class VivaSimulator(QWidget):
         submit_btn = QPushButton("Submit Response")
         submit_btn.clicked.connect(self.submit_response)
         next_btn = QPushButton("Next Question")
-        next_btn.clicked.connect(self.load_session)
+        next_btn.clicked.connect(self.next_question)
         btn_layout.addWidget(submit_btn)
         btn_layout.addWidget(next_btn)
         layout.addLayout(btn_layout)
@@ -201,23 +265,46 @@ class VivaSimulator(QWidget):
         layout.addWidget(self.feedback_label)
         self.setLayout(layout)
 
+        self.questions = []
+        self.question_idx = 0
         self.current_question_id = "viva-1"
         self.load_session()
 
     def load_session(self):
         session = api_post("/api/viva/session", {})
-        if session and "questions" in session and session["questions"]:
-            q = session["questions"][0]
-            self.current_question_id = q.get("id", "viva-1")
-            self.question_display.setText(
-                f"{q.get('question_sa', '')}\n\n{q.get('question_en', '')}"
-            )
-            self.feedback_label.setText("New viva question loaded from Rust backend. Type response and submit.")
+        if session and session.get("questions"):
+            self.questions = session["questions"]
+            self.question_idx = 0
+            self.show_current_question("Loaded viva session from Rust backend. Type response and submit.")
         else:
+            self.questions = []
             self.question_display.setText("Question: Explain the sandhi rules for 'अग्नि + इव'")
+
+    def show_current_question(self, status_msg=""):
+        if not self.questions:
+            self.load_session()
+            return
+        q = self.questions[self.question_idx % len(self.questions)]
+        self.current_question_id = q.get("id", "viva-1")
+        self.question_display.setText(
+            f"{q.get('question_sa', '')}\n\n{q.get('question_en', '')}"
+        )
+        if status_msg:
+            self.feedback_label.setText(status_msg)
+
+    def next_question(self):
+        if not self.questions:
+            self.load_session()
+            return
+        self.question_idx = (self.question_idx + 1) % len(self.questions)
+        self.response_area.clear()
+        self.show_current_question("Next viva question ready.")
 
     def submit_response(self):
         text = self.response_area.toPlainText().strip()
+        if not text:
+            self.feedback_label.setText("Please enter a response before submitting.")
+            return
         result = api_post("/api/viva/evaluate", {
             "question_id": self.current_question_id,
             "response_text": text
@@ -230,7 +317,8 @@ class VivaSimulator(QWidget):
             )
             self.feedback_label.setText(fb)
         else:
-            self.feedback_label.setText("Evaluation completed locally (Backend offline).")
+            local_score = 75 if len(text) > 25 else 50
+            self.feedback_label.setText(f"Score: {local_score}/100 — Evaluated locally (Backend offline).")
 
 
 class SanskritLabDesktop(QMainWindow):
@@ -238,6 +326,7 @@ class SanskritLabDesktop(QMainWindow):
         super().__init__()
         self.setWindowTitle("SanskritLab — Research & Learning Platform")
         self.setMinimumSize(1280, 800)
+        self.backend_status_text = "Backend: Checking..."
 
         self.init_menu()
         self.init_ui()
@@ -246,19 +335,35 @@ class SanskritLabDesktop(QMainWindow):
     def init_menu(self):
         menubar = self.menuBar()
         file_menu = menubar.addMenu("&File")
-        file_menu.addAction("Open Manuscript...")
-        file_menu.addAction("Import Corpus...")
+        open_action = file_menu.addAction("Open Manuscript...")
+        open_action.triggered.connect(lambda: self.statusBar().showMessage("Open Manuscript: select 3D Viewer or OCR module"))
+        import_action = file_menu.addAction("Import Corpus...")
+        import_action.triggered.connect(lambda: self.nav_list.setCurrentRow(0))
         file_menu.addSeparator()
-        file_menu.addAction("Exit")
+        exit_action = file_menu.addAction("Exit")
+        exit_action.triggered.connect(self.close)
 
         view_menu = menubar.addMenu("&View")
-        view_menu.addAction("3D Viewer")
-        view_menu.addAction("Grammar Maps")
-        view_menu.addAction("Timeline")
+        view_menu.addAction("3D Viewer").triggered.connect(lambda: self.nav_list.setCurrentRow(3))
+        view_menu.addAction("Grammar Maps").triggered.connect(lambda: self.nav_list.setCurrentRow(4))
+        view_menu.addAction("Timeline").triggered.connect(lambda: self.nav_list.setCurrentRow(5))
 
         help_menu = menubar.addMenu("&Help")
-        help_menu.addAction("Documentation")
-        help_menu.addAction("About SanskritLab")
+        help_menu.addAction("Documentation").triggered.connect(
+            lambda: QMessageBox.information(
+                self,
+                "SanskritLab Documentation",
+                "Use the left navigation list to switch between Corpus, Grammar Maps, 3D Viewer, and Viva Simulator.\n"
+                f"Rust Engine URL: {BACKEND_BASE_URL}"
+            )
+        )
+        help_menu.addAction("About SanskritLab").triggered.connect(
+            lambda: QMessageBox.about(
+                self,
+                "About SanskritLab",
+                "SanskritLab Desktop v0.2.0 — Research & Learning Platform"
+            )
+        )
 
     def init_ui(self):
         central = QWidget()

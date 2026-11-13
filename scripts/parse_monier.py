@@ -13,17 +13,21 @@ import re
 import sys
 import json
 
+from pathlib import Path
+
 # SLP1 (Sanskrit Library Phonetic) to Devanagari mapping
+# Note: in SLP1, diphthongs are exclusively 'E' (ai/ऐ) and 'O' (au/औ);
+# lowercase 'a'+'i' / 'a'+'u' represent vowel hiatus (अइ / अउ).
 SLP1_VOWELS = {
     'a': 'अ', 'A': 'आ', 'i': 'इ', 'I': 'ई', 'u': 'उ', 'U': 'ऊ',
-    'f': 'ऋ', 'F': 'ॠ', 'x': 'ऌ', 'X': 'ॡ', 'e': 'ए', 'E': 'ऐ', 'ai': 'ऐ',
-    'o': 'ओ', 'O': 'औ', 'au': 'औ'
+    'f': 'ऋ', 'F': 'ॠ', 'x': 'ऌ', 'X': 'ॡ', 'e': 'ए', 'E': 'ऐ',
+    'o': 'ओ', 'O': 'औ'
 }
 
 SLP1_MATRAS = {
     'a': '', 'A': 'ा', 'i': 'ि', 'I': 'ी', 'u': 'ु', 'U': 'ू',
-    'f': 'ृ', 'F': 'ॄ', 'x': 'ॢ', 'X': 'ॣ', 'e': 'े', 'E': 'ै', 'ai': 'ै',
-    'o': 'ो', 'O': 'ौ', 'au': 'ौ'
+    'f': 'ृ', 'F': 'ॄ', 'x': 'ॢ', 'X': 'ॣ', 'e': 'े', 'E': 'ै',
+    'o': 'ो', 'O': 'ौ'
 }
 
 SLP1_CONSONANTS = {
@@ -50,39 +54,15 @@ SLP1_TO_IAST = {
 
 def slp1_to_iast(text):
     out = []
-    i = 0
-    n = len(text)
-    while i < n:
-        if i + 1 < n and text[i:i+2] in ('ai', 'au'):
-            out.append(text[i:i+2])
-            i += 2
-        elif text[i] in SLP1_TO_IAST:
-            out.append(SLP1_TO_IAST[text[i]])
-            i += 1
-        else:
-            out.append(text[i])
-            i += 1
+    for ch in text:
+        out.append(SLP1_TO_IAST.get(ch, ch))
     return "".join(out)
 
 def slp1_to_devanagari(text):
     out = []
-    i = 0
-    n = len(text)
     prev_consonant = False
 
-    while i < n:
-        ch2 = text[i:i+2] if i + 1 < n else ""
-        if ch2 in ('ai', 'au'):
-            if prev_consonant:
-                out.append(SLP1_MATRAS[ch2])
-                prev_consonant = False
-            else:
-                out.append(SLP1_VOWELS[ch2])
-            i += 2
-            continue
-
-        ch = text[i]
-
+    for ch in text:
         # Vowels
         if ch in SLP1_VOWELS:
             if prev_consonant:
@@ -92,7 +72,6 @@ def slp1_to_devanagari(text):
                 prev_consonant = False
             else:
                 out.append(SLP1_VOWELS[ch])
-            i += 1
             continue
 
         # If previous was consonant and current is another consonant, add virama
@@ -104,17 +83,14 @@ def slp1_to_devanagari(text):
         if ch in SLP1_CONSONANTS:
             out.append(SLP1_CONSONANTS[ch])
             prev_consonant = True
-            i += 1
             continue
 
         # Modifiers
         if ch in SLP1_OTHER:
             out.append(SLP1_OTHER[ch])
-            i += 1
             continue
 
         out.append(ch)
-        i += 1
 
     if prev_consonant:
         out.append('्')
@@ -194,15 +170,15 @@ def parse_mw(mw_path):
                         # Filter out empty or pure cross references
                         is_pure_ref = any(k in clean_def.lower() for k in ['see pp.', 'see under', '&c. see p'])
                         if len(clean_def) >= 4 and not is_pure_ref:
-                            # Extract POS
+                            # Extract POS using word-boundary regex so "cf." does not match "f."
                             pos = "noun"
-                            if "m." in body or "n." in body or "f." in body:
+                            if re.search(r'\b(?:m|n|f)\.|mf\(', body):
                                 pos = "noun"
-                            elif "cl." in body or "Pass." in body or "Caus." in body or "Desid." in body:
+                            elif re.search(r'\b(?:cl\.\s*\d+|Pass\.|Caus\.|Desid\.)', body):
                                 pos = "verb"
-                            elif "ind." in body or "indecl." in body:
+                            elif re.search(r'\b(?:ind|indecl)\.', body):
                                 pos = "indeclinable"
-                            elif "adj." in body:
+                            elif re.search(r'\badj\.', body):
                                 pos = "adjective"
 
                             # Extract concise meanings
@@ -347,31 +323,36 @@ def parse_mw(mw_path):
     print(f"Extracted {len(entries)} comprehensive entries spanning entire alphabet.")
     return entries
 
+def sql_quote(val: str) -> str:
+    return "'" + val.replace("'", "''") + "'"
+
+
 def main():
-    mw_path = "Assets/Dictionary/txt/mw.txt"
-    if not os.path.exists(mw_path):
+    repo_root = Path(__file__).resolve().parent.parent
+    mw_path = repo_root / "Assets" / "Dictionary" / "txt" / "mw.txt"
+    if not mw_path.exists():
         print(f"Error: {mw_path} not found.")
         sys.exit(1)
 
-    entries = parse_mw(mw_path)
+    entries = parse_mw(str(mw_path))
 
     # Save to client/src/data/monier_core.json
-    out_json = "client/src/data/monier_core.json"
+    out_json = repo_root / "client" / "src" / "data" / "monier_core.json"
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump(entries, f, ensure_ascii=False, separators=(',', ':'))
-    print(f"Saved {out_json} ({os.path.getsize(out_json) / (1024 * 1024):.2f} MB)")
+    print(f"Saved {out_json} ({out_json.stat().st_size / (1024 * 1024):.2f} MB)")
 
-    # Generate a database seed SQL sample
-    out_sql = "database/seed_monier_sample.sql"
+    # Generate a database seed SQL sample using safe SQL ARRAY literals
+    out_sql = repo_root / "database" / "seed_monier_sample.sql"
     with open(out_sql, "w", encoding="utf-8") as f:
         f.write("-- Monier-Williams Sanskrit Dictionary Seed (Sample Core)\n")
         f.write("INSERT INTO public.dictionary (word, pos, meanings) VALUES\n")
         rows = []
-        for e in entries[:1000]: # top 1000 for lightweight SQL seed
-            w = e["word"].replace("'", "''")
-            pos = e["pos"].replace("'", "''")
-            meanings_str = '{"' + '", "'.join([m.replace('"', '\\"').replace("'", "''") for m in e["meanings"]]) + '"}'
-            rows.append(f"  ('{w}', '{pos}', '{meanings_str}')")
+        for e in entries[:1000]:  # top 1000 for lightweight SQL seed
+            w_sql = sql_quote(e["word"])
+            pos_sql = sql_quote(e["pos"])
+            meanings_sql = "ARRAY[" + ", ".join(sql_quote(m) for m in e["meanings"]) + "]::text[]"
+            rows.append(f"  ({w_sql}, {pos_sql}, {meanings_sql})")
         f.write(",\n".join(rows))
         f.write("\nON CONFLICT DO NOTHING;\n")
     print(f"Saved {out_sql}")
